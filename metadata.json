@@ -1,0 +1,8 @@
+{
+  "name": "DarkGuard AI — Auditor for Deceptive E-Commerce Design",
+  "description": "Hybrid ML and rule-based auditor detecting fake urgency, misleading discounts, confirm shaming, and pre-selected extras with reversible Ethical View.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

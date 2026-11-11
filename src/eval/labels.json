@@ -1,0 +1,307 @@
+[
+  {
+    "pageId": "eval-planted-01",
+    "title": "AudioMax Noise Cancelling Pro",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2", "DP-3", "DP-4"],
+    "elements": [
+      { "text": "Hurry! Deal ends in 00:14:59", "expectedCategory": "DP-1" },
+      { "text": "60% OFF - Was $200.00 Now $120.00", "expectedCategory": "DP-2" },
+      { "text": "No thanks, I don't care about audio quality", "expectedCategory": "DP-3" },
+      { "text": "Add 2-Year Accidental Damage Protection for $19.99 (Pre-checked)", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-02",
+    "title": "Nordic Glow Ergonomic Desk Lamp",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2", "DP-4"],
+    "elements": [
+      { "text": "Flash Sale: 02:45:00 remaining", "expectedCategory": "DP-1" },
+      { "text": "50% Discount (Was $100.00, Now $70.00)", "expectedCategory": "DP-2" },
+      { "text": "Include Premium Bulb Replacement Warranty $9.99", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-03",
+    "title": "SwiftRunner Trail Marathon Shoes",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-3", "DP-4"],
+    "elements": [
+      { "text": "Only 2 left in stock! Selling fast", "expectedCategory": "DP-1" },
+      { "text": "No, I prefer full price", "expectedCategory": "DP-3" },
+      { "text": "Add carbon offset donation $2.00", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-04",
+    "title": "AeroTitan Ultra Lightweight Luggage",
+    "isPlanted": true,
+    "plantedCategories": ["DP-2", "DP-3"],
+    "elements": [
+      { "text": "Save 40% (Original MRP $250.00, Sale $180.00)", "expectedCategory": "DP-2" },
+      { "text": "No thanks, I will take the risk of lost luggage", "expectedCategory": "DP-3" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-05",
+    "title": "ChronoMaster Automatic Watch",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2"],
+    "elements": [
+      { "text": "Offer expires in 00:09:30", "expectedCategory": "DP-1" },
+      { "text": "Save 70% ($500 -> $250)", "expectedCategory": "DP-2" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-06",
+    "title": "PureAir HEPA Smart Filter",
+    "isPlanted": true,
+    "plantedCategories": ["DP-3", "DP-4"],
+    "elements": [
+      { "text": "No thanks, I don't care about my safety", "expectedCategory": "DP-3" },
+      { "text": "Auto-ship replacement filters every 3 months", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-07",
+    "title": "ChefSupreme Japanese Damascus Knife",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-4"],
+    "elements": [
+      { "text": "Flash deal ends in 00:04:12", "expectedCategory": "DP-1" },
+      { "text": "Add sharpening service warranty $14.99", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-08",
+    "title": "ThermaRest Orthopedic Foam Pillow",
+    "isPlanted": true,
+    "plantedCategories": ["DP-2", "DP-3"],
+    "elements": [
+      { "text": "Special 50% discount: $80 down to $60", "expectedCategory": "DP-2" },
+      { "text": "No, I prefer bad posture", "expectedCategory": "DP-3" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-09",
+    "title": "OptiView 4K Portable Projector",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2", "DP-4"],
+    "elements": [
+      { "text": "Order now! 00:19:59 left before price increases", "expectedCategory": "DP-1" },
+      { "text": "65% off ($400 down to $220)", "expectedCategory": "DP-2" },
+      { "text": "Add express shipping insurance $8.95", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-10",
+    "title": "FitTrack Smart Health Ring",
+    "isPlanted": true,
+    "plantedCategories": ["DP-3", "DP-4"],
+    "elements": [
+      { "text": "No thanks, I dislike fitness data", "expectedCategory": "DP-3" },
+      { "text": "Monthly VIP Health Analytics Subscription $9.99/mo", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-11",
+    "title": "VoltCharge 100W GaN Travel Adapter",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2"],
+    "elements": [
+      { "text": "Hurry! Almost gone", "expectedCategory": "DP-1" },
+      { "text": "45% off: was $60, now $45", "expectedCategory": "DP-2" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-12",
+    "title": "Zenith Leather Messenger Bag",
+    "isPlanted": true,
+    "plantedCategories": ["DP-3", "DP-4"],
+    "elements": [
+      { "text": "No thanks, I will pay full price", "expectedCategory": "DP-3" },
+      { "text": "Include leather conditioning kit $15.00", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-13",
+    "title": "AuraSound Pocket Speaker",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-3"],
+    "elements": [
+      { "text": "Demand is high! Only 1 remaining", "expectedCategory": "DP-1" },
+      { "text": "No, I don't want to save money", "expectedCategory": "DP-3" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-14",
+    "title": "Gourmet Espresso Machine",
+    "isPlanted": true,
+    "plantedCategories": ["DP-2", "DP-4"],
+    "elements": [
+      { "text": "50% OFF (was €600, now €400)", "expectedCategory": "DP-2" },
+      { "text": "Add 3-year extended warranty €49.00", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-15",
+    "title": "Lumina True Wireless Earbuds",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-2", "DP-3"],
+    "elements": [
+      { "text": "Timer: 00:07:45 ends today", "expectedCategory": "DP-1" },
+      { "text": "Save 50% ($120 -> $80)", "expectedCategory": "DP-2" },
+      { "text": "No thanks, I prefer paying full price", "expectedCategory": "DP-3" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-16",
+    "title": "Barista Cold Brew Pitcher",
+    "isPlanted": true,
+    "plantedCategories": ["DP-4"],
+    "elements": [
+      { "text": "Pre-selected: Premium organic coffee filters $6.00", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-17",
+    "title": "HydraFlow Stainless Flask",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1"],
+    "elements": [
+      { "text": "Flash deal expires in 00:11:20", "expectedCategory": "DP-1" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-18",
+    "title": "CoreStance Mechanical Keyboard",
+    "isPlanted": true,
+    "plantedCategories": ["DP-2"],
+    "elements": [
+      { "text": "Save 40%: was ₹4,999 now ₹3,999", "expectedCategory": "DP-2" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-19",
+    "title": "StudioMic Condenser Microphone",
+    "isPlanted": true,
+    "plantedCategories": ["DP-3"],
+    "elements": [
+      { "text": "No thanks, I hate discounts", "expectedCategory": "DP-3" }
+    ]
+  },
+  {
+    "pageId": "eval-planted-20",
+    "title": "SolShield Polarized Sunglasses",
+    "isPlanted": true,
+    "plantedCategories": ["DP-1", "DP-4"],
+    "elements": [
+      { "text": "Selling fast! Only 3 left", "expectedCategory": "DP-1" },
+      { "text": "Add hard shell case and microfiber cloth $12.50", "expectedCategory": "DP-4" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-01",
+    "title": "Kanso Organic Heavyweight Cotton T-Shirt",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Price: $32.00", "expectedCategory": "none" },
+      { "text": "Ships in 2-3 business days", "expectedCategory": "none" },
+      { "text": "Decline gift wrap", "expectedCategory": "none" },
+      { "text": "Add to bag", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-02",
+    "title": "Artisan Ceramic Pour-Over Dripper",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Handcrafted in Kyoto, $42.00", "expectedCategory": "none" },
+      { "text": "No thanks", "expectedCategory": "none" },
+      { "text": "Optional filter pack (unchecked)", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-03",
+    "title": "Field Notes Grid Notebook 3-Pack",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "$14.95", "expectedCategory": "none" },
+      { "text": "Standard shipping calculated at checkout", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-04",
+    "title": "Muji Mechanical Pencil 0.5mm",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Retail price $4.50", "expectedCategory": "none" },
+      { "text": "In stock", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-05",
+    "title": "Aeropress Coffee Maker Standard",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Original Aeropress $39.95", "expectedCategory": "none" },
+      { "text": "Includes 350 micro-filters", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-06",
+    "title": "Hasami Porcelain Mug 11oz Natural",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "$36.00 each", "expectedCategory": "none" },
+      { "text": "Dishwasher and microwave safe", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-07",
+    "title": "Hario V60 Buono Drip Kettle",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Stainless Steel 1.2L - $55.00", "expectedCategory": "none" },
+      { "text": "Free standard shipping over $50", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-08",
+    "title": "Braun Classic Travel Alarm Clock",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Matte Black - $28.00", "expectedCategory": "none" },
+      { "text": "Quiet precision quartz movement", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-09",
+    "title": "Cast Iron Skillet 10.25 inch",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Pre-seasoned with 100% vegetable oil - $24.90", "expectedCategory": "none" },
+      { "text": "Made in USA", "expectedCategory": "none" }
+    ]
+  },
+  {
+    "pageId": "eval-clean-10",
+    "title": "Canvas Tote Bag Heavy Duty",
+    "isPlanted": false,
+    "plantedCategories": [],
+    "elements": [
+      { "text": "Natural Unbleached Cotton $18.00", "expectedCategory": "none" },
+      { "text": "Reinforced cross-stitch handles", "expectedCategory": "none" }
+    ]
+  }
+]
