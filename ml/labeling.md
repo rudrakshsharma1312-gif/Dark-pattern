@@ -227,3 +227,4 @@ Maximum two classes per string is the practical limit. If you think three apply,
 | Sarcasm (`"Because who needs savings?"`) | Label `neutral` — the model cannot handle sarcasm reliably. Note in model card known weaknesses. |
 | Button text that is both a main CTA and an add-on (`"Buy now + warranty"`) | Label `addon_extra` only if the add-on is explicit. |
 | Strings with HTML entities or punctuation only | Label `neutral` and exclude from training if text is fewer than 3 tokens after tokenization. |
+

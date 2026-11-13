@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Python & ML artifacts
+__pycache__/
+*.py[cod]
+ml/.venv/
+ml/artifacts/

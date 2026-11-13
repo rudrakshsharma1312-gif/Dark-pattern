@@ -1,0 +1,108 @@
+{
+  "metrics": [
+    {
+      "category": "DP-1",
+      "name": "Fake Urgency",
+      "rulesOnly": {
+        "precision": 1,
+        "recall": 0.636,
+        "f1": 0.778,
+        "falsePositiveRate": 0
+      },
+      "rulesPlusML": {
+        "precision": 0.846,
+        "recall": 1,
+        "f1": 0.917,
+        "falsePositiveRate": 0.105
+      },
+      "improvement": {
+        "recallDelta": 0.364,
+        "fpIncrease": true
+      }
+    },
+    {
+      "category": "DP-2",
+      "name": "Misleading Discount",
+      "rulesOnly": {
+        "precision": 1,
+        "recall": 0.4,
+        "f1": 0.571,
+        "falsePositiveRate": 0
+      },
+      "rulesPlusML": {
+        "precision": 1,
+        "recall": 0.4,
+        "f1": 0.571,
+        "falsePositiveRate": 0
+      },
+      "improvement": {
+        "recallDelta": 0,
+        "fpIncrease": false
+      }
+    },
+    {
+      "category": "DP-3",
+      "name": "Confirm Shaming",
+      "rulesOnly": {
+        "precision": 1,
+        "recall": 0.8,
+        "f1": 0.889,
+        "falsePositiveRate": 0
+      },
+      "rulesPlusML": {
+        "precision": 0.909,
+        "recall": 1,
+        "f1": 0.952,
+        "falsePositiveRate": 0.05
+      },
+      "improvement": {
+        "recallDelta": 0.2,
+        "fpIncrease": true
+      }
+    },
+    {
+      "category": "DP-4",
+      "name": "Pre-selected Extras",
+      "rulesOnly": {
+        "precision": 1,
+        "recall": 0.455,
+        "f1": 0.625,
+        "falsePositiveRate": 0
+      },
+      "rulesPlusML": {
+        "precision": 0.9,
+        "recall": 0.818,
+        "f1": 0.857,
+        "falsePositiveRate": 0.053
+      },
+      "improvement": {
+        "recallDelta": 0.364,
+        "fpIncrease": true
+      }
+    }
+  ],
+  "overall": {
+    "rulesOnly": {
+      "precision": 1,
+      "recall": 0.573,
+      "f1": 0.728,
+      "falsePositiveRate": 0
+    },
+    "rulesPlusML": {
+      "precision": 0.914,
+      "recall": 0.804,
+      "f1": 0.856,
+      "falsePositiveRate": 0.3
+    }
+  },
+  "releaseGate": {
+    "passed": false,
+    "precisionCheck": true,
+    "recallCheck": true,
+    "fpRateCheck": false
+  },
+  "latencyMs": 6.4,
+  "testedPagesCount": 30,
+  "plantedCount": 20,
+  "cleanCount": 10
+}

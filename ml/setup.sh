@@ -22,3 +22,4 @@ echo "  source ml/.venv/bin/activate"
 echo ""
 echo "Then run the pipeline:"
 echo "  python3 ml/train.py"
+
