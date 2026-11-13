@@ -1,0 +1,4 @@
+# Pinned for Python 3.13 compatibility
+scikit-learn==1.5.2
+pandas==2.2.3
+numpy==2.1.3
