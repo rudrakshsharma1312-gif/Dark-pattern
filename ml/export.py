@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""
+DarkGuard AI - Model Exporter (ml/export.py)
+
+Exports the trained model artifact to src/ml/shaming-v1.json and a sidecar
+checksum file src/ml/shaming-v1.sha256.
+Also generates ml/golden/parity-vectors.json for the cross-runtime parity check.
+
+Per User Architecture Directives:
+1. Exact file byte hashing: shaming-v1.json is written with fixed formatting,
+   and its exact raw text/bytes are hashed directly into shaming-v1.sha256.
+   No JSON re-serialization occurs in JS, preventing float formatting mismatches.
+2. Single canonical location: src/ml/shaming-v1.json.
+"""
+
+import hashlib
+import json
+import math
+import os
+import re
+from typing import Dict, List
+import pandas as pd
+from train import extract_unigrams_and_bigrams
+
+
+def main():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    temp_artifact_path = os.path.join(base_dir, 'ml', 'artifacts', 'trained_model.json')
+
+    if not os.path.exists(temp_artifact_path):
+        raise FileNotFoundError(f"Missing {temp_artifact_path}. Please run ml/train.py first.")
+
+    with open(temp_artifact_path, 'r') as f:
+        payload = json.load(f)
+
+    # Destination paths
+    model_json_path = os.path.join(base_dir, 'src', 'ml', 'shaming-v1.json')
+    checksum_path = os.path.join(base_dir, 'src', 'ml', 'shaming-v1.sha256')
+
+    # Format JSON deterministically
+    json_content = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+
+    # Write model JSON
+    with open(model_json_path, 'w', encoding='utf-8') as f:
+        f.write(json_content)
+
+    # Compute raw bytes SHA-256
+    file_sha256 = hashlib.sha256(json_content.encode('utf-8')).hexdigest()
+
+    # Write sidecar checksum file
+    with open(checksum_path, 'w', encoding='utf-8') as f:
+        f.write(file_sha256 + "\n")
+
+    print(f"Exported model to: {model_json_path}")
+    print(f"Exported sidecar checksum to: {checksum_path}")
+    print(f"Model File SHA-256: {file_sha256}")
+    print(f"Vocab size: {payload['features']['vocab_size']}")
+    print(f"Classes: {payload['classes']}")
+    print(f"Thresholds: {payload['thresholds']}")
+
+    # -------------------------------------------------------------------------
+    # Generate golden parity test vectors
+    # -------------------------------------------------------------------------
+    golden_strings = [
+        "Hurry! Deal ends in 00:14:59",
+        "Only 2 left in stock! Selling fast",
+        "No thanks, I don't care about audio quality",
+        "Add 2-Year Accidental Damage Protection for $19.99",
+        "Pre-checked add-on option: a gift wrap",
+        "60% OFF - Was $200.00 Now $120.00",
+        "Special 50% discount: $80 down to $60",
+        "Price $32.00, in stock, ships in 2-3 business days",
+        "Decline gift wrap and continue without saving",
+        "Flash Sale: 02:45:00 remaining",
+        "Save 40% was 4999 now 3999",
+        "Add $4.99 priority shipping insurance",
+        "No, I prefer full price",
+        "Retail price $4.50",
+        "Stainless Steel 1.2L - $55.00",
+        "Demand is high! Only 1 remaining",
+        "No thanks, I will pay full price",
+        "Save up to 60% on selected items",
+        "100% recyclable outer carton packaging",
+        "Tick-tock! Your reserved item expires in 00:08:45"
+    ]
+
+    vocabulary = payload['vocabulary']
+    idf_list = payload['idf']
+    sublinear_tf = payload['features']['sublinear_tf']
+
+    golden_vectors = []
+    for text in golden_strings:
+        tokens = extract_unigrams_and_bigrams(text)
+        term_counts: Dict[int, int] = {}
+        for tok in tokens:
+            if tok in vocabulary:
+                idx = vocabulary[tok]
+                term_counts[idx] = term_counts.get(idx, 0) + 1
+
+        indices = sorted(term_counts.keys())
+        values = []
+        norm_sq = 0.0
+        for idx in indices:
+            cnt = term_counts[idx]
+            tf = 1.0 + math.log(cnt) if sublinear_tf else float(cnt)
+            weight = tf * idf_list[idx]
+            values.append(weight)
+            norm_sq += weight * weight
+
+        norm = math.sqrt(norm_sq) or 1.0
+        normalized_values = [round(v / norm, 6) for v in values]
+
+        golden_vectors.append({
+            "text": text,
+            "tokens": tokens,
+            "sparse_indices": indices,
+            "sparse_values": normalized_values
+        })
+
+    golden_json_path = os.path.join(base_dir, 'ml', 'golden', 'parity-vectors.json')
+    with open(golden_json_path, 'w', encoding='utf-8') as f:
+        json.dump(golden_vectors, f, indent=2)
+
+    print(f"Generated {len(golden_vectors)} golden parity vectors at {golden_json_path}")
+
+
+if __name__ == '__main__':
+    main()

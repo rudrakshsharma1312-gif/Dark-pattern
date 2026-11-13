@@ -1,7 +1,8 @@
 /**
  * DarkGuard AI Feature Extractor
- * Generates word unigrams/bigrams and character 3-5 grams with TF-IDF weighting.
- * Matches training logic in Python for cross-runtime parity.
+ * Generates word unigrams and bigrams with sublinear TF-IDF weighting.
+ * Paritied with training logic in ml/train.py.
+ * Note: char_wb n-grams removed per G-1 decision; TRD §6.3 deviation noted in model card.
  */
 
 export interface SparseVector {
@@ -28,7 +29,8 @@ export class FeatureExtractor {
   }
 
   /**
-   * Tokenizes text into word unigrams and bigrams, and character 3-5 grams.
+   * Tokenizes text into word unigrams and bigrams.
+   * Matches extract_unigrams_and_bigrams in ml/train.py.
    */
   public extractNgrams(rawText: string): string[] {
     const text = this.lowercase ? rawText.toLowerCase().trim() : rawText.trim();
@@ -36,7 +38,9 @@ export class FeatureExtractor {
 
     const ngrams: string[] = [];
 
-    // 1. Word tokens (split on non-alphanumerics)
+    // Word tokens: replace non-word, non-whitespace, non-hyphen with space
+    // Preserves hyphenated words ("2-year", "pre-checked", "add-on"),
+    // handles prices ("$19.99" -> "19", "99"), and preserves single characters ("a").
     const words = text
       .replace(/[^\w\s-]/g, ' ')
       .split(/\s+/)
@@ -50,15 +54,6 @@ export class FeatureExtractor {
     // Word bigrams
     for (let i = 0; i < words.length - 1; i++) {
       ngrams.push(`${words[i]} ${words[i + 1]}`);
-    }
-
-    // 2. Character 3-5 grams (word-boundary aware: char_wb)
-    const padded = ` ${text} `;
-    const len = padded.length;
-    for (let n = 3; n <= 5; n++) {
-      for (let i = 0; i <= len - n; i++) {
-        ngrams.push(padded.substring(i, i + n));
-      }
     }
 
     return ngrams;
@@ -82,17 +77,18 @@ export class FeatureExtractor {
       return { indices: [], values: [] };
     }
 
-    const indices: number[] = [];
+    // Keep indices sorted for deterministic order
+    const sortedIndices = Array.from(termCounts.keys()).sort((a, b) => a - b);
     const values: number[] = [];
     let normSq = 0;
 
-    for (const [idx, count] of termCounts.entries()) {
+    for (const idx of sortedIndices) {
+      const count = termCounts.get(idx)!;
       // Sublinear TF: 1 + log(tf)
       const tf = this.sublinearTf ? 1 + Math.log(count) : count;
       const idfVal = this.idf[idx] ?? 1.0;
       const weight = tf * idfVal;
 
-      indices.push(idx);
       values.push(weight);
       normSq += weight * weight;
     }
@@ -102,7 +98,7 @@ export class FeatureExtractor {
     const normalizedValues = values.map((v) => v / norm);
 
     return {
-      indices,
+      indices: sortedIndices,
       values: normalizedValues,
     };
   }

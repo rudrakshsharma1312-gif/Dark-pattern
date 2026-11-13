@@ -1,0 +1,816 @@
+[
+  {
+    "text": "Hurry! Deal ends in 00:14:59",
+    "tokens": [
+      "hurry",
+      "deal",
+      "ends",
+      "in",
+      "00",
+      "14",
+      "59",
+      "hurry deal",
+      "deal ends",
+      "ends in",
+      "in 00",
+      "00 14",
+      "14 59"
+    ],
+    "sparse_indices": [
+      2,
+      78,
+      284,
+      760,
+      766,
+      892,
+      894,
+      1136,
+      1167,
+      1168
+    ],
+    "sparse_values": [
+      0.204873,
+      0.329104,
+      0.34747,
+      0.270606,
+      0.391722,
+      0.288972,
+      0.34747,
+      0.314858,
+      0.264521,
+      0.35911
+    ]
+  },
+  {
+    "text": "Only 2 left in stock! Selling fast",
+    "tokens": [
+      "only",
+      "2",
+      "left",
+      "in",
+      "stock",
+      "selling",
+      "fast",
+      "only 2",
+      "2 left",
+      "left in",
+      "in stock",
+      "stock selling",
+      "selling fast"
+    ],
+    "sparse_indices": [
+      115,
+      121,
+      951,
+      1167,
+      1180,
+      1273,
+      1276,
+      1566,
+      1569,
+      2026,
+      2027,
+      2125
+    ],
+    "sparse_values": [
+      0.250557,
+      0.356656,
+      0.250557,
+      0.225913,
+      0.318863,
+      0.228449,
+      0.356656,
+      0.205483,
+      0.306696,
+      0.306696,
+      0.356656,
+      0.239971
+    ]
+  },
+  {
+    "text": "No thanks, I don't care about audio quality",
+    "tokens": [
+      "no",
+      "thanks",
+      "i",
+      "don",
+      "t",
+      "care",
+      "about",
+      "audio",
+      "quality",
+      "no thanks",
+      "thanks i",
+      "i don",
+      "don t",
+      "t care",
+      "care about",
+      "about audio",
+      "audio quality"
+    ],
+    "sparse_indices": [
+      361,
+      592,
+      593,
+      844,
+      845,
+      1145,
+      1150,
+      1461,
+      1465,
+      2179,
+      2180,
+      2205,
+      2207
+    ],
+    "sparse_values": [
+      0.332618,
+      0.304826,
+      0.362825,
+      0.267655,
+      0.267655,
+      0.16105,
+      0.291631,
+      0.187685,
+      0.247759,
+      0.263838,
+      0.345814,
+      0.242379,
+      0.256874
+    ]
+  },
+  {
+    "text": "Add 2-Year Accidental Damage Protection for $19.99",
+    "tokens": [
+      "add",
+      "2-year",
+      "accidental",
+      "damage",
+      "protection",
+      "for",
+      "19",
+      "99",
+      "add 2-year",
+      "2-year accidental",
+      "accidental damage",
+      "damage protection",
+      "protection for",
+      "for 19",
+      "19 99"
+    ],
+    "sparse_indices": [
+      109,
+      111,
+      127,
+      128,
+      344,
+      373,
+      376,
+      381,
+      382,
+      749,
+      751,
+      999,
+      1002,
+      1810,
+      1823
+    ],
+    "sparse_values": [
+      0.249033,
+      0.267585,
+      0.280748,
+      0.299301,
+      0.146833,
+      0.257375,
+      0.280748,
+      0.24198,
+      0.299301,
+      0.249033,
+      0.280748,
+      0.213655,
+      0.299301,
+      0.168338,
+      0.280748
+    ]
+  },
+  {
+    "text": "Pre-checked add-on option: a gift wrap",
+    "tokens": [
+      "pre-checked",
+      "add-on",
+      "option",
+      "a",
+      "gift",
+      "wrap",
+      "pre-checked add-on",
+      "add-on option",
+      "option a",
+      "a gift",
+      "gift wrap"
+    ],
+    "sparse_indices": [
+      353,
+      387,
+      1063,
+      1066,
+      1583,
+      2492
+    ],
+    "sparse_values": [
+      0.356775,
+      0.32548,
+      0.385493,
+      0.463305,
+      0.434587,
+      0.463305
+    ]
+  },
+  {
+    "text": "60% OFF - Was $200.00 Now $120.00",
+    "tokens": [
+      "60",
+      "off",
+      "-",
+      "was",
+      "200",
+      "00",
+      "now",
+      "120",
+      "00",
+      "60 off",
+      "off -",
+      "- was",
+      "was 200",
+      "200 00",
+      "00 now",
+      "now 120",
+      "120 00"
+    ],
+    "sparse_indices": [
+      0,
+      2,
+      68,
+      136,
+      294,
+      297,
+      1482,
+      1510,
+      2405,
+      2411
+    ],
+    "sparse_values": [
+      0.38659,
+      0.321116,
+      0.332437,
+      0.345625,
+      0.312551,
+      0.362627,
+      0.228547,
+      0.214149,
+      0.242247,
+      0.362627
+    ]
+  },
+  {
+    "text": "Special 50% discount: $80 down to $60",
+    "tokens": [
+      "special",
+      "50",
+      "discount",
+      "80",
+      "down",
+      "to",
+      "60",
+      "special 50",
+      "50 discount",
+      "discount 80",
+      "80 down",
+      "down to",
+      "to 60"
+    ],
+    "sparse_indices": [
+      265,
+      268,
+      294,
+      326,
+      819,
+      850,
+      855,
+      2101,
+      2269,
+      2276
+    ],
+    "sparse_values": [
+      0.271138,
+      0.391834,
+      0.316791,
+      0.284504,
+      0.250982,
+      0.301737,
+      0.350314,
+      0.336946,
+      0.218695,
+      0.391834
+    ]
+  },
+  {
+    "text": "Price $32.00, in stock, ships in 2-3 business days",
+    "tokens": [
+      "price",
+      "32",
+      "00",
+      "in",
+      "stock",
+      "ships",
+      "in",
+      "2-3",
+      "business",
+      "days",
+      "price 32",
+      "32 00",
+      "00 in",
+      "in stock",
+      "stock ships",
+      "ships in",
+      "in 2-3",
+      "2-3 business",
+      "business days"
+    ],
+    "sparse_indices": [
+      2,
+      759,
+      1167,
+      1180,
+      1741,
+      2054,
+      2125
+    ],
+    "sparse_values": [
+      0.226832,
+      0.413373,
+      0.495877,
+      0.413373,
+      0.224351,
+      0.462367,
+      0.311098
+    ]
+  },
+  {
+    "text": "Decline gift wrap and continue without saving",
+    "tokens": [
+      "decline",
+      "gift",
+      "wrap",
+      "and",
+      "continue",
+      "without",
+      "saving",
+      "decline gift",
+      "gift wrap",
+      "wrap and",
+      "and continue",
+      "continue without",
+      "without saving"
+    ],
+    "sparse_indices": [
+      431,
+      698,
+      702,
+      774,
+      1063,
+      1066,
+      1985,
+      2478,
+      2483,
+      2492
+    ],
+    "sparse_values": [
+      0.224494,
+      0.270716,
+      0.349733,
+      0.266154,
+      0.310225,
+      0.372844,
+      0.301438,
+      0.281108,
+      0.372844,
+      0.372844
+    ]
+  },
+  {
+    "text": "Flash Sale: 02:45:00 remaining",
+    "tokens": [
+      "flash",
+      "sale",
+      "02",
+      "45",
+      "00",
+      "remaining",
+      "flash sale",
+      "sale 02",
+      "02 45",
+      "45 00",
+      "00 remaining"
+    ],
+    "sparse_indices": [
+      2,
+      26,
+      237,
+      238,
+      989,
+      995,
+      1894,
+      1943
+    ],
+    "sparse_values": [
+      0.212114,
+      0.432367,
+      0.313934,
+      0.386551,
+      0.308644,
+      0.405566,
+      0.432367,
+      0.270932
+    ]
+  },
+  {
+    "text": "Save 40% was 4999 now 3999",
+    "tokens": [
+      "save",
+      "40",
+      "was",
+      "4999",
+      "now",
+      "3999",
+      "save 40",
+      "40 was",
+      "was 4999",
+      "4999 now",
+      "now 3999"
+    ],
+    "sparse_indices": [
+      218,
+      226,
+      232,
+      253,
+      254,
+      1482,
+      1486,
+      1963,
+      1970,
+      2405,
+      2417
+    ],
+    "sparse_values": [
+      0.343994,
+      0.264898,
+      0.343994,
+      0.343994,
+      0.343994,
+      0.203365,
+      0.343994,
+      0.193476,
+      0.307543,
+      0.215556,
+      0.343994
+    ]
+  },
+  {
+    "text": "Add $4.99 priority shipping insurance",
+    "tokens": [
+      "add",
+      "4",
+      "99",
+      "priority",
+      "shipping",
+      "insurance",
+      "add 4",
+      "4 99",
+      "99 priority",
+      "priority shipping",
+      "shipping insurance"
+    ],
+    "sparse_indices": [
+      219,
+      222,
+      344,
+      381,
+      1196,
+      1783,
+      1784,
+      2051
+    ],
+    "sparse_values": [
+      0.31839,
+      0.370294,
+      0.211254,
+      0.348144,
+      0.289732,
+      0.403922,
+      0.430613,
+      0.403922
+    ]
+  },
+  {
+    "text": "No, I prefer full price",
+    "tokens": [
+      "no",
+      "i",
+      "prefer",
+      "full",
+      "price",
+      "no i",
+      "i prefer",
+      "prefer full",
+      "full price"
+    ],
+    "sparse_indices": [
+      1043,
+      1047,
+      1145,
+      1157,
+      1461,
+      1462,
+      1729,
+      1741
+    ],
+    "sparse_values": [
+      0.368992,
+      0.408518,
+      0.23426,
+      0.443393,
+      0.273002,
+      0.329705,
+      0.433263,
+      0.273002
+    ]
+  },
+  {
+    "text": "Retail price $4.50",
+    "tokens": [
+      "retail",
+      "price",
+      "4",
+      "50",
+      "retail price",
+      "price 4",
+      "4 50"
+    ],
+    "sparse_indices": [
+      219,
+      265,
+      1741,
+      1911,
+      1912
+    ],
+    "sparse_values": [
+      0.447184,
+      0.418506,
+      0.293465,
+      0.465738,
+      0.567315
+    ]
+  },
+  {
+    "text": "Stainless Steel 1.2L - $55.00",
+    "tokens": [
+      "stainless",
+      "steel",
+      "1",
+      "2l",
+      "-",
+      "55",
+      "00",
+      "stainless steel",
+      "steel 1",
+      "1 2l",
+      "2l -",
+      "- 55",
+      "55 00"
+    ],
+    "sparse_indices": [
+      0,
+      2,
+      35,
+      277
+    ],
+    "sparse_values": [
+      0.663082,
+      0.3253,
+      0.452291,
+      0.499935
+    ]
+  },
+  {
+    "text": "Demand is high! Only 1 remaining",
+    "tokens": [
+      "demand",
+      "is",
+      "high",
+      "only",
+      "1",
+      "remaining",
+      "demand is",
+      "is high",
+      "high only",
+      "only 1",
+      "1 remaining"
+    ],
+    "sparse_indices": [
+      35,
+      792,
+      794,
+      1114,
+      1218,
+      1566,
+      1567,
+      1894
+    ],
+    "sparse_values": [
+      0.285609,
+      0.374348,
+      0.418717,
+      0.360064,
+      0.315695,
+      0.241239,
+      0.374348,
+      0.418717
+    ]
+  },
+  {
+    "text": "No thanks, I will pay full price",
+    "tokens": [
+      "no",
+      "thanks",
+      "i",
+      "will",
+      "pay",
+      "full",
+      "price",
+      "no thanks",
+      "thanks i",
+      "i will",
+      "will pay",
+      "pay full",
+      "full price"
+    ],
+    "sparse_indices": [
+      1043,
+      1047,
+      1145,
+      1159,
+      1461,
+      1465,
+      1650,
+      1653,
+      1741,
+      2205,
+      2207,
+      2456
+    ],
+    "sparse_values": [
+      0.275766,
+      0.305305,
+      0.175074,
+      0.420482,
+      0.204028,
+      0.269332,
+      0.244297,
+      0.323798,
+      0.204028,
+      0.263485,
+      0.279241,
+      0.394418
+    ]
+  },
+  {
+    "text": "Save up to 60% on selected items",
+    "tokens": [
+      "save",
+      "up",
+      "to",
+      "60",
+      "on",
+      "selected",
+      "items",
+      "save up",
+      "up to",
+      "to 60",
+      "60 on",
+      "on selected",
+      "selected items"
+    ],
+    "sparse_indices": [
+      294,
+      298,
+      1247,
+      1551,
+      1561,
+      1963,
+      1983,
+      2023,
+      2024,
+      2269,
+      2276,
+      2341,
+      2343
+    ],
+    "sparse_values": [
+      0.253712,
+      0.313812,
+      0.247306,
+      0.211144,
+      0.313812,
+      0.1765,
+      0.313812,
+      0.313812,
+      0.313812,
+      0.175149,
+      0.313812,
+      0.280559,
+      0.313812
+    ]
+  },
+  {
+    "text": "100% recyclable outer carton packaging",
+    "tokens": [
+      "100",
+      "recyclable",
+      "outer",
+      "carton",
+      "packaging",
+      "100 recyclable",
+      "recyclable outer",
+      "outer carton",
+      "carton packaging"
+    ],
+    "sparse_indices": [
+      52,
+      55,
+      598,
+      599,
+      1629,
+      1630,
+      1640,
+      1875,
+      1876
+    ],
+    "sparse_values": [
+      0.268716,
+      0.348953,
+      0.348953,
+      0.348953,
+      0.348953,
+      0.348953,
+      0.300072,
+      0.327323,
+      0.348953
+    ]
+  },
+  {
+    "text": "Tick-tock! Your reserved item expires in 00:08:45",
+    "tokens": [
+      "tick-tock",
+      "your",
+      "reserved",
+      "item",
+      "expires",
+      "in",
+      "00",
+      "08",
+      "45",
+      "tick-tock your",
+      "your reserved",
+      "reserved item",
+      "item expires",
+      "expires in",
+      "in 00",
+      "00 08",
+      "08 45"
+    ],
+    "sparse_indices": [
+      2,
+      7,
+      33,
+      237,
+      932,
+      934,
+      1167,
+      1168,
+      1239,
+      2510
+    ],
+    "sparse_values": [
+      0.189071,
+      0.385396,
+      0.385396,
+      0.27983,
+      0.331411,
+      0.344558,
+      0.244118,
+      0.331411,
+      0.29678,
+      0.320669
+    ]
+  }
+]
