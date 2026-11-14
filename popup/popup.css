@@ -854,3 +854,8 @@ body {
   padding-top: 8px;
   margin-top: 4px;
 }
+
+.footer-build-stamp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-dim);
+}

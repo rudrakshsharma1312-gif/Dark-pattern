@@ -1,0 +1,4 @@
+Version: 0.3.0
+Version-Name: 0.3.0 (50c31edb)
+Content-Hash: 50c31edb
+ZIP-SHA256: 7883b5c999fe6602bedb79b093f1ed3592f2799374e53d8951b6f87680cb0155

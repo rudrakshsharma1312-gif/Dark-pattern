@@ -1,0 +1,40 @@
+name: CI Verification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Verify Extension Parity
+        run: npm run verify:extension
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Verify Test Pages
+        run: npm run verify:pages
+
+      - name: Build Web Application
+        run: npm run build:web
+
+      - name: Verify Links & Asset Parity
+        run: npm run verify:links

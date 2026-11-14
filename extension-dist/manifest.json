@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "DarkGuard AI",
+  "version": "0.3.0",
+  "description": "Intelligent on-device auditor for deceptive e-commerce design patterns.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "DarkGuard AI Auditor"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/ethical-view.css",
+        "content/templates.json",
+        "content/shaming-v1.json"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "version_name": "0.3.0 (50c31edb)"
+}

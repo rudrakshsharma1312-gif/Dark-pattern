@@ -3,6 +3,8 @@ build/
 dist/
 dist-web/
 _site/
+!extension-dist/
+!extension-dist/**
 coverage/
 .DS_Store
 *.log

@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../..');
-const extensionPath = path.join(rootDir, 'dist/darkguard-unpacked');
+const extensionPath = path.join(rootDir, 'extension-dist');
 const testSiteDir = path.join(rootDir, 'test-site');
 const userDataDir = path.join(rootDir, '.playwright-e2e-session');
 
@@ -47,7 +47,7 @@ async function runE2ESmokeTests() {
 
   // 0. Ensure extension package exists
   if (!fs.existsSync(extensionPath) || !fs.existsSync(path.join(extensionPath, 'manifest.json'))) {
-    console.log('Building dist/darkguard-unpacked extension bundle first...');
+    console.log('Building extension-dist bundle first...');
     const { execSync } = await import('child_process');
     execSync('npm run package:extension', { cwd: rootDir, stdio: 'inherit' });
   }
