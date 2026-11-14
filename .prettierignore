@@ -1,0 +1,5 @@
+# ML model artifacts – exact bytes matter for SHA-256 checksum integrity
+src/ml/shaming-v1.json
+src/ml/shaming-v1.sha256
+src/ml/shaming-v1.checksum.ts
+

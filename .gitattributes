@@ -1,0 +1,6 @@
+# DarkGuard AI – Git Attributes
+# Prevent line-ending conversion on the ML model artifact (exact bytes matter for SHA-256 checksum).
+src/ml/shaming-v1.json -text
+src/ml/shaming-v1.sha256 -text
+src/ml/shaming-v1.checksum.ts -text
+

@@ -93,6 +93,7 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
 
 ## 7. Integrity & Fallback Protocol
 
-- Integrity is verified via SHA-256 byte comparison against `shaming-v1.sha256`.
+- Integrity is verified via SHA-256 byte comparison against `shaming-v1.sha256` and the typed constant in `shaming-v1.checksum.ts`.
+- **Accidental Corruption vs. Tampering Scope:** The SHA-256 checksum guards strictly against accidental file corruption, incomplete asset extraction, or network/bundle truncation. It does not prevent deliberate adversarial tampering, as the checksum constant and model artifact ship within the same client extension bundle.
 - If the model file is missing or corrupted, `classifier.ts` sets `status = 'corrupted'` and `batchPredict()` returns empty results, causing `fusion.js` to execute a pure rules-only scan without throwing runtime exceptions.
 
