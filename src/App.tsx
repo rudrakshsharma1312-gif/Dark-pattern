@@ -153,6 +153,7 @@ export default function App() {
                       testContainerRef={testShopContainerRef}
                       currentDomain="demo.darkguard.shop"
                       currentPath={`/products/${selectedProduct.id}`}
+                      onOpenGuide={() => setCurrentTab('guide')}
                     />
                   </div>
                 </div>

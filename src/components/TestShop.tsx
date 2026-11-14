@@ -64,7 +64,7 @@ export const PRODUCTS: ProductScenario[] = [
       'Multipoint Bluetooth 5.3 pairing across devices',
     ],
     imageUrl:
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect width="400" height="300" fill="%23141720"/><circle cx="200" cy="150" r="70" fill="none" stroke="%23E6B85C" stroke-width="4"/><path d="M150 150 A50 50 0 0 1 250 150" fill="none" stroke="%23CBD2DC" stroke-width="6"/><rect x="135" y="140" width="22" height="45" rx="10" fill="%23E6B85C"/><rect x="243" y="140" width="22" height="45" rx="10" fill="%23E6B85C"/><text x="200" y="250" text-anchor="middle" fill="%23CBD2DC" font-family="sans-serif" font-size="14" font-weight="600">AuraSound Pro Studio</text></svg>',
   },
   {
     id: 'nordic-lamp',
@@ -100,7 +100,7 @@ export const PRODUCTS: ProductScenario[] = [
       'Aircraft-grade sandblasted anodized aluminum arm',
     ],
     imageUrl:
-      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&auto=format&fit=crop&q=80',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect width="400" height="300" fill="%23141720"/><line x1="160" y1="230" x2="240" y2="230" stroke="%23E6B85C" stroke-width="6" stroke-linecap="round"/><line x1="200" y1="230" x2="200" y2="120" stroke="%23CBD2DC" stroke-width="5"/><line x1="200" y1="120" x2="240" y2="90" stroke="%23E6B85C" stroke-width="5"/><polygon points="230,90 260,80 270,110 240,115" fill="%23E6B85C"/><text x="200" y="265" text-anchor="middle" fill="%23CBD2DC" font-family="sans-serif" font-size="14" font-weight="600">Nordic Glow Task Lamp</text></svg>',
   },
   {
     id: 'swift-runner',
@@ -135,7 +135,7 @@ export const PRODUCTS: ProductScenario[] = [
       'Integrated rock protection plate for technical terrain',
     ],
     imageUrl:
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect width="400" height="300" fill="%23141720"/><path d="M120 180 Q160 140 220 150 Q260 160 280 185 L120 185 Z" fill="%23E6B85C"/><line x1="110" y1="190" x2="290" y2="190" stroke="%23CBD2DC" stroke-width="8" stroke-linecap="round"/><text x="200" y="240" text-anchor="middle" fill="%23CBD2DC" font-family="sans-serif" font-size="14" font-weight="600">SwiftRunner Trail Shoes</text></svg>',
   },
   {
     id: 'clean-tee',
@@ -171,7 +171,7 @@ export const PRODUCTS: ProductScenario[] = [
       'Reinforced double-needle topstitching',
     ],
     imageUrl:
-      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect width="400" height="300" fill="%23141720"/><path d="M160 90 L240 90 L270 120 L245 140 L230 130 L230 220 L170 220 L170 130 L155 140 L130 120 Z" fill="none" stroke="%23CBD2DC" stroke-width="4"/><text x="200" y="255" text-anchor="middle" fill="%23CBD2DC" font-family="sans-serif" font-size="14" font-weight="600">Kanso Heavyweight Tee</text></svg>',
   },
   {
     id: 'clean-pourover',
@@ -207,7 +207,7 @@ export const PRODUCTS: ProductScenario[] = [
       'Universal base fits directly over most servers and mugs',
     ],
     imageUrl:
-      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect width="400" height="300" fill="%23141720"/><polygon points="150,110 250,110 220,180 180,180" fill="none" stroke="%23E6B85C" stroke-width="4"/><line x1="160" y1="190" x2="240" y2="190" stroke="%23CBD2DC" stroke-width="5" stroke-linecap="round"/><text x="200" y="245" text-anchor="middle" fill="%23CBD2DC" font-family="sans-serif" font-size="14" font-weight="600">Artisan Pour-Over Dripper</text></svg>',
   },
 ];
 

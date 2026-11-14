@@ -1,4 +1,3 @@
-import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,95 +8,157 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const siteDir = path.join(rootDir, '_site');
 
-// 1. HTTP server serving _site under /Dark-pattern/
-const server = http.createServer((req, res) => {
-  let urlPath = req.url?.split('?')[0] || '/';
-  if (!urlPath.startsWith('/Dark-pattern')) {
-    res.writeHead(404);
-    res.end('Not under /Dark-pattern');
-    return;
-  }
-
-  let relPath = urlPath.slice('/Dark-pattern'.length) || '/';
-  if (relPath === '/' || relPath === '') relPath = '/index.html';
-  if (relPath.endsWith('/')) relPath += 'index.html';
-
-  const filePath = path.join(siteDir, relPath);
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    const ext = path.extname(filePath);
-    const mime =
-      ext === '.html'
-        ? 'text/html'
-        : ext === '.css'
-        ? 'text/css'
-        : ext === '.js'
-        ? 'application/javascript'
-        : 'text/plain';
-    res.writeHead(200, { 'Content-Type': mime });
-    res.end(fs.readFileSync(filePath));
+function copyRecursiveSync(src: string, dest: string) {
+  if (!fs.existsSync(src)) return;
+  const stats = fs.statSync(src);
+  if (stats.isDirectory()) {
+    fs.mkdirSync(dest, { recursive: true });
+    for (const item of fs.readdirSync(src)) {
+      copyRecursiveSync(path.join(src, item), path.join(dest, item));
+    }
   } else {
-    res.writeHead(404);
-    res.end(`File not found: ${filePath}`);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
   }
-});
+}
 
-server.listen(0, async () => {
-  const port = (server.address() as any).port;
-  const baseUrl = `http://localhost:${port}/Dark-pattern`;
-  console.log(`[Server] Serving _site under ${baseUrl}`);
+// Assemble _site for testing if not already complete
+console.log('Ensuring _site directory is assembled...');
+fs.mkdirSync(siteDir, { recursive: true });
+copyRecursiveSync(path.join(rootDir, 'landing'), siteDir);
+copyRecursiveSync(path.join(rootDir, 'landing'), path.join(siteDir, 'landing'));
+copyRecursiveSync(path.join(rootDir, 'test-site'), path.join(siteDir, 'test-site'));
 
-  const visited = new Set<string>();
-  const toVisit: string[] = ['/index.html', '/test-site/index.html'];
-  const errors: { from: string; link: string; status: number; target: string }[] = [];
+const distWeb = path.join(rootDir, 'dist-web');
+if (fs.existsSync(distWeb)) {
+  copyRecursiveSync(distWeb, path.join(siteDir, 'app'));
+}
 
-  while (toVisit.length > 0) {
-    const current = toVisit.shift()!;
-    if (visited.has(current)) continue;
-    visited.add(current);
+const mockOrigin = 'http://localhost:8080';
+const subpath = '/Dark-pattern';
+const baseUrl = `${mockOrigin}${subpath}`;
 
-    const fullUrl = `${baseUrl}${current.startsWith('/') ? '' : '/'}${current}`;
+console.log(`[Crawler] Validating all links and asset references under ${baseUrl}/ ...`);
+
+const visited = new Set<string>();
+const toVisit: string[] = ['/index.html', '/test-site/index.html'];
+if (fs.existsSync(path.join(siteDir, 'app', 'index.html'))) {
+  toVisit.push('/app/index.html');
+}
+
+const errors: { from: string; link: string; target: string; reason: string }[] = [];
+
+while (toVisit.length > 0) {
+  const current = toVisit.shift()!;
+  if (visited.has(current)) continue;
+  visited.add(current);
+
+  let diskPath = path.join(siteDir, current);
+  if (fs.existsSync(diskPath) && fs.statSync(diskPath).isDirectory()) {
+    diskPath = path.join(diskPath, 'index.html');
+  }
+
+  if (!fs.existsSync(diskPath)) {
+    errors.push({ from: 'queue', link: current, target: diskPath, reason: 'File does not exist on disk' });
+    continue;
+  }
+
+  const currentUrl = `${baseUrl}${current.startsWith('/') ? '' : '/'}${current}`;
+  const html = fs.readFileSync(diskPath, 'utf-8');
+  const dom = new JSDOM(html, { url: currentUrl });
+
+  // 1. Check anchor links
+  const links = Array.from(dom.window.document.querySelectorAll('a[href]'));
+  for (const a of links) {
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http://') || href.startsWith('https://')) {
+      continue;
+    }
+
     try {
-      const resp = await fetch(fullUrl);
-      if (!resp.ok) {
-        errors.push({ from: 'queue', link: current, status: resp.status, target: fullUrl });
-        continue;
-      }
+      const resolved = new URL(href, currentUrl);
+      if (resolved.origin === mockOrigin) {
+        if (!resolved.pathname.startsWith(subpath)) {
+          errors.push({
+            from: current,
+            link: href,
+            target: resolved.pathname,
+            reason: `Broken prefix: link does not stay within ${subpath}/ (went to ${resolved.pathname})`,
+          });
+          continue;
+        }
 
-      if (resp.headers.get('content-type')?.includes('text/html')) {
-        const html = await resp.text();
-        const dom = new JSDOM(html, { url: fullUrl });
-        const links = Array.from(dom.window.document.querySelectorAll('a[href]'));
+        let relTarget = resolved.pathname.slice(subpath.length) || '/index.html';
+        if (relTarget.endsWith('/')) relTarget += 'index.html';
+        let targetDiskPath = path.join(siteDir, relTarget);
+        if (fs.existsSync(targetDiskPath) && fs.statSync(targetDiskPath).isDirectory()) {
+          targetDiskPath = path.join(targetDiskPath, 'index.html');
+        }
 
-        for (const a of links) {
-          const href = a.getAttribute('href') || '';
-          if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http://') || href.startsWith('https://')) {
-            continue;
-          }
-
-          // Resolve against current page URL
-          const resolved = new URL(href, fullUrl);
-          if (resolved.origin === `http://localhost:${port}`) {
-            const checkResp = await fetch(resolved.href);
-            if (!checkResp.ok) {
-              errors.push({ from: current, link: href, status: checkResp.status, target: resolved.pathname });
-            } else if (resolved.pathname.startsWith('/Dark-pattern') && !visited.has(resolved.pathname.slice('/Dark-pattern'.length))) {
-              toVisit.push(resolved.pathname.slice('/Dark-pattern'.length));
-            }
-          }
+        if (!fs.existsSync(targetDiskPath)) {
+          errors.push({
+            from: current,
+            link: href,
+            target: resolved.pathname,
+            reason: `404 Not Found on disk: ${targetDiskPath}`,
+          });
+        } else if (!visited.has(relTarget) && relTarget.endsWith('.html')) {
+          toVisit.push(relTarget);
         }
       }
-    } catch (err: any) {
-      errors.push({ from: 'fetch-err', link: current, status: 500, target: err.message });
+    } catch (e: any) {
+      errors.push({ from: current, link: href, target: href, reason: e.message });
     }
   }
 
-  console.log(`\nChecked ${visited.size} internal pages.`);
-  if (errors.length === 0) {
-    console.log('✅ ZERO 404s detected across all links under /Dark-pattern/ subpath!');
-  } else {
-    console.error(`❌ Found ${errors.length} broken links:`, errors);
-  }
+  // 2. Check assets: script[src], link[rel="stylesheet"][href], img[src]
+  const assets = [
+    ...Array.from(dom.window.document.querySelectorAll('script[src]')).map((el) => ({ el, attr: 'src' })),
+    ...Array.from(dom.window.document.querySelectorAll('link[rel="stylesheet"][href]')).map((el) => ({ el, attr: 'href' })),
+    ...Array.from(dom.window.document.querySelectorAll('img[src]')).map((el) => ({ el, attr: 'src' })),
+  ];
 
-  server.close();
-  process.exit(errors.length === 0 ? 0 : 1);
-});
+  for (const { el, attr } of assets) {
+    const src = el.getAttribute(attr) || '';
+    if (src.startsWith('data:') || src.startsWith('http://') || src.startsWith('https://') || src.startsWith('//')) {
+      continue;
+    }
+
+    try {
+      const resolved = new URL(src, currentUrl);
+      if (resolved.origin === mockOrigin) {
+        if (!resolved.pathname.startsWith(subpath)) {
+          errors.push({
+            from: current,
+            link: src,
+            target: resolved.pathname,
+            reason: `Asset path breaks subpath: ${src}`,
+          });
+          continue;
+        }
+
+        const relTarget = resolved.pathname.slice(subpath.length);
+        const targetDiskPath = path.join(siteDir, relTarget);
+        if (!fs.existsSync(targetDiskPath)) {
+          errors.push({
+            from: current,
+            link: src,
+            target: resolved.pathname,
+            reason: `Asset missing: ${targetDiskPath}`,
+          });
+        }
+      }
+    } catch (e: any) {
+      errors.push({ from: current, link: src, target: src, reason: e.message });
+    }
+  }
+}
+
+console.log(`\nChecked ${visited.size} internal pages & views.`);
+if (errors.length === 0) {
+  console.log('✅ ZERO 404s detected across all links & assets under /Dark-pattern/ subpath!');
+  process.exit(0);
+} else {
+  console.error(`❌ Found ${errors.length} broken links/assets:`, JSON.stringify(errors, null, 2));
+  process.exit(1);
+}

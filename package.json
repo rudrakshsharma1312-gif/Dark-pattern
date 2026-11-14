@@ -6,15 +6,20 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build",
+    "build:web": "vite build",
+    "preview:web": "vite preview --outDir dist-web",
     "build:extension": "node scripts/build-extension.mjs",
     "package:extension": "node scripts/package-extension.mjs",
+    "dev:ext": "node scripts/package-extension.mjs && node -e \"console.log('\\n✅ Extension packaged in dist/darkguard-unpacked!\\nTo see updates in Chrome:\\n1. Go to chrome://extensions\\n2. Click the ↺ (Reload) button on DarkGuard AI\\n3. Close and reopen the popup.\\n')\"",
+    "serve:site": "tsx scripts/serve-site.ts",
     "verify:pages": "tsx scripts/verify-all-pages.ts",
+    "verify:links": "tsx scripts/verify-pages-links.ts",
     "eval:real": "tsx eval/run.ts --real-engine",
     "test": "vitest run",
     "test:e2e": "tsx tests/e2e/smoke.ts",
     "start": "tsx server.ts",
-    "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
+    "preview": "vite preview --outDir dist-web",
+    "clean": "rm -rf dist dist-web server.js _site",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

@@ -28,15 +28,29 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Web Application
+        run: npm run build:web
+
       - name: Setup Pages Configuration
         uses: actions/configure-pages@v5
 
       - name: Assemble Public Pages Artifact
         run: |
-          mkdir -p _site/test-site _site/landing
+          mkdir -p _site/test-site _site/landing _site/app
           # Landing page at root and at /landing/
           cp -r landing/* _site/
           cp -r landing/* _site/landing/
+          # React Web App at /app/
+          cp -r dist-web/* _site/app/
           # Test site at /test-site/
           cp -r test-site/* _site/test-site/
 

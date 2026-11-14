@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { runEvaluation, EvalRunResult } from '../eval/eval-runner';
 import { MODEL_CARD_V1 } from '../ml/model-card';
-import { Play, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Play, CheckCircle2, ShieldCheck, X } from 'lucide-react';
 
 export const EvalDashboard: React.FC = () => {
   const [evalResult, setEvalResult] = useState<EvalRunResult | null>(null);
@@ -32,13 +32,13 @@ export const EvalDashboard: React.FC = () => {
             <h2 className="font-display font-bold text-xl text-[var(--ink-900)]">
               Evaluation &amp; Ablation Platform
             </h2>
-            <span className="text-xs text-[var(--mint-ink)] font-semibold">
-              · Release gate: PASS
+            <span className="text-xs text-[var(--rose-ink)] font-semibold px-2.5 py-0.5 rounded-full bg-[rgba(244,63,94,0.12)] border border-[rgba(244,63,94,0.25)]">
+              · ML Release Gate: FAILED (Rules-Only Active)
             </span>
           </div>
           <div className="w-8 h-[2px] bg-[var(--accent)] rounded-full mt-2" aria-hidden="true" />
           <p className="text-xs text-[var(--ink-500)] mt-1.5">
-            Empirical benchmark on 30 ground-truth labeled pages (20 planted, 10 clean controls)
+            Results on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only. Real-site performance has not been measured.
           </p>
         </div>
 
@@ -226,14 +226,17 @@ export const EvalDashboard: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-[var(--mint-ink)] shrink-0" />
                   <span>Recall &ge; 0.70 on planted pattern set: <strong className="text-[var(--ink-900)]">PASS (85%)</strong></span>
                 </div>
-                <div className="flex items-center gap-2.5 py-2.5 px-3 bg-[var(--bg-tile)] rounded-[12px] border border-[var(--line-subtle)]">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--mint-ink)] shrink-0" />
-                  <span>No increase in false-positive rate over rules: <strong className="text-[var(--ink-900)]">PASS (0.00 delta)</strong></span>
+                <div className="flex items-center gap-2.5 py-2.5 px-3 bg-[var(--bg-tile)] rounded-[12px] border border-[rgba(244,63,94,0.3)]">
+                  <X className="w-4 h-4 text-[var(--rose-ink)] shrink-0" />
+                  <span>No increase in false-positive rate over rules: <strong className="text-[var(--rose-ink)]">FAILED (+30% on clean controls)</strong></span>
                 </div>
                 <div className="flex items-center gap-2.5 py-2.5 px-3 bg-[var(--bg-tile)] rounded-[12px] border border-[var(--line-subtle)]">
                   <CheckCircle2 className="w-4 h-4 text-[var(--mint-ink)] shrink-0" />
                   <span>Ethical View zero-mutation guarantee tests: <strong className="text-[var(--ink-900)]">PASS (100% reversible)</strong></span>
                 </div>
+              </div>
+              <div className="mt-3.5 p-3 rounded-[12px] bg-[var(--bg-tile)] border border-[var(--line-subtle)] text-[11px] text-[var(--ink-500)] leading-relaxed">
+                <strong className="text-[var(--ink-700)]">Transparency Note:</strong> While rules-only achieves 0 false positives on our test bed, the text ML classifier introduced 4 false flags across clean control pages (+30% clean false alarm rate). In accordance with ML-R9, the text model is shipped <strong>disabled by default</strong> to protect consumer trust.
               </div>
             </div>
           </motion.div>
