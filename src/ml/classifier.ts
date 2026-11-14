@@ -2,22 +2,30 @@ import type { ClassifierResult, ModelArtifact } from '../types/index.ts';
 import { FeatureExtractor } from './features.ts';
 import { sha256Sync } from './sha256-sync.ts';
 import { SHAMING_V1_SHA256 } from './shaming-v1.checksum.ts';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import path from 'path';
-
 /**
  * Loads the raw model JSON text from the co-located shaming-v1.json file.
  * Under Node/tsx (tests, CLI eval): uses fs.readFileSync on the known path.
- * Under Vite (browser bundle): this code is tree-shaken; the Vite entrypoint
- * should pass rawModelText to the constructor via the ?raw static import,
- * or rely on the fallback returning '' which marks the classifier corrupted.
+ * Under Vite (browser bundle): returns '' which falls back to rules-only scanning.
  */
 function loadRawModelText(): string {
+  if (typeof window !== 'undefined' || typeof document !== 'undefined') {
+    return '';
+  }
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    return fs.readFileSync(path.join(__dirname, 'shaming-v1.json'), 'utf-8');
+    const nodeFs = (globalThis as any).process?.versions?.node ? eval('require')('fs') : null;
+    const nodePath = (globalThis as any).process?.versions?.node ? eval('require')('path') : null;
+    if (nodeFs && nodePath) {
+      const candidates = [
+        nodePath.resolve(process.cwd(), 'src/ml/shaming-v1.json'),
+        nodePath.resolve(process.cwd(), 'ml/shaming-v1.json'),
+      ];
+      for (const p of candidates) {
+        if (nodeFs.existsSync(p)) {
+          return nodeFs.readFileSync(p, 'utf-8');
+        }
+      }
+    }
+    return '';
   } catch {
     return '';
   }
