@@ -2,10 +2,6 @@
 > Intelligent, privacy-first Chromium extension auditing deceptive e-commerce design patterns on-device.
 
 [![CI Verification](https://github.com/rudrakshsharma1312-gif/Dark-pattern/actions/workflows/ci.yml/badge.svg)](https://github.com/rudrakshsharma1312-gif/Dark-pattern/actions)
-![Manifest V3](https://img.shields.io/badge/Chrome%20%7C%20Edge-Manifest%20V3-4F46E5)
-![Privacy](https://img.shields.io/badge/Privacy-100%25%20On--Device-10B981)
-[![Test Suite](https://img.shields.io/badge/Test%20Bed-16%20Deterministic%20Pages-8B5CF6)](test-site/index.html)
-![Zero Network](https://img.shields.io/badge/Zero%20Network-Enforced%20by%20Test-0EA5E9)
 
 ---
 
@@ -113,7 +109,7 @@ flowchart LR
 ```
 
 1. **Scanner Engine**: Filters rendered DOM candidates ($<200$ chars, visible tags, geometry). Never reads input values or checkout forms.
-2. **Temporal Observation (DP-1)**: When timer digits are detected, DarkGuard samples the text across a deterministic 10-second observation window. If values do not decrement, it flags a frozen countdown. Real decrementing timers pass with zero false alarms.
+2. **Temporal Observation & Scan Duration (DP-1)**: When timer digits are detected, DarkGuard samples the text across a deterministic 10-second observation window ($\Delta t \ge 10\text{ s}$). If values do not decrement, it flags a frozen countdown. Real decrementing timers pass without detection. A full scan takes **approximately 11 seconds** because of this mandatory 10-second observation window. Outside of this observation window, the synchronous processing pipeline (candidate extraction, rules DP-1–DP-4, fusion, and risk scoring) executes in under 10 ms (measured at 8.5 ms in [`eval/reports/eval-results.json`](eval/reports/eval-results.json)).
 3. **Risk Formula & Category Weights**:
    $$\text{Risk Score} = \min\left(100, \sum_{i=1}^{4} w_i \times \text{Severity}_i \times \text{Confidence}_i \times 33.3\right)$$
    | Category | Weight ($w_i$) | Rationale |
@@ -134,21 +130,31 @@ flowchart LR
 
 ## 5. Honest Status & Results
 
-### ML Release Gate Disclosure (ML-R9)
-DarkGuard AI was architected with a hybrid engine: deterministic DOM rules and an on-device TF-IDF Logistic Regression text model (`src/ml/shaming-v1.json`).
+### ML Architecture & Release Gate Disclosure (ML-R9)
+DarkGuard AI was architected with a hybrid engine: deterministic DOM rules and an on-device text classifier (`src/ml/classifier.ts`, weight array loaded from `src/ml/shaming-v1.json`). The text model is **TF-IDF (sublinear word unigrams and adjacent word bigrams, max 4,000 features) + one-vs-rest logistic regression running in plain JavaScript**. It is **not TensorFlow.js** and requires no external ML runtimes or GPU acceleration.
 
-During evaluation across 30 labeled fixture pages (20 planted, 10 clean controls):
-- While the text model improved recall on ambiguous text strings, it introduced **4 false alarms across clean control pages (+30% false alarm rate)**.
-- **Safety Criterion ML-R9**: The text model must produce zero increase in false-positive rate over rules on clean control pages.
-- **Result**: The text model **FAILED the release gate**.
-- **Engineering Decision**: To protect shopper trust, the extension ships with the text model **DISABLED by default** (`ml_enabled: false`). The shipped extension operates in high-precision, zero-false-alarm **rules-only mode**.
-- Full audit and ablation documentation: [`ml/model-card-v1.md`](ml/model-card-v1.md), [`eval/reports/ablation.md`](eval/reports/ablation.md), and [`eval/reports/eval-results.json`](eval/reports/eval-results.json).
+#### Release Gate Criteria (ML-R9)
+Evaluated in [`eval/run.ts`](eval/run.ts) across 30 labeled fixture pages (20 planted, 10 clean controls):
+1. **Precision Check**: Macro precision on pages $\ge 0.85$ (achieved **0.914** &rarr; **PASS**).
+2. **Recall Check**: Macro recall on pages $\ge 0.70$ (achieved **0.804** in [`eval/reports/ablation.md`](eval/reports/ablation.md) and [`ml/model-card-v1.md`](ml/model-card-v1.md), with micro recall at 0.810 [34 of 42 planted instances]; recorded as **0.705** in [`eval/reports/eval-results.json`](eval/reports/eval-results.json) where DP-2 arithmetic rules are evaluated without rendered DOM context &rarr; **PASS**).
+3. **Clean-Page False Alarm Check**: Zero increase in false-positive rate over rules-only on clean pages (`cleanFpRulesPlusML <= cleanFpRulesOnly`, i.e., $\le 0$ false alarm increase).
+   - Rules-only clean page false alarms: **0 of 10 clean pages (0.0%)** (42 total candidate elements on 10 pages, 0 flagged).
+   - Rules + ML clean page false alarms: **3 of 10 clean pages (30.0%)** with 4 false detections across those 3 pages (2 on `eval-clean-02`, 1 on `eval-clean-04`, 1 on `eval-clean-06`).
+   - Clean page false alarm increase: **+3 clean pages (4 detections)** &rarr; **FAIL**.
 
-### Evaluation Benchmark (Test Bed)
-Results on our curated test bed (23 pages: 16 test-site scenarios + 7 real-world clean fixtures; detectors were tuned on these pages; rules-only mode):
-- **Planted Target Patterns Caught**: 12 of 12 (100%)
-- **Clean Pages with False Flags**: 0 of 14 (0.0% false alarm rate)
-- *Limitation*: Real-site accuracy on arbitrary un-curated web stores has not been measured.
+#### System Release Gate Result: FAILED
+Because the text model introduced 4 false detections across 3 clean pages (+30.0% clean page false-alarm rate), the system **FAILED the release gate**.
+
+#### Engineering Decision: Ship Rules-Only by Default
+To protect consumer trust and avoid penalizing legitimate merchants, the extension ships with the text classifier **DISABLED by default** (`ml_enabled: false`). The default shipped extension operates purely as a deterministic, zero-network, rule-based engine.
+
+Detailed documentation and error analysis: [`ml/model-card-v1.md`](ml/model-card-v1.md), [`eval/reports/ablation.md`](eval/reports/ablation.md), and [`eval/reports/eval-results.json`](eval/reports/eval-results.json).
+
+### Curated Test Bed Evaluation
+Results on our curated test bed (23 pages: 16 test-site scenarios in [`test-site/`](test-site/) + 7 real-world clean fixtures in [`tests/fixtures/real-world-clean/`](tests/fixtures/real-world-clean/); evaluated via `npm run eval:real` in rules-only mode):
+- **Planted Target Patterns Caught on Curated Test Bed**: 12 of 12 (detectors were tuned on these scenarios)
+- **Clean Pages with False Flags**: 0 of 14 (0.0% false alarm rate on these clean controls)
+- **Important Limitation**: These metrics reflect performance on our curated test bed only; real-world accuracy on uncurated web stores has not been measured.
 
 ### Known Limitations
 1. **Dynamic / Late-Loading Prices**: Single-page stores that dynamically render price calculations after scan completion require a rescan.
@@ -288,6 +294,7 @@ Dark-pattern/
 - **Gurleen Kaur Bhatia** (`Gurleen`)
 
 ### License & Third-Party Notice
-- **License**: No `LICENSE` file is currently present in the repository; all rights are reserved by the authors.
+<!-- TODO: Choose and add an open-source or proprietary LICENSE file to the repository root (e.g. MIT, Apache-2.0, or All Rights Reserved). -->
+- **License**: No `LICENSE` file is currently present in the repository root; all rights are reserved by the authors until an official open-source license is chosen.
 - **Third-Party Libraries**: Built using open-source packages: React & Vite (MIT), esbuild (MIT), Tailwind CSS (MIT), Lucide React (ISC), Vitest (MIT), Playwright (Apache 2.0), and Python scientific libraries (scikit-learn, numpy, pandas under BSD).
 - **Training Data**: The experimental text model was trained on 823 proprietary, hand-labeled short UI strings created for this project; no public dataset was used.
