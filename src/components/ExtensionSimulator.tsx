@@ -27,12 +27,14 @@ interface ExtensionSimulatorProps {
   testContainerRef: React.RefObject<HTMLElement | null>;
   currentDomain?: string;
   currentPath?: string;
+  onOpenGuide?: () => void;
 }
 
 export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
   testContainerRef,
   currentDomain = 'demo.darkguard.shop',
   currentPath = '/products/aura-sound-pro',
+  onOpenGuide,
 }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanStepMessage, setScanStepMessage] = useState('');
@@ -246,12 +248,34 @@ ${scanResult.detections
     <div className="w-full glass-panel rounded-[24px] flex flex-col overflow-hidden">
       {/* Extension Simulator Header */}
       <div className="border-b border-[var(--line-card)] px-5 py-3.5 flex items-center justify-between gap-3 bg-gradient-to-r from-[var(--bg-bar-from)] to-[var(--bg-bar-to)]">
-        <div className="min-w-0">
-          <div className="font-display font-bold text-sm text-[var(--ink-900)] truncate">
-            DarkGuard AI
+        <div className="min-w-0 flex flex-col gap-0.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-display font-bold text-sm text-[var(--ink-900)]">
+              DarkGuard AI
+            </span>
+            <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-border)]">
+              Web simulator (not the browser extension)
+            </span>
           </div>
-          <div className="text-[11px] text-[var(--ink-500)] truncate">
-            TF-IDF Logistic ML · SHA-256 Verified
+          <div className="flex items-center gap-2 text-[11px] text-[var(--ink-500)]">
+            <span>In-browser test engine</span>
+            <span aria-hidden="true">·</span>
+            {onOpenGuide ? (
+              <button
+                type="button"
+                onClick={onOpenGuide}
+                className="text-[var(--accent)] hover:underline font-medium cursor-pointer"
+              >
+                Get the real extension &rarr;
+              </button>
+            ) : (
+              <a
+                href="#install"
+                className="text-[var(--accent)] hover:underline font-medium"
+              >
+                Get the real extension &rarr;
+              </a>
+            )}
           </div>
         </div>
 
