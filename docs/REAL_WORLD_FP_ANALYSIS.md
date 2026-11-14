@@ -2,6 +2,10 @@
 
 This report documents the false-positive analysis conducted on synthetic real-world clean e-commerce fixtures using the DarkGuard AI rules engine (rules-only mode, `mlEnabled: false`).
 
+> [!NOTE]
+> **Test Bed Scope**: Results on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only.
+> **Limitation**: Real-site performance on live uncurated commercial websites has not been measured.
+
 ---
 
 ## 1. Test Matrix & Results (After Hardening)
@@ -14,7 +18,7 @@ This report documents the false-positive analysis conducted on synthetic real-wo
 | `clean-free-shipping.html` | "Free shipping on all orders over $50!" banner | **0** | None | **0** | ✅ PASS (CLEAN) |
 | `clean-sale-ends-sunday.html` | "Sale ends Sunday at midnight" promotional notice | **0** | None | **0** | ✅ PASS (CLEAN) |
 | `clean-remember-me.html` | Pre-checked "Remember me on this computer" checkbox | **0** | None | **0** | ✅ PASS (CLEAN) |
-| `clean-stock-urgency.html` | "Only 3 left in stock - order soon" in standard product card | **1** | `DP-1` (`fake_urgency`, informational note, `ET-URG-02`) | **0** | ✅ PASS (CLEAN SCORE 0) |
+| `clean-stock-urgency.html` | "Only 3 left in stock - order soon" in standard product card | **0** | None (Honest stock count excluded from visible findings) | **0** | ✅ PASS (CLEAN) |
 
 ---
 
@@ -37,5 +41,6 @@ This report documents the false-positive analysis conducted on synthetic real-wo
 ### D. Low-Stock Urgency & Promotional Deadlines (`clean-stock-urgency.html`, `clean-sale-ends-sunday.html`)
 - **Engine Behavior:**
   - `clean-sale-ends-sunday.html`: "Sale ends Sunday at midnight" does not match countdown timer patterns or high-pressure scarcity keywords, producing 0 detections.
-  - `clean-stock-urgency.html`: Matches static text pattern `/only \d+ left in stock/i`. Under rules-only mode (ML off) without an observed timer, it produces an informational note (`templateId: 'ET-URG-02'`, `confidence: 0.50`, `details: { scoreContributionZero: true }`) with **0 score contribution**. The page risk score remains **0 (Low)**, preserving template consistency while eliminating false alarms from the risk score.
+  - `clean-stock-urgency.html`: Honest stock-count text ("Only 3 left in stock", "Only 2 left") produces 0 visible finding cards, 0 Ethical View notes, and 0 contribution to the banner's issue count or risk score.
+  - Urgency text without stock count (e.g. "Hurry! Offer ends soon!" with no timer) continues to use `ET-URG-02` as an informational note.
 - **Planted Pages Verification:** Planted urgency pages (`planted-urgency-01.html`, `planted-urgency-02.html`, and `planted-combined-01.html`) employ observed timers (frozen countdowns) and continue to be detected at full confidence and severity.

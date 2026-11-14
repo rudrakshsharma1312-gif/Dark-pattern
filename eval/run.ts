@@ -300,8 +300,9 @@ async function runRealEngineEvaluation() {
   ];
 
   console.log('='.repeat(80));
-  console.log('DARKGUARD AI: REAL ENGINE EVALUATION (RULES-ONLY MODE)');
-  console.log(`Evaluated on ${testPages.length} rendered pages (9 planted, 14 clean)`);
+  console.log('DARKGUARD AI: TEST BED EVALUATION (RULES-ONLY MODE)');
+  console.log('Results on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only');
+  console.log('Limitation: Real-site performance has not been measured.');
   console.log('='.repeat(80));
 
   const stats: Record<CategoryId, { tp: number; fp: number; fn: number; tn: number }> = {
@@ -398,7 +399,9 @@ async function runRealEngineEvaluation() {
   const totalTime = performance.now() - start;
 
   const realEngineResult = {
-    evalMode: 'real-rendered-engine',
+    evalMode: 'rules-only-test-bed',
+    description: 'Results on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only',
+    limitation: 'Real-site performance on uncurated live commercial websites has not been measured.',
     evaluatedAt: new Date().toISOString(),
     latencyMs: Number(totalTime.toFixed(1)),
     totalPages: testPages.length,
@@ -430,14 +433,15 @@ async function runRealEngineEvaluation() {
   );
   console.log('-'.repeat(80));
   console.log(`Clean pages with at least one false flag: ${cleanPagesWithFalseFlags} of ${cleanPageCount} (${((cleanPagesWithFalseFlags / cleanPageCount) * 100).toFixed(1)}%)`);
-  console.log(`Planted target pattern recall: ${categoryMetrics.reduce((acc, m) => acc + m.tp, 0)} of ${categoryMetrics.reduce((acc, m) => acc + m.tp + m.fn, 0)} (100.0%)`);
+  console.log(`Planted target patterns detected on test bed: ${categoryMetrics.reduce((acc, m) => acc + m.tp, 0)} of ${categoryMetrics.reduce((acc, m) => acc + m.tp + m.fn, 0)}`);
+  console.log(`Note: These metrics reflect performance on our curated test bed only; real-world accuracy has not been measured.`);
 
   // Write report
   const reportsDir = path.join(__dirname, 'reports');
   fs.mkdirSync(reportsDir, { recursive: true });
   const outPath = path.join(reportsDir, 'real-engine-results.json');
   fs.writeFileSync(outPath, JSON.stringify(realEngineResult, null, 2), 'utf-8');
-  console.log(`\nSaved real engine evaluation results to ${outPath}\n`);
+  console.log(`\nSaved test bed evaluation results to ${outPath}\n`);
 }
 
 if (process.argv.includes('--real-engine') || process.argv.includes('--real')) {

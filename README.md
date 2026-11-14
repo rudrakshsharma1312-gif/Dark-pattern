@@ -119,7 +119,7 @@ The test website is **100% offline and standalone** with zero external dependenc
 
 1. **Hosted Live Deployments**:
    * **GitHub Pages**: `https://aditri-web.github.io/Dark-pattern/test-site/` (Test Bed) and `https://aditri-web.github.io/Dark-pattern/` (Landing Page)
-   * **Vercel Preview**: `https://dark-pattern.vercel.app/test-site/` (Alternative preview via `vercel.json`)
+   * **Vercel Preview**: `https://<your-project>.vercel.app/test-site/` (Placeholder until project is deployed via Vercel)
 2. **Local Static Server**:
    * Serve `test-site/` directly using standard static server:
      ```bash
@@ -139,6 +139,7 @@ The test website is **100% offline and standalone** with zero external dependenc
 ### Automated Test & Verification Commands
 - `npm test`: Runs Vitest across all test suites (detectors, hint independence, privacy, contract, and real-world clean fixtures).
 - `npm run verify:pages`: Runs the 16-page end-to-end verification script (`scripts/verify-all-pages.ts`) against the test site, checking all 9 planted and 7 clean pages with DOM restoration.
+- `npm run eval:real`: Runs real engine evaluation on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only. *Limitation: Real-site performance on live web stores has not been measured.*
 - `npm run package:extension`: Bundles `content/scanner.js`, validates manifest paths, and creates `dist/darkguard-extension.zip`.
 
 ---

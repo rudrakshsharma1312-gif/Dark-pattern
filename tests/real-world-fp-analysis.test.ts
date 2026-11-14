@@ -41,13 +41,12 @@ describe('Real-World Clean Fixtures Regression Suite (Score 0 Expected)', () => 
     {
       file: 'clean-stock-urgency.html',
       name: 'Clean Stock Urgency (Only 3 left in stock)',
-      // Text-only urgency produces an informational note (ET-URG-02) but zero score contribution
-      expectedDetections: 1,
-      isInformationalOnly: true,
+      // Honest stock-count text produces 0 visible findings and 0 Ethical View notes
+      expectedDetections: 0,
     },
   ];
 
-  it.each(cleanFixtures)('produces 0 risk score on $name ($file)', async (fixture) => {
+  it.each(cleanFixtures)('produces 0 risk score and 0 visible findings on $name ($file)', async (fixture) => {
     const html = fs.readFileSync(path.join(fixturesDir, fixture.file), 'utf-8');
     const dom = new JSDOM(html, { url: `http://localhost:3000/${fixture.file}` });
     try {
@@ -60,15 +59,46 @@ describe('Real-World Clean Fixtures Regression Suite (Score 0 Expected)', () => 
         mlEnabled: false,
       });
 
-      // All honest real-world clean fixtures must produce Risk Score 0 and Low band
+      // All honest real-world clean fixtures must produce Risk Score 0 and 0 visible findings
       expect(result.risk_score).toBe(0);
       expect(result.level).toBe('Low');
       expect(result.detections.length).toBe(fixture.expectedDetections);
+    } finally {
+      dom.window.close();
+    }
+  });
 
-      if (fixture.isInformationalOnly) {
-        expect(result.detections[0].templateId).toBe('ET-URG-02');
-        expect(result.detections[0].details?.scoreContributionZero).toBe(true);
-      }
+  it('keeps ET-URG-02 for urgency claims without stock text (e.g. Hurry! Offer ends soon!)', async () => {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <body>
+        <div>
+          <h2>Flash Deals</h2>
+          <p class="urgency-banner">Hurry! Offer ends soon!</p>
+          <button>Buy Now</button>
+        </div>
+      </body>
+      </html>
+    `;
+    const dom = new JSDOM(html, { url: 'http://localhost:3000/urgency-claim.html' });
+    try {
+      const scanner = new DarkGuardScanner();
+      const result = await scanner.scan({
+        container: dom.window.document.body,
+        domain: 'localhost',
+        urlPath: '/urgency-claim.html',
+        observeMs: 1500,
+        mlEnabled: false,
+      });
+
+      // Claims without stock text trigger ET-URG-02 informational template
+      expect(result.detections.length).toBe(1);
+      const det = result.detections[0];
+      expect(det.categoryId).toBe('DP-1');
+      expect(det.templateId).toBe('ET-URG-02');
+      expect(det.details?.scoreContributionZero).toBe(true);
+      expect(result.risk_score).toBe(0); // Score contribution 0 when ML is off
     } finally {
       dom.window.close();
     }
