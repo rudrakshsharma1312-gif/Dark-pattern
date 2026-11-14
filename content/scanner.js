@@ -387,6 +387,9 @@
         const label = candidate.text || el?.labels?.[0]?.textContent || el?.closest("label")?.textContent || el?.parentElement?.textContent || "";
         const matchesAddon = ADDON_KEYWORDS.test(label);
         if (!matchesAddon) continue;
+        const isNewsletterOrTerms = /\b(newsletter|email\s*updates?|terms|privacy|i\s*agree)\b/i.test(label);
+        const mentionsPaidAddon = /\b(warranty|insurance|protection|donation|gift\s*wrap|paid\s*plan)\b|(?:\$|€|£)\s*\d+|\b\d+(?:\.\d{2})?\s*(?:\$|€|£|usd|eur|gbp)\b/i.test(label);
+        if (isNewsletterOrTerms && !mentionsPaidAddon) continue;
         let container = el?.parentElement || null;
         let hasActionBtn = false;
         const docBody = el.ownerDocument?.body;
