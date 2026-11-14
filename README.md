@@ -117,12 +117,23 @@ The server will start at `http://localhost:3000`.
 
 The test website is **100% offline and standalone** with zero external dependencies.
 
-1. **Direct File URL (No Server Required)**:
+1. **Hosted Live Deployments**:
+   * **GitHub Pages**: `https://<username>.github.io/<repo>/test-site/` (Test Bed) and `https://<username>.github.io/<repo>/` (Landing Page)
+   * **Vercel Preview**: `https://<project-name>.vercel.app/test-site/` (Alternative preview via `vercel.json`)
+2. **Local Static Server**:
+   * Serve `test-site/` directly using standard static server:
+     ```bash
+     npx serve test-site
+     ```
+     Navigate to `http://localhost:3000` (or the printed port).
+   * Or run development server:
+     ```bash
+     npm run dev
+     ```
+3. **Direct File URL (Zero Setup)**:
    * Open `test-site/index.html` directly in Chrome or Edge by double-clicking [`test-site/index.html`](test-site/index.html).
-2. **Via Local Server**:
-   * Navigate to `http://localhost:3000/test-site/index.html` (or run `npm run dev`).
-3. **Navigating the 14 Pages**:
-   * Use the **Evaluation Matrix Hub** at `test-site/index.html` to filter between the **8 planted pages** and **6 clean control pages**.
+4. **Navigating the 16 Scenarios**:
+   * Use the **Evaluation Matrix Hub** at `test-site/index.html` to explore the **Featured Combined Demo** (`planted-combined-01.html`), the **8 single-pattern planted pages**, and the **7 clean control pages** (including `clean-ticking-timer.html`).
    * Each page includes a top inspection bar detailing the specific dark pattern under test and quick-jump links.
 
 ---
