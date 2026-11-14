@@ -136,6 +136,11 @@ The test website is **100% offline and standalone** with zero external dependenc
    * Use the **Evaluation Matrix Hub** at `test-site/index.html` to explore the **Featured Combined Demo** (`planted-combined-01.html`), the **8 single-pattern planted pages**, and the **7 clean control pages** (including `clean-ticking-timer.html`).
    * Each page includes a top inspection bar detailing the specific dark pattern under test and quick-jump links.
 
+### Automated Test & Verification Commands
+- `npm test`: Runs Vitest across all test suites (detectors, hint independence, privacy, contract, and real-world clean fixtures).
+- `npm run verify:pages`: Runs the 16-page end-to-end verification script (`scripts/verify-all-pages.ts`) against the test site, checking all 9 planted and 7 clean pages with DOM restoration.
+- `npm run package:extension`: Bundles `content/scanner.js`, validates manifest paths, and creates `dist/darkguard-extension.zip`.
+
 ---
 
 ## 6b. Manual Verification Checklist for Loaded Unpacked Extension

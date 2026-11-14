@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:extension": "node scripts/build-extension.mjs",
     "package:extension": "node scripts/package-extension.mjs",
+    "verify:pages": "tsx scripts/verify-all-pages.ts",
     "test": "vitest run",
     "start": "tsx server.ts",
     "preview": "vite preview",
