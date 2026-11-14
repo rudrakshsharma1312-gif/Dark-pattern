@@ -25,6 +25,21 @@ async function build() {
     sourcemap: false,
     plugins: [
       {
+        name: 'zero-network-ai-explain-stub',
+        setup(build) {
+          build.onResolve({ filter: /ai-explain/ }, (args) => {
+            return { path: args.path, namespace: 'ai-explain-stub' };
+          });
+          build.onLoad({ filter: /.*/, namespace: 'ai-explain-stub' }, () => {
+            return {
+              contents: `
+                export async function enhanceExplanationsWithTimeout() { return; }
+              `,
+            };
+          });
+        },
+      },
+      {
         name: 'node-builtins-browser-shim',
         setup(build) {
           build.onResolve({ filter: /^(fs|path|url)$/ }, (args) => {
