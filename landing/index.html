@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkGuard AI — Intelligent Deceptive Design Auditor</title>
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span>DarkGuard AI</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#patterns" class="nav-link">Dark Patterns</a></li>
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#install" class="nav-link">Installation</a></li>
+        <li><a href="../test-site/index.html" class="nav-cta-btn">Open Test Bed &rarr;</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>DarkGuard AI • 12-Hour Hackathon Project</span>
+      </div>
+
+      <h1 class="hero-title">
+        Detect and neutralise <span class="highlight">deceptive design</span> in online shopping.
+      </h1>
+
+      <p class="hero-subtitle">
+        DarkGuard AI is an on-device Chrome and Edge extension that scans e-commerce product pages, 
+        flags four pervasive dark patterns with mathematical and temporal proof, calculates a 0–100 risk score, 
+        and restores transparency via Ethical View with a one-click Show Original button.
+      </p>
+
+      <div class="hero-actions">
+        <a href="../test-site/index.html" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <span>Explore 14-Page Test Bed</span>
+        </a>
+
+        <a href="#install" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>Extension Install Guide</span>
+        </a>
+      </div>
+
+      <!-- Quick Metrics Bar -->
+      <div class="hero-stats-bar">
+        <div class="hero-stat-item">
+          <div class="stat-value">4</div>
+          <div class="stat-label">Patterns Detected</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="stat-value">14</div>
+          <div class="stat-label">Test Scenarios Built</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="stat-value">0–100</div>
+          <div class="stat-label">Unified Risk Score</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">On-Device & Private</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. The Four Dark Patterns Section -->
+  <section class="section" id="patterns" style="background:#ffffff; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Detection Engine</span>
+        <h2 class="section-title">The Four Deceptive Patterns We Target</h2>
+        <p class="section-desc">
+          Online retailers routinely exploit cognitive biases to rush decisions and inflate basket sizes. DarkGuard AI rigorously checks for evidence behind each claim.
+        </p>
+      </div>
+
+      <div class="patterns-grid">
+        <!-- Pattern 1: Fake Urgency -->
+        <article class="pattern-card">
+          <div class="pattern-header">
+            <span class="pattern-badge dp1">DP-1</span>
+            <span style="font-size:0.8rem; font-weight:700; color:#b91c1c;">Rule Verification</span>
+          </div>
+          <h3 class="pattern-title">Fake Urgency & Scarcity</h3>
+          <p class="pattern-desc">
+            Artificial countdown timers and manufactured scarcity claims (e.g., "Only 2 left!") designed to induce panic and force an impulsive checkout before the customer can research alternatives.
+          </p>
+          <div class="pattern-detection-box">
+            <strong>Evidence Verification:</strong>
+            Observes countdown timers over a 10-second window. If timer digits stay frozen or claim deadlines without state change, DarkGuard flags the element with temporal proof.
+          </div>
+        </article>
+
+        <!-- Pattern 2: Misleading Discount -->
+        <article class="pattern-card">
+          <div class="pattern-header">
+            <span class="pattern-badge dp2">DP-2</span>
+            <span style="font-size:0.8rem; font-weight:700; color:#c2410c;">Arithmetic Proof</span>
+          </div>
+          <h3 class="pattern-title">Misleading Discount Calculations</h3>
+          <p class="pattern-desc">
+            Exaggerated percentage-off claims that do not mathematically correspond to the difference between reference price (MSRP/Was) and current sale price.
+          </p>
+          <div class="pattern-detection-box">
+            <strong>Evidence Verification:</strong>
+            Extracts reference and sale prices, calculates <code>((Was - Now) / Was) * 100</code>, and flags any discrepancy exceeding 5 percentage points (e.g., claiming 70% off when it is actually 50%).
+          </div>
+        </article>
+
+        <!-- Pattern 3: Confirm Shaming -->
+        <article class="pattern-card">
+          <div class="pattern-header">
+            <span class="pattern-badge dp3">DP-3</span>
+            <span style="font-size:0.8rem; font-weight:700; color:#a16207;">Rule + ML Phrasing</span>
+          </div>
+          <h3 class="pattern-title">Confirm Shaming Phrasing</h3>
+          <p class="pattern-desc">
+            Guilt-inducing, manipulative decline button copy that shames or patronizes shoppers for opting out of discounts, insurance, or mailing lists (e.g., "No thanks, I prefer paying full price").
+          </p>
+          <div class="pattern-detection-box">
+            <strong>Evidence Verification:</strong>
+            Combines an exact 40+ curated shaming lexicon with an on-device TF-IDF text classifier to detect guilt-inducing opt-out language near primary call-to-action buttons.
+          </div>
+        </article>
+
+        <!-- Pattern 4: Pre-Selected Extras -->
+        <article class="pattern-card">
+          <div class="pattern-header">
+            <span class="pattern-badge dp4">DP-4</span>
+            <span style="font-size:0.8rem; font-weight:700; color:#7e22ce;">DOM State Audit</span>
+          </div>
+          <h3 class="pattern-title">Pre-Selected Extras & Add-ons</h3>
+          <p class="pattern-desc">
+            Optional extras—such as extended warranties, courier insurance, damage protection, or recurring subscriptions—that are pre-checked by default near the Add to Cart button without explicit buyer consent.
+          </p>
+          <div class="pattern-detection-box">
+            <strong>Evidence Verification:</strong>
+            Audits the DOM for checkbox inputs with <code>checked="true"</code> located in purchase action areas containing add-on keywords (warranty, insurance, protection plan, subscription).
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. How It Works Section -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Simple Workflow</span>
+        <h2 class="section-title">How DarkGuard AI Works in 3 Steps</h2>
+        <p class="section-desc">
+          Zero complex configuration. Seamlessly integrates into your shopping journey without slowing down your browser.
+        </p>
+      </div>
+
+      <div class="process-grid">
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-num-badge">1</div>
+          <h3 class="step-title">Open Shopping Page</h3>
+          <p class="step-desc">
+            Navigate to any e-commerce product page, deal portal, or explore our built-in 14-scenario evaluation test bed.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-num-badge">2</div>
+          <h3 class="step-title">Scan with DarkGuard AI</h3>
+          <p class="step-desc">
+            Open the extension popup and click <strong>Scan this page</strong>. DarkGuard audits visible pricing, timers, decline buttons, and checkboxes in milliseconds.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-num-badge">3</div>
+          <h3 class="step-title">Review & Restore</h3>
+          <p class="step-desc">
+            Inspect findings, highlight suspicious elements, view the 0–100 risk score, or toggle <strong>Ethical View</strong> with a 1-click Show Original guarantee.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Key Features Section -->
+  <section class="section" id="features" style="background:#ffffff; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Core Capabilities</span>
+        <h2 class="section-title">Engineered for Honest Consumer Defense</h2>
+        <p class="section-desc">
+          Built on principles of evidence-based proof, consumer safety, and absolute privacy.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Evidence-Based Findings</h3>
+          <p class="feature-desc">
+            Every detection presents concrete proof: exact discount arithmetic, frozen timer timestamps, or matched manipulative decline phrases.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="m10 15 5-3-5-3v6z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Unified 0–100 Risk Score</h3>
+          <p class="feature-desc">
+            Transparent severity weighting translates multiple pattern detections into an intuitive risk gauge (Low, Moderate, High, Very high).
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Visual Highlighting</h3>
+          <p class="feature-desc">
+            Clicking any finding smoothly scrolls the viewport to the deceptive element and highlights it with an animated, non-destructive pulse overlay.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Ethical View & Show Original</h3>
+          <p class="feature-desc">
+            Adds small explanatory notes and a top banner to contextualize deceptive design. Never alters prices, buttons, or checkboxes, with full 1-click restore.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">100% On-Device Privacy</h3>
+          <p class="feature-desc">
+            All rule matching and text classification run entirely inside your browser. No passwords, card data, or browsing history ever leave your device.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Hybrid Fusion Architecture</h3>
+          <p class="feature-desc">
+            Combines strict deterministic DOM heuristics with a fast TF-IDF logistic classifier. Gracefully falls back to rules if the ML model is disabled.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Extension Installation Guide -->
+  <section class="section" id="install">
+    <div class="container">
+      <div class="install-container">
+        <div style="text-align:center; max-width:620px; margin:0 auto 12px auto;">
+          <span class="section-tag">Installation</span>
+          <h2 class="section-title">Install Extension Locally in 4 Steps</h2>
+          <p class="section-desc">
+            Install DarkGuard AI into Google Chrome or Microsoft Edge using standard Developer Mode.
+          </p>
+        </div>
+
+        <div class="install-steps-list">
+          <div class="install-step-item">
+            <span class="step-pill">1</span>
+            <div class="step-content">
+              <h4>Open Extensions Management in your browser</h4>
+              <p>Navigate to <span class="code-inline">chrome://extensions</span> in Chrome or <span class="code-inline">edge://extensions</span> in Edge.</p>
+            </div>
+          </div>
+
+          <div class="install-step-item">
+            <span class="step-pill">2</span>
+            <div class="step-content">
+              <h4>Enable Developer Mode</h4>
+              <p>Toggle the <strong>Developer mode</strong> switch located in the top-right corner of the Extensions dashboard.</p>
+            </div>
+          </div>
+
+          <div class="install-step-item">
+            <span class="step-pill">3</span>
+            <div class="step-content">
+              <h4>Click "Load unpacked"</h4>
+              <p>Click the <strong>Load unpacked</strong> button on the top-left toolbar, then select this repository's workspace root directory containing <span class="code-inline">popup/</span> and <span class="code-inline">content/</span>.</p>
+            </div>
+          </div>
+
+          <div class="install-step-item">
+            <span class="step-pill">4</span>
+            <div class="step-content">
+              <h4>Pin and Scan</h4>
+              <p>Pin the DarkGuard AI shield icon to your browser toolbar. Open any shopping page or our test bed, and click <strong>Scan this page</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Test Bed CTA Section -->
+  <section class="container">
+    <div class="testbed-cta-card">
+      <h2>Explore the 14-Page Evaluation Test Bed</h2>
+      <p>
+        Built by Member C specifically for reproducible hackathon evaluation: 8 planted pages demonstrating 
+        frozen timers, 70% fake discounts, shaming decline buttons, and pre-checked insurance, plus 6 clean shopping control pages.
+      </p>
+
+      <div class="testbed-cta-actions">
+        <a href="../test-site/index.html" class="btn-cta-accent">
+          <span>Open Test Suite Directory</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+
+        <a href="../test-site/planted-urgency-01.html" class="btn-cta-outline">
+          <span>Inspect Scenario 1 (DP-1 Urgency)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>DarkGuard AI</strong> • Built by Member C (Product & Demo Lead) for the 12-Hour Hackathon Project.
+      </div>
+      <ul class="footer-links">
+        <li><a href="../test-site/index.html" class="footer-link">Test Website</a></li>
+        <li><a href="#patterns" class="footer-link">Dark Patterns</a></li>
+        <li><a href="#install" class="footer-link">Install Guide</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
