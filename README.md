@@ -181,5 +181,3 @@ This project was built following the 12-hour hackathon work division across thre
 ---
 
 
-* **2:10 – 2:50 (Member B)**: Present the rules-only vs rules+ML evaluation table and model card. Explain on-device TF-IDF classification and SHA-256 fallback protection.
-* **2:50 – 3:00 (All)**: Closing summary on consumer privacy (nothing leaves the browser) and future roadmap.
