@@ -1,51 +1,51 @@
 id,text,labels,site_domain,category_type,source
-r-0001,"Only 1 room left on our site!",urgency,booking.com,DP-1,live-scrape
-r-0002,"High demand: 18 people booked this today",urgency,booking.com,DP-1,live-scrape
-r-0003,"In 4 other carts right now",urgency,asos.com,DP-1,live-scrape
-r-0004,"Deal expires in 12m 45s",urgency,shein.com,DP-1,live-scrape
-r-0005,"Selling fast: 3 units left in warehouse",urgency,wayfair.com,DP-1,live-scrape
-r-0006,"Hurry, almost gone!",urgency,target.com,DP-1,live-scrape
-r-0007,"Lightning Deal 85% claimed",urgency,amazon.com,DP-1,live-scrape
-r-0008,"Over 50 people bought this in the past 24 hours",urgency,temu.com,DP-1,live-scrape
-r-0009,"Only 2 remaining in stock - order soon",urgency,amazon.com,DP-1,live-scrape
-r-0010,"Price valid for the next 15 minutes only",urgency,expedia.com,DP-1,live-scrape
-r-0011,"No thanks, I don't want to save money",shaming,groupon.com,DP-3,live-scrape
-r-0012,"No thanks, I prefer paying full price",shaming,audible.com,DP-3,live-scrape
-r-0013,"I'll pass on 20% off and pay regular price",shaming,wish.com,DP-3,live-scrape
-r-0014,"No, I don't like discounts",shaming,casper.com,DP-3,live-scrape
-r-0015,"Decline protection and assume all repair costs myself",shaming,bestbuy.com,DP-3,live-scrape
-r-0016,"No thanks, I don't care about free shipping",shaming,harrys.com,DP-3,live-scrape
-r-0017,"I don't want silky smooth skin",shaming,ipsy.com,DP-3,live-scrape
-r-0018,"No thanks, I hate great deals",shaming,hellofresh.com,DP-3,live-scrape
-r-0019,"Skip and lose your $10 reward credit",shaming,kohls.com,DP-3,live-scrape
-r-0020,"No thanks, I like wasting money",shaming,economist.com,DP-3,live-scrape
-r-0021,"Add 3-Year Protection Plan for $24.99",addon_extra,bestbuy.com,DP-4,live-scrape
-r-0022,"Pre-selected seat assignment fee $14.00",addon_extra,ryanair.com,DP-4,live-scrape
-r-0023,"Include accidental damage coverage: $5.99/mo",addon_extra,target.com,DP-4,live-scrape
-r-0024,"Add express parcel handling for $3.50",addon_extra,aliexpress.com,DP-4,live-scrape
-r-0025,"Add priority baggage delivery to your booking",addon_extra,spirit.com,DP-4,live-scrape
-r-0026,"Checked: 2-Year extended warranty plan",addon_extra,walmart.com,DP-4,live-scrape
-r-0027,"Add expedited gift packaging for $6.00",addon_extra,nordstrom.com,DP-4,live-scrape
-r-0028,"Include return shipping guarantee for $1.98",addon_extra,shein.com,DP-4,live-scrape
-r-0029,"Add carbon offset contribution of $2.50",addon_extra,easyjet.com,DP-4,live-scrape
-r-0030,"Pre-selected equipment loss insurance",addon_extra,avis.com,DP-4,live-scrape
-r-0031,"Extra 40% off with promo code SAVE40",discount_wording,jcrew.com,DP-2,live-scrape
-r-0032,"List Price $120.00, Your Price $69.99 (Save 42%)",discount_wording,amazon.com,DP-2,live-scrape
-r-0033,"Limited time 50% discount applied at checkout",discount_wording,gap.com,DP-2,live-scrape
-r-0034,"Was $89.00 now $44.50 - Save $44.50",discount_wording,macys.com,DP-2,live-scrape
-r-0035,"Save 30% on your entire order today",discount_wording,oldnavy.com,DP-2,live-scrape
-r-0036,"Flash Discount: $25 off orders over $100",discount_wording,express.com,DP-2,live-scrape
-r-0037,"Special promotional price $14.99 down from $29.99",discount_wording,ebay.com,DP-2,live-scrape
-r-0038,"Clearance savings: 60% off original retail price",discount_wording,kohls.com,DP-2,live-scrape
-r-0039,"Was $199.99 now slashed to $129.99",discount_wording,homedepot.com,DP-2,live-scrape
-r-0040,"Today only: 25% off regular list price",discount_wording,target.com,DP-2,live-scrape
-r-0041,"Free standard shipping on orders over $99",neutral,patagonia.com,neutral,live-scrape
-r-0042,"Designed for all-day comfort and breathability",neutral,allbirds.com,neutral,live-scrape
-r-0043,"Product specifications and technical details",neutral,apple.com,neutral,live-scrape
-r-0044,"30-day return policy on unworn items",neutral,everlane.com,neutral,live-scrape
-r-0045,"Add item to cart",neutral,rei.com,neutral,live-scrape
-r-0046,"Check store availability near you",neutral,target.com,neutral,live-scrape
-r-0047,"Dimensions: 10 x 8 x 4 inches; Weight: 1.2 lbs",neutral,amazon.com,neutral,live-scrape
-r-0048,"Material: 100% recycled nylon with DWR finish",neutral,patagonia.com,neutral,live-scrape
-r-0049,"Sign up for our weekly community newsletter",neutral,muji.com,neutral,live-scrape
-r-0050,"Customer reviews and verified ratings",neutral,sephora.com,neutral,live-scrape
+r-0001,Only 1 room left on our site!,urgency,booking.com,DP-1,hand-picked-lookalike-not-representative
+r-0002,High demand: 18 people booked this today,urgency,booking.com,DP-1,hand-picked-lookalike-not-representative
+r-0003,In 4 other carts right now,urgency,asos.com,DP-1,hand-picked-lookalike-not-representative
+r-0004,Deal expires in 12m 45s,urgency,shein.com,DP-1,hand-picked-lookalike-not-representative
+r-0005,Selling fast: 3 units left in warehouse,urgency,wayfair.com,DP-1,hand-picked-lookalike-not-representative
+r-0006,"Hurry, almost gone!",urgency,target.com,DP-1,hand-picked-lookalike-not-representative
+r-0007,Lightning Deal 85% claimed,urgency,amazon.com,DP-1,hand-picked-lookalike-not-representative
+r-0008,Over 50 people bought this in the past 24 hours,urgency,temu.com,DP-1,hand-picked-lookalike-not-representative
+r-0009,Only 2 remaining in stock - order soon,urgency,amazon.com,DP-1,hand-picked-lookalike-not-representative
+r-0010,Price valid for the next 15 minutes only,urgency,expedia.com,DP-1,hand-picked-lookalike-not-representative
+r-0011,"No thanks, I don't want to save money",shaming,groupon.com,DP-3,hand-picked-lookalike-not-representative
+r-0012,"No thanks, I prefer paying full price",shaming,audible.com,DP-3,hand-picked-lookalike-not-representative
+r-0013,I'll pass on 20% off and pay regular price,shaming,wish.com,DP-3,hand-picked-lookalike-not-representative
+r-0014,"No, I don't like discounts",shaming,casper.com,DP-3,hand-picked-lookalike-not-representative
+r-0015,Decline protection and assume all repair costs myself,shaming,bestbuy.com,DP-3,hand-picked-lookalike-not-representative
+r-0016,"No thanks, I don't care about free shipping",shaming,harrys.com,DP-3,hand-picked-lookalike-not-representative
+r-0017,I don't want silky smooth skin,shaming,ipsy.com,DP-3,hand-picked-lookalike-not-representative
+r-0018,"No thanks, I hate great deals",shaming,hellofresh.com,DP-3,hand-picked-lookalike-not-representative
+r-0019,Skip and lose your $10 reward credit,shaming,kohls.com,DP-3,hand-picked-lookalike-not-representative
+r-0020,"No thanks, I like wasting money",shaming,economist.com,DP-3,hand-picked-lookalike-not-representative
+r-0021,Add 3-Year Protection Plan for $24.99,addon_extra,bestbuy.com,DP-4,hand-picked-lookalike-not-representative
+r-0022,Pre-selected seat assignment fee $14.00,addon_extra,ryanair.com,DP-4,hand-picked-lookalike-not-representative
+r-0023,Include accidental damage coverage: $5.99/mo,addon_extra,target.com,DP-4,hand-picked-lookalike-not-representative
+r-0024,Add express parcel handling for $3.50,addon_extra,aliexpress.com,DP-4,hand-picked-lookalike-not-representative
+r-0025,Add priority baggage delivery to your booking,addon_extra,spirit.com,DP-4,hand-picked-lookalike-not-representative
+r-0026,Checked: 2-Year extended warranty plan,addon_extra,walmart.com,DP-4,hand-picked-lookalike-not-representative
+r-0027,Add expedited gift packaging for $6.00,addon_extra,nordstrom.com,DP-4,hand-picked-lookalike-not-representative
+r-0028,Include return shipping guarantee for $1.98,addon_extra,shein.com,DP-4,hand-picked-lookalike-not-representative
+r-0029,Add carbon offset contribution of $2.50,addon_extra,easyjet.com,DP-4,hand-picked-lookalike-not-representative
+r-0030,Pre-selected equipment loss insurance,addon_extra,avis.com,DP-4,hand-picked-lookalike-not-representative
+r-0031,Extra 40% off with promo code SAVE40,discount_wording,jcrew.com,DP-2,hand-picked-lookalike-not-representative
+r-0032,"List Price $120.00, Your Price $69.99 (Save 42%)",discount_wording,amazon.com,DP-2,hand-picked-lookalike-not-representative
+r-0033,Limited time 50% discount applied at checkout,discount_wording,gap.com,DP-2,hand-picked-lookalike-not-representative
+r-0034,Was $89.00 now $44.50 - Save $44.50,discount_wording,macys.com,DP-2,hand-picked-lookalike-not-representative
+r-0035,Save 30% on your entire order today,discount_wording,oldnavy.com,DP-2,hand-picked-lookalike-not-representative
+r-0036,Flash Discount: $25 off orders over $100,discount_wording,express.com,DP-2,hand-picked-lookalike-not-representative
+r-0037,Special promotional price $14.99 down from $29.99,discount_wording,ebay.com,DP-2,hand-picked-lookalike-not-representative
+r-0038,Clearance savings: 60% off original retail price,discount_wording,kohls.com,DP-2,hand-picked-lookalike-not-representative
+r-0039,Was $199.99 now slashed to $129.99,discount_wording,homedepot.com,DP-2,hand-picked-lookalike-not-representative
+r-0040,Today only: 25% off regular list price,discount_wording,target.com,DP-2,hand-picked-lookalike-not-representative
+r-0041,Free standard shipping on orders over $99,neutral,patagonia.com,neutral,hand-picked-lookalike-not-representative
+r-0042,Designed for all-day comfort and breathability,neutral,allbirds.com,neutral,hand-picked-lookalike-not-representative
+r-0043,Product specifications and technical details,neutral,apple.com,neutral,hand-picked-lookalike-not-representative
+r-0044,30-day return policy on unworn items,neutral,everlane.com,neutral,hand-picked-lookalike-not-representative
+r-0045,Add item to cart,neutral,rei.com,neutral,hand-picked-lookalike-not-representative
+r-0046,Check store availability near you,neutral,target.com,neutral,hand-picked-lookalike-not-representative
+r-0047,Dimensions: 10 x 8 x 4 inches; Weight: 1.2 lbs,neutral,amazon.com,neutral,hand-picked-lookalike-not-representative
+r-0048,Material: 100% recycled nylon with DWR finish,neutral,patagonia.com,neutral,hand-picked-lookalike-not-representative
+r-0049,Sign up for our weekly community newsletter,neutral,muji.com,neutral,hand-picked-lookalike-not-representative
+r-0050,Customer reviews and verified ratings,neutral,sephora.com,neutral,hand-picked-lookalike-not-representative
