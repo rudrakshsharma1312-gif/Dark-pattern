@@ -68,8 +68,8 @@ async function packageExtension() {
     fs.copyFileSync(path.join(rootDir, 'templates.json'), path.join(unpackedDir, 'templates.json'));
   }
 
-  // 4. Validate manifest paths
-  console.log('\n[4/5] Validating manifest.json path resolution...');
+  // 4. Validate manifest paths & popup runtime assets
+  console.log('\n[4/5] Validating manifest.json and popup asset resolution...');
   const manifest = JSON.parse(fs.readFileSync(path.join(unpackedDir, 'manifest.json'), 'utf-8'));
   const pathsToCheck = [];
 
@@ -90,6 +90,18 @@ async function packageExtension() {
   pathsToCheck.push('content/ethical-view.js');
   pathsToCheck.push('content/ethical-view.css');
 
+  // Also check all assets referenced by popup.html
+  const popupHtmlPath = path.join(unpackedDir, 'popup', 'popup.html');
+  if (fs.existsSync(popupHtmlPath)) {
+    const popupHtml = fs.readFileSync(popupHtmlPath, 'utf-8');
+    const srcMatches = Array.from(popupHtml.matchAll(/src=["']([^"']+)["']/g)).map(m => m[1]);
+    const hrefMatches = Array.from(popupHtml.matchAll(/href=["']([^"']+)["']/g)).map(m => m[1]);
+    for (const ref of [...srcMatches, ...hrefMatches]) {
+      if (ref.startsWith('http://') || ref.startsWith('https://') || ref.startsWith('#') || ref.startsWith('data:')) continue;
+      pathsToCheck.push(path.join('popup', ref));
+    }
+  }
+
   let allResolved = true;
   for (const relPath of pathsToCheck) {
     const fullPath = path.join(unpackedDir, relPath);
@@ -99,7 +111,7 @@ async function packageExtension() {
   }
 
   if (!allResolved) {
-    throw new Error('Manifest path resolution check failed. Missing files in extension package.');
+    throw new Error('❌ Asset validation failed: One or more files referenced by manifest.json or popup.html are missing in dist/darkguard-unpacked.');
   }
 
   // 5. Create zip archive
