@@ -59,24 +59,12 @@ export function fuseDetections(input: FusionInput): Detection[] {
 
     // Determine template ID based on evidence code
     let templateId = 'ET-URG-01';
-    let isInformational = false;
-    if (ev.evidenceCode === 'frozen_countdown') {
-      templateId = 'ET-URG-01';
-    } else if (ev.evidenceCode === 'urgency_text_only') {
-      templateId = 'ET-URG-02';
-      // When ML is off or did not confirm urgency (source === 'rule'), treat as an informational note with score contribution 0
-      if (source === 'rule') {
-        isInformational = true;
-      }
-    } else if (ev.evidenceCode === 'arithmetic_mismatch') {
-      templateId = 'ET-DISC-01';
-    } else if (ev.evidenceCode === 'unlabeled_reference') {
-      templateId = 'ET-DISC-02';
-    } else if (ev.evidenceCode === 'shaming_phrase') {
-      templateId = 'ET-CONF-01';
-    } else if (ev.evidenceCode === 'preselected_addon') {
-      templateId = 'ET-EXTRA-01';
-    }
+    if (ev.evidenceCode === 'frozen_countdown') templateId = 'ET-URG-01';
+    else if (ev.evidenceCode === 'urgency_text_only') templateId = 'ET-URG-02';
+    else if (ev.evidenceCode === 'arithmetic_mismatch') templateId = 'ET-DISC-01';
+    else if (ev.evidenceCode === 'unlabeled_reference') templateId = 'ET-DISC-02';
+    else if (ev.evidenceCode === 'shaming_phrase') templateId = 'ET-CONF-01';
+    else if (ev.evidenceCode === 'preselected_addon') templateId = 'ET-EXTRA-01';
 
     // Suggest seller question
     let sellerQuestion: string | undefined;
@@ -104,12 +92,9 @@ export function fuseDetections(input: FusionInput): Detection[] {
       evidenceSnippet: candidate?.text || '',
       elementSelector: candidate?.selector || '',
       elementRect: candidate?.rect,
-      details: {
-        ...ev.details,
-        ...(isInformational ? { scoreContributionZero: true, isInformational: true } : {}),
-      },
+      details: ev.details,
       sellerQuestion,
-      isUncertain: isInformational ? true : false,
+      isUncertain: false,
     });
   }
 

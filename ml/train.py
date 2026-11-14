@@ -16,7 +16,6 @@ import json
 import math
 import os
 import re
-import unicodedata
 from typing import Dict, List, Tuple
 import numpy as np
 import pandas as pd
@@ -25,41 +24,23 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 
 # -----------------------------------------------------------------------------
-# Canonical Unicode Tokenizer (paritied with JS extractNgrams in features.ts)
+# Canonical Tokenizer (paritied with JS extractNgrams in features.ts)
 # -----------------------------------------------------------------------------
 def extract_unigrams_and_bigrams(text: str) -> List[str]:
-    r"""
-    Canonical Unicode tokenizer shared between Python training and JS inference.
+    """
+    Canonical tokenizer shared between Python training and JS inference.
     Rule:
     1. Lowercase and trim.
-    2. Replace non-letter, non-number, non-combining-mark, non-whitespace, non-hyphen,
-       non-underscore characters with space.
-       In Python: uses unicodedata.category() starting with ('L', 'N', 'M'),
-       matching JS RegExp /[^\p{L}\p{N}\p{M}\s_-]/gu.
-       Preserves:
-       - Accented words ("café deal")
-       - Non-Latin scripts ("सिर्फ आज")
-       - Hyphenated compound words ("2-year", "pre-checked", "add-on")
-       - Prices ("$19.99" -> "19", "99"; "₹499" -> "499")
-       - Single-character tokens ("a", "1", "l")
-       Replaces punctuation, em-dashes, and currency symbols with spaces.
+    2. Replace non-alphanumeric, non-whitespace, non-hyphen with space ([^\\w\\s-]).
+       This preserves hyphenated words ("2-year", "pre-checked", "add-on"),
+       handles prices ("$19.99" -> "19", "99"), and preserves single characters ("a").
     3. Split on whitespace into word tokens.
     4. Return word unigrams + adjacent word bigrams.
     """
     text = text.lower().strip()
     if not text:
         return []
-    out = []
-    for ch in text:
-        if ch in '-_' or ch.isspace():
-            out.append(ch)
-        else:
-            cat = unicodedata.category(ch)
-            if cat.startswith(('L', 'N', 'M')):
-                out.append(ch)
-            else:
-                out.append(' ')
-    clean = ''.join(out)
+    clean = re.sub(r'[^\w\s-]', ' ', text)
     words = [w for w in clean.split() if len(w) > 0]
     ngrams = list(words)
     for i in range(len(words) - 1):

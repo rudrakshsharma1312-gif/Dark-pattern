@@ -6,12 +6,6 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build",
-    "build:extension": "node scripts/build-extension.mjs",
-    "package:extension": "node scripts/package-extension.mjs",
-    "verify:pages": "tsx scripts/verify-all-pages.ts",
-    "eval:real": "tsx eval/run.ts --real-engine",
-    "test": "vitest run",
-    "test:e2e": "tsx tests/e2e/smoke.ts",
     "start": "tsx server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
@@ -32,18 +26,14 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/jsdom": "^30.0.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
-    "jsdom": "^29.1.1",
-    "playwright": "^1.65.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.12"
+    "@types/express": "^4.17.21"
   }
 }

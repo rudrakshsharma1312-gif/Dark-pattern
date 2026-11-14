@@ -18,15 +18,3 @@ Items and architectural enhancements logged for future development:
 5. **Multi-Page Flow Tracking:**
    - Detect sneak-into-basket and subscription traps that span the product page, cart, and final payment screen.
 
-6. **Machine Learning Model v2 Roadmap (`eval/reports/LATER-ml.md`):**
-   - Detailed plan for retraining with numeric normalization (`NUM`), minimum known-token coverage thresholds, general hard-negative neutral patterns, double-blind annotation, and mandatory evaluation disclosure rules. See full document at [eval/reports/LATER-ml.md](file:///Users/aditrisingh/Dark-pattern/eval/reports/LATER-ml.md).
-
-7. **MutationObserver Instant Timer Audit:**
-   - In addition to interval sampling across `observeMs`, attach a lightweight `MutationObserver` to elements matching clock patterns to detect ticks immediately, returning early if the timer actively counts down.
-
-8. **Dynamic Cross-Currency Discrepancy Detection:**
-   - Audit deceptive currency conversions and dynamic currency conversion (DCC) markup where local price calculations hide unfavorable exchange rate spreads.
-
-9. **Playwright Automated Extension Testing:**
-   - Add automated end-to-end browser extension fixture tests using `chromium.launchPersistentContext({ args: ['--load-extension=.'] })` in a dedicated CI environment.
-

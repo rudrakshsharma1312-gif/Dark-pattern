@@ -15,14 +15,12 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
   const [animatedScore, setAnimatedScore] = useState(0);
 
   useEffect(() => {
-    // 900ms ease-out animation per Design System section 9
     let startTimestamp: number | null = null;
     const duration = 850;
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // ease-out curve: 1 - (1 - progress)^3
       const easeOut = 1 - Math.pow(1 - progress, 3);
       setAnimatedScore(Math.round(easeOut * score));
       if (progress < 1) {
@@ -33,30 +31,29 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
     requestAnimationFrame(step);
   }, [score]);
 
-  // Color mapping per design system
-  // Low (0-24): Mint (#8FD1B0)
-  // Moderate (25-49): Butter (#EBD27A)
-  // High (50-74): Peach (#F1A98F)
-  // Very high (75-100): Rose (#E8A0B5)
-  let ringColor = '#8FD1B0'; // Mint
+  // High-contrast theme-aware semantic colors
+  let ringColor = 'var(--mint-ink)'; // Low (Jade Emerald)
+  let levelColor = 'text-[var(--mint-ink)]';
   let headline = 'Looks sound in what we checked';
 
   if (score >= 75) {
-    ringColor = '#E8A0B5'; // Rose
+    ringColor = 'var(--rose-ink)'; // Very high (Rose Crimson)
+    levelColor = 'text-[var(--rose-ink)]';
     headline = 'Significant concerns found';
   } else if (score >= 50) {
-    ringColor = '#F1A98F'; // Peach
+    ringColor = 'var(--peach-ink)'; // High (Burnished Copper)
+    levelColor = 'text-[var(--peach-ink)]';
     headline = 'Several concerns to follow up';
   } else if (score >= 25) {
-    ringColor = '#EBD27A'; // Butter
+    ringColor = 'var(--butter-ink)'; // Moderate (Champagne Amber)
+    levelColor = 'text-[var(--butter-ink)]';
     headline = 'A few things worth checking';
   }
 
-  // SVG calculations for 160px ring, 14px stroke
   const size = 160;
-  const strokeWidth = 14;
-  const radius = (size - strokeWidth) / 2; // (160 - 14)/2 = 73
-  const circumference = 2 * Math.PI * radius; // ~458.67
+  const strokeWidth = 12;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (animatedScore / 100) * circumference;
 
   return (
@@ -73,7 +70,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#EDF2F8"
+            stroke="var(--ring-track)"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -94,31 +91,31 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
 
         {/* Center score readout */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="font-display font-bold text-4xl text-[#1F2A37] tabular leading-none">
+          <span className="font-display font-bold text-4xl text-[var(--ink-900)] tabular leading-none">
             {animatedScore}
           </span>
-          <span className="text-[11px] font-medium text-[#5F6E80] mt-1 tracking-wider uppercase">
+          <span className="text-[11px] font-medium text-[var(--ink-500)] mt-1.5 tracking-wider uppercase">
             Risk Score
           </span>
         </div>
       </div>
 
-      {/* Band headline & level */}
-      <h3 className="font-display font-semibold text-base text-[#1F2A37] mt-3">
+      {/* Band headline & unboxed metadata */}
+      <h3 className="font-display font-semibold text-base text-[var(--ink-900)] mt-3">
         {headline}
       </h3>
 
-      <div className="flex items-center gap-2 mt-1.5">
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#EDF2F8] text-[#3D4B5C]">
+      <div className="flex items-center gap-2 mt-1.5 text-xs">
+        <span className="text-[var(--ink-500)] tabular">
           {elementsChecked} elements checked
         </span>
-        <span className="text-xs text-[#5F6E80] font-medium">·</span>
-        <span className="text-xs font-semibold text-[#1F2A37]">
+        <span aria-hidden="true" className="text-[var(--ink-300)]">·</span>
+        <span className={`font-semibold ${levelColor}`}>
           {level} risk
         </span>
       </div>
 
-      <p className="text-[11px] text-[#9AA7B6] mt-2">
+      <p className="text-[11px] text-[var(--ink-500)] mt-2">
         Screening only, not a certification.
       </p>
     </div>

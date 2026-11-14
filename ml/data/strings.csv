@@ -56,7 +56,7 @@ s-0054,Damage protection plan $12.99 per year,addon_extra,site-B,train,hand-writ
 s-0055,Leather conditioning kit add-on $15.00,addon_extra,site-B,train,planted,hand-written-MIT,member-b
 s-0056,Priority support membership $4.99 per month,addon_extra,site-B,train,hand-written,hand-written-MIT,member-b
 s-0057,Save 50% $120 to $80,discount_wording,site-B,train,planted,hand-written-MIT,member-b
-s-0058,Save 35% slashed from 4500 to 2925,discount_wording,site-B,train,planted,hand-written-MIT,member-b
+s-0058,Save 40% was 4999 now 3999,discount_wording,site-B,train,planted,hand-written-MIT,member-b
 s-0059,30% markdown from original price $80,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0060,MRP $299 sale price $199,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0061,List price $120 our price $79,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
@@ -363,10 +363,10 @@ s-0361,Free returns within 30 days,neutral,site-I,test,clean,hand-written-MIT,me
 s-0362,Sold by official brand store,neutral,site-I,test,clean,hand-written-MIT,member-b
 s-0363,Manufacturer warranty 1 year,neutral,site-I,test,clean,hand-written-MIT,member-b
 s-0364,Select delivery date,neutral,site-I,test,clean,hand-written-MIT,member-b
-s-0365,Hurry deal ends in 00:05:00,urgency,site-H,test,hand-written,hand-written-MIT,member-b
-s-0366,No thanks I'll pay more,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0367,Accident cover plan $11.99/year,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
-s-0368,Flash price 50% off was $200,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
+s-0365,Hurry deal ends in 00:05:00,urgency,site-J,test,hand-written,hand-written-MIT,member-b
+s-0366,No thanks I'll pay more,shaming,site-J,test,hand-written,hand-written-MIT,member-b
+s-0367,Accident cover plan $11.99/year,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
+s-0368,Flash price 50% off was $200,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0369,Price $29.99,neutral,site-J,test,clean,hand-written-MIT,member-b
 s-0370,Free shipping above $40,neutral,site-J,test,clean,hand-written-MIT,member-b
 s-0371,Buy it now,neutral,site-J,test,clean,hand-written-MIT,member-b
@@ -382,7 +382,7 @@ s-0380,Almost sold out 30% off,urgency|discount_wording,site-F,val,hand-written,
 s-0381,Scarce item 65% markdown hurry,urgency|discount_wording,site-G,val,hand-written,hand-written-MIT,member-b
 s-0382,Flash deal 00:14:59 save 20%,urgency|discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0383,Countdown 00:30:00 60% off,urgency|discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0384,Last 2 save 45% grab now,urgency|discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
+s-0384,Last 2 save 45% grab now,urgency|discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0385,No I hate saving 50% off,shaming,site-A,train,hand-written,hand-written-MIT,member-b
 s-0386,No warranty needed enjoy the risk,shaming,site-B,train,hand-written,hand-written-MIT,member-b
 s-0387,I'll skip the 30% discount,shaming,site-C,train,hand-written,hand-written-MIT,member-b
@@ -392,7 +392,7 @@ s-0390,No thanks I'll pay full rate happily,shaming,site-F,val,hand-written,hand
 s-0391,I'd rather not get the discount,shaming,site-G,val,hand-written,hand-written-MIT,member-b
 s-0392,No I'm fine paying extra for no reason,shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0393,Continue without savings I prefer full price,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0394,Decline offer pay original price of $150,shaming,site-I,test,hand-written,hand-written-MIT,member-b
+s-0394,Decline offer pay original price of $150,shaming,site-J,test,hand-written,hand-written-MIT,member-b
 s-0395,Keyboard cover protection plan $7.99,addon_extra,site-A,train,hand-written,hand-written-MIT,member-b
 s-0396,Food delivery subscription $9.99/month,addon_extra,site-B,train,hand-written,hand-written-MIT,member-b
 s-0397,Luggage tracking insurance $6.00,addon_extra,site-C,train,hand-written,hand-written-MIT,member-b
@@ -402,7 +402,7 @@ s-0400,4K display insurance $16.99,addon_extra,site-F,val,hand-written,hand-writ
 s-0401,Exclusive access membership $3.99/month,addon_extra,site-G,val,hand-written,hand-written-MIT,member-b
 s-0402,Annual cleaning service $39.00,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0403,Repair and replace coverage $22.00,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
-s-0404,Roof damage insurance add-on $45/year,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
+s-0404,Roof damage insurance add-on $45/year,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
 s-0405,Reference price $80 current $50 save 37%,discount_wording,site-A,train,hand-written,hand-written-MIT,member-b
 s-0406,10% off for new members was $110 now $99,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0407,Seasonal sale 45% off $400 items,discount_wording,site-C,train,hand-written,hand-written-MIT,member-b
@@ -412,7 +412,7 @@ s-0410,Compare at $120 sale price $72,discount_wording,site-F,val,hand-written,h
 s-0411,RRP $350 discounted to $245,discount_wording,site-G,val,hand-written,hand-written-MIT,member-b
 s-0412,Annual sale 50% all footwear,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0413,Flash price $39 versus retail $79,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0414,Exclusive deal 60% below market price,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
+s-0414,Exclusive deal 60% below market price,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0415,All sizes available,neutral,site-A,train,clean,hand-written-MIT,member-b
 s-0416,View product video,neutral,site-B,train,clean,hand-written-MIT,member-b
 s-0417,Compare colours,neutral,site-C,train,clean,hand-written-MIT,member-b
@@ -432,7 +432,7 @@ s-0430,Be fast item flying off shelves,urgency,site-F,val,hand-written,hand-writ
 s-0431,Deal imminent to expire hurry,urgency,site-G,val,hand-written,hand-written-MIT,member-b
 s-0432,Limited release only 10 made,urgency,site-H,test,hand-written,hand-written-MIT,member-b
 s-0433,Final sale day ends at 23:59,urgency,site-I,test,hand-written,hand-written-MIT,member-b
-s-0434,Don't wait 2 left at sale price,urgency,site-H,test,hand-written,hand-written-MIT,member-b
+s-0434,Don't wait 2 left at sale price,urgency,site-J,test,hand-written,hand-written-MIT,member-b
 s-0435,I'd rather pay more and get nothing extra,shaming,site-A,train,hand-written,hand-written-MIT,member-b
 s-0436,No I don't value protecting my device,shaming,site-B,train,hand-written,hand-written-MIT,member-b
 s-0437,Decline offer I enjoy full price,shaming,site-C,train,hand-written,hand-written-MIT,member-b
@@ -442,7 +442,7 @@ s-0440,No I'd rather pay the extra $20,shaming,site-F,val,hand-written,hand-writ
 s-0441,Continue without protection I'll be okay,shaming,site-G,val,hand-written,hand-written-MIT,member-b
 s-0442,I'll decline the warranty no problem,shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0443,No thanks paying more is my preference,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0444,Skip discount proceed at full cost,shaming,site-I,test,hand-written,hand-written-MIT,member-b
+s-0444,Skip discount proceed at full cost,shaming,site-J,test,hand-written,hand-written-MIT,member-b
 s-0445,Mobile data protection add-on $3.99,addon_extra,site-A,train,hand-written,hand-written-MIT,member-b
 s-0446,Extended returns service $4.99,addon_extra,site-B,train,hand-written,hand-written-MIT,member-b
 s-0447,Shoe care kit subscription $7.00/month,addon_extra,site-C,train,hand-written,hand-written-MIT,member-b
@@ -452,7 +452,7 @@ s-0450,Colour protection coating plan $6.99,addon_extra,site-F,val,hand-written,
 s-0451,Pet accident coverage $10.99/month,addon_extra,site-G,val,hand-written,hand-written-MIT,member-b
 s-0452,Electronic circuit protection $13.00,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0453,Full-year maintenance contract $55.00,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
-s-0454,Subscription refill pack $8.49/month,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
+s-0454,Subscription refill pack $8.49/month,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
 s-0455,Year-end clearance 80% off was $500,discount_wording,site-A,train,hand-written,hand-written-MIT,member-b
 s-0456,Introductory 15% off for first purchase,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0457,Promo applied save $25 on $100,discount_wording,site-C,train,hand-written,hand-written-MIT,member-b
@@ -462,7 +462,7 @@ s-0460,Special member rate $29 reg $55,discount_wording,site-F,val,hand-written,
 s-0461,Overstocked 60% liquidation sale,discount_wording,site-G,val,hand-written,hand-written-MIT,member-b
 s-0462,Save $120 reference $240 our price $120,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0463,Today 25% off all homeware,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0464,Factory direct 55% off retail,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
+s-0464,Factory direct 55% off retail,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0465,Track your order,neutral,site-B,train,clean,hand-written-MIT,member-b
 s-0466,Gift card balance $20.00,neutral,site-C,train,clean,hand-written-MIT,member-b
 s-0467,Choose gift option,neutral,site-D,train,clean,hand-written-MIT,member-b
@@ -481,7 +481,7 @@ s-0479,Offer valid while stocks last hurry,urgency,site-F,val,hand-written,hand-
 s-0480,Last chance price drops soon,urgency,site-G,val,hand-written,hand-written-MIT,member-b
 s-0481,Time is ticking 00:04:00 left,urgency,site-H,test,hand-written,hand-written-MIT,member-b
 s-0482,Remaining stock 1 piece,urgency,site-I,test,hand-written,hand-written-MIT,member-b
-s-0483,Grab the deal before the timer hits zero,urgency,site-H,test,hand-written,hand-written-MIT,member-b
+s-0483,Grab the deal before the timer hits zero,urgency,site-J,test,hand-written,hand-written-MIT,member-b
 s-0484,No I'm fine with no savings,shaming,site-A,train,hand-written,hand-written-MIT,member-b
 s-0485,No thanks my current gear is fine I'll pay more,shaming,site-B,train,hand-written,hand-written-MIT,member-b
 s-0486,I'll continue without the extra protection,shaming,site-C,train,hand-written,hand-written-MIT,member-b
@@ -491,7 +491,7 @@ s-0489,No thanks I'd rather pay retail price,shaming,site-F,val,hand-written,han
 s-0490,Continue without savings that's okay,shaming,site-G,val,hand-written,hand-written-MIT,member-b
 s-0491,No I don't need a good deal thanks,shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0492,I'll go ahead without the warranty,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0493,I'll decline and pay the full $80,shaming,site-I,test,hand-written,hand-written-MIT,member-b
+s-0493,I'll decline and pay the full $80,shaming,site-J,test,hand-written,hand-written-MIT,member-b
 s-0494,Battery swap warranty $9.99,addon_extra,site-A,train,hand-written,hand-written-MIT,member-b
 s-0495,Smart lock protection plan $17.00,addon_extra,site-B,train,hand-written,hand-written-MIT,member-b
 s-0496,Tool insurance and maintenance $22/year,addon_extra,site-C,train,hand-written,hand-written-MIT,member-b
@@ -501,7 +501,7 @@ s-0499,Display panel insurance $21.99,addon_extra,site-F,val,hand-written,hand-w
 s-0500,Extended life subscription $11.00/month,addon_extra,site-G,val,hand-written,hand-written-MIT,member-b
 s-0501,Digital cloud backup plan $3.99/month,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0502,Frame and lens protection $18.00,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
-s-0503,Appliance cover plan $29.99/year,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
+s-0503,Appliance cover plan $29.99/year,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
 s-0504,Big winter sale 65% off was $300,discount_wording,site-A,train,hand-written,hand-written-MIT,member-b
 s-0505,Extra 20% off with code SAVE20,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0506,MRP 1999 price 999,discount_wording,site-C,train,hand-written,hand-written-MIT,member-b
@@ -511,7 +511,7 @@ s-0509,Cost price deal was $90 now $45,discount_wording,site-F,val,hand-written,
 s-0510,Flash clearance save 80% while stock lasts,discount_wording,site-G,val,hand-written,hand-written-MIT,member-b
 s-0511,Bargain offer 35% off list price $200,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0512,Deal applied 50% off $160 to $80,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0513,Compare cost $400 our price $200 save 50%,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
+s-0513,Compare cost $400 our price $200 save 50%,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0514,View cart,neutral,site-A,train,clean,hand-written-MIT,member-b
 s-0515,Continue to checkout,neutral,site-B,train,clean,hand-written-MIT,member-b
 s-0516,Apply coupon code,neutral,site-C,train,clean,hand-written-MIT,member-b
@@ -528,7 +528,7 @@ s-0526,Today's price only 3 hours left,urgency,site-F,val,hand-written,hand-writ
 s-0527,Act now price valid 10 minutes,urgency,site-G,val,hand-written,hand-written-MIT,member-b
 s-0528,Almost out of stock be quick,urgency,site-H,test,hand-written,hand-written-MIT,member-b
 s-0529,Closing flash deal 00:09:59,urgency,site-I,test,hand-written,hand-written-MIT,member-b
-s-0530,Beat the rush order before stock runs out,urgency,site-H,test,hand-written,hand-written-MIT,member-b
+s-0530,Beat the rush order before stock runs out,urgency,site-J,test,hand-written,hand-written-MIT,member-b
 s-0531,No thanks I'd rather miss out,shaming,site-A,train,hand-written,hand-written-MIT,member-b
 s-0532,I'll gladly pay full price,shaming,site-B,train,hand-written,hand-written-MIT,member-b
 s-0533,Continue and forfeit my discount,shaming,site-C,train,hand-written,hand-written-MIT,member-b
@@ -538,7 +538,7 @@ s-0536,I'll pass on the deal and pay more,shaming,site-F,val,hand-written,hand-w
 s-0537,No thanks I prefer the original price,shaming,site-G,val,hand-written,hand-written-MIT,member-b
 s-0538,No I'll accept paying extra,shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0539,I'll skip savings and pay in full,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0540,Decline and proceed at full cost,shaming,site-I,test,hand-written,hand-written-MIT,member-b
+s-0540,Decline and proceed at full cost,shaming,site-J,test,hand-written,hand-written-MIT,member-b
 s-0541,Windshield crack protection $14/year,addon_extra,site-A,train,hand-written,hand-written-MIT,member-b
 s-0542,Pet dental insurance $8.99/month,addon_extra,site-B,train,hand-written,hand-written-MIT,member-b
 s-0543,Jewellery theft cover $12.00/year,addon_extra,site-C,train,hand-written,hand-written-MIT,member-b
@@ -548,7 +548,7 @@ s-0546,On-site repair service add-on $35.00,addon_extra,site-F,val,hand-written,
 s-0547,Smart meter protection plan $9.99,addon_extra,site-G,val,hand-written,hand-written-MIT,member-b
 s-0548,Mould protection add-on $7.99/year,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0549,Plant care subscription $4.99/month,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
-s-0550,Furniture cover plan $25.00/year,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
+s-0550,Furniture cover plan $25.00/year,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
 s-0551,Final hours 55% off was $180 now $81,discount_wording,site-A,train,hand-written,hand-written-MIT,member-b
 s-0552,15% off first order was $80 now $68,discount_wording,site-B,train,hand-written,hand-written-MIT,member-b
 s-0553,MRP $500 price $250 save 50%,discount_wording,site-C,train,hand-written,hand-written-MIT,member-b
@@ -558,7 +558,7 @@ s-0556,Today only 50% off selected tech,discount_wording,site-F,val,hand-written
 s-0557,Member exclusive 40% below RRP,discount_wording,site-G,val,hand-written,hand-written-MIT,member-b
 s-0558,Clearance 65% off original $230,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0559,Weekend flash 35% off $140,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0560,Promo price $49 compare $89,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
+s-0560,Promo price $49 compare $89,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0561,View all categories,neutral,site-A,train,clean,hand-written-MIT,member-b
 s-0562,Filter by brand,neutral,site-B,train,clean,hand-written-MIT,member-b
 s-0563,Sort by price,neutral,site-C,train,clean,hand-written-MIT,member-b
@@ -739,28 +739,28 @@ s-0737,Tick-tock! Your reserved item expires in 00:08:45,urgency,site-H,test,han
 s-0738,Extreme demand: 4 shoppers have this in their basket,urgency,site-H,test,hand-written,hand-written-MIT,member-b
 s-0739,Only 3 pairs remaining in warehouse - act swiftly,urgency,site-I,test,hand-written,hand-written-MIT,member-b
 s-0740,Warehouse clearance: final 2 pieces before restock,urgency,site-I,test,hand-written,hand-written-MIT,member-b
-s-0741,Hurry up! Special seasonal promotion ends in 00:15:30,urgency,site-H,test,hand-written,hand-written-MIT,member-b
-s-0742,Doors closing soon: limited stock available today,urgency,site-I,test,hand-written,hand-written-MIT,member-b
+s-0741,Hurry up! Special seasonal promotion ends in 00:15:30,urgency,site-J,test,hand-written,hand-written-MIT,member-b
+s-0742,Doors closing soon: limited stock available today,urgency,site-J,test,hand-written,hand-written-MIT,member-b
 s-0743,Price increase in 12 minutes: claim current rate,urgency,site-H,test,hand-written,hand-written-MIT,member-b
 s-0744,Instant checkout required: item reserved for 5 minutes,urgency,site-I,test,hand-written,hand-written-MIT,member-b
 s-0745,"No thanks, I don't believe in protecting my gear",shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0746,I'll take the gamble and pay out of pocket if damaged,shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0747,"No, I'd rather miss out on guaranteed savings",shaming,site-I,test,hand-written,hand-written-MIT,member-b
 s-0748,Skip discount - I genuinely prefer paying full retail,shaming,site-I,test,hand-written,hand-written-MIT,member-b
-s-0749,Decline special voucher and pay the higher amount,shaming,site-H,test,hand-written,hand-written-MIT,member-b
-s-0750,"No thanks, I feel better paying top dollar",shaming,site-I,test,hand-written,hand-written-MIT,member-b
+s-0749,Decline special voucher and pay the higher amount,shaming,site-J,test,hand-written,hand-written-MIT,member-b
+s-0750,"No thanks, I feel better paying top dollar",shaming,site-J,test,hand-written,hand-written-MIT,member-b
 s-0751,"I don't need peace of mind, let it break",shaming,site-H,test,hand-written,hand-written-MIT,member-b
 s-0752,Continue without promo - I don't care to save money,shaming,site-I,test,hand-written,hand-written-MIT,member-b
 s-0753,Add 24-month accidental drop and spill insurance $16.50,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0754,Include waterproof travel pouch & carabiner add-on $8.50,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0755,Optional premium expedited customs clearance $11.00,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
 s-0756,Comprehensive lost baggage protection policy $7.50,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
-s-0757,Annual battery health replacement service add-on $13.50,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
-s-0758,Opt-in carbon mitigation credit for air freight $1.75,addon_extra,site-I,test,hand-written,hand-written-MIT,member-b
+s-0757,Annual battery health replacement service add-on $13.50,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
+s-0758,Opt-in carbon mitigation credit for air freight $1.75,addon_extra,site-J,test,hand-written,hand-written-MIT,member-b
 s-0759,Extended commercial usage license add-on $25.00,addon_extra,site-H,test,hand-written,hand-written-MIT,member-b
 s-0760,Special voucher applied: $45 reduction off catalog price,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
 s-0761,Overstock markdown: save $75 on initial retail price,discount_wording,site-I,test,hand-written,hand-written-MIT,member-b
-s-0762,Promotional pricing: $85 list price reduced to $55 today,discount_wording,site-H,test,hand-written,hand-written-MIT,member-b
+s-0762,Promotional pricing: $85 list price reduced to $55 today,discount_wording,site-J,test,hand-written,hand-written-MIT,member-b
 s-0763,Estimated arrival between Thursday and Saturday,neutral,site-H,test,hand-written,hand-written-MIT,member-b
 s-0764,Product dimensions: 15cm x 8cm x 3cm,neutral,site-I,test,hand-written,hand-written-MIT,member-b
 s-0765,"Package contents: adapter, cable, quick start guide",neutral,site-J,test,hand-written,hand-written-MIT,member-b
@@ -803,22 +803,3 @@ s-0801,End of season discount: 40% reduction applied at checkout,discount_wordin
 s-0802,Order shipped in discreet protective cardboard sleeve,neutral,site-C,train,hand-written,hand-written-MIT,member-b
 s-0803,Maximum allowable purchase quantity is 5 units per customer,neutral,site-D,train,hand-written,hand-written-MIT,member-b
 s-0804,Please verify your shipping postal code prior to completing payment,neutral,site-E,train,hand-written,hand-written-MIT,member-b
-s-0805,"Care instructions: Hand wash cold, lay flat to dry",neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0806,Standard delivery takes 3-5 business days,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0807,Free exchanges within 30 days of purchase,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0808,Item dimensions: 15 cm x 10 cm x 5 cm,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0809,Material: 100% recycled organic wool,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0810,Select your preferred size from the dropdown,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0811,Enter your promo code at final checkout,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0812,Order confirmation will be sent to your email address,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0813,View complete ingredient disclosure and laboratory testing,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0814,Customer support available Monday to Friday 9am-5pm EST,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0815,Gift receipt included upon customer request,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0816,Track your package with official postal tracking number,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0817,Return to main category catalog,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0818,Save this item to your personal favorites,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0819,Secure payment processing via standard debit or credit card,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0820,"Product designed in Copenhagen, crafted in Portugal",neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0821,Filter search results by color and style,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0822,Estimated sales tax calculated at final payment screen,neutral,site-J,test,hand-written-clean,MIT,member-b
-s-0823,Sign in to your account to review order history,neutral,site-J,test,hand-written-clean,MIT,member-b

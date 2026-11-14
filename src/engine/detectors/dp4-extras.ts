@@ -35,26 +35,15 @@ export const DP4ExtrasDetector = {
       const matchesAddon = ADDON_KEYWORDS.test(label);
       if (!matchesAddon) continue;
 
-      // Narrow exclusion: skip when label/text is about newsletter, email updates, terms, privacy, or "I agree",
-      // UNLESS the same label or nearby text also mentions warranty, insurance, protection, donation, gift wrap, or a paid plan or price.
-      const isNewsletterOrTerms = /\b(newsletter|email\s*updates?|terms|privacy|i\s*agree)\b/i.test(label);
-      const mentionsPaidAddon = /\b(warranty|insurance|protection|donation|gift\s*wrap|paid\s*plan)\b|(?:\$|€|£)\s*\d+|\b\d+(?:\.\d{2})?\s*(?:\$|€|£|usd|eur|gbp)\b/i.test(label);
-      if (isNewsletterOrTerms && !mentionsPaidAddon) continue;
-
-      // Walk up parent tree to check if near an action button, form, or purchase area
-      let container: HTMLElement | null = el?.parentElement || null;
-      let hasActionBtn = false;
-      const docBody = el.ownerDocument?.body;
-      while (container && container !== docBody && container.tagName !== 'MAIN') {
-        if (
-          container.querySelector('button, input[type="submit"], [role="button"]') ||
-          container.matches?.('form, .product-actions, .cart-actions, .checkout-area')
-        ) {
-          hasActionBtn = true;
-          break;
-        }
-        container = container.parentElement;
-      }
+      // Check if near add to cart or checkout
+      const container =
+        el?.closest('form, .product-actions, .cart-actions, .checkout-area, [data-action-area="true"]') ||
+        el?.parentElement;
+      const hasActionBtn = Boolean(
+        container?.querySelector(
+          'button, input[type="submit"], [role="button"], .add-to-cart, .buy-btn'
+        )
+      );
 
       if (hasActionBtn || candidate.nearPrimaryAction || candidate.inForm) {
         evidenceList.push({

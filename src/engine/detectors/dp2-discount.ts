@@ -13,10 +13,6 @@ export function parsePrice(text: string): { amount: number; currency: string } |
 
   // Currency symbols
   const currencyMatch = text.match(/([$€£₹]|USD|EUR|GBP|INR)/i);
-  // If there's no currency symbol and text is a percentage or discount claim, not a price
-  if (!currencyMatch && /%|\boff\b/i.test(text)) {
-    return null;
-  }
   const currency = currencyMatch ? currencyMatch[0] : '$';
 
   // Match numerical patterns like 1,299.00 or 1.299,00 or 19.99 or 200
@@ -69,51 +65,25 @@ export const DP2DiscountDetector = {
       const statedPercent = parseInt(statedMatch[1], 10);
 
       // Look in parent container for current price and reference price
-      let container: HTMLElement | null = el?.parentElement || null;
-      let refEl: Element | null = null;
-      let currEl: Element | null = null;
-      let refParsed: { amount: number; currency: string } | null = null;
-      let currParsed: { amount: number; currency: string } | null = null;
+      const container = el?.closest('.price-container, .product-pricing, .pricing, [data-price-group="true"]') ||
+                        el?.parentElement?.parentElement ||
+                        el?.parentElement;
 
-      // Walk up parent tree to find container housing both original/strikethrough and current prices
-      const docBody = el.ownerDocument?.body;
-      while (container && container !== docBody && container.tagName !== 'MAIN') {
-        refEl =
-          container.querySelector('s, del, .line-through, [style*="line-through"], .original-price, .was-price, .mrp') ||
-          Array.from(container.querySelectorAll('span, strong, div, p')).find(
-            (node) => /\b(?:was|mrp|orig)\b/i.test(node.textContent || '') && parsePrice(node.textContent || '')
-          ) ||
-          null;
+      if (!container) continue;
 
-        if (refEl) {
-          refParsed = parsePrice(refEl.textContent || '');
-          if (refParsed) {
-            // Find current price (any price element that is not refEl)
-            currEl =
-              container.querySelector('.current-price, .sale-price, .final-price, .now-price') ||
-              Array.from(container.querySelectorAll('span, strong, b, div, p')).find(
-                (node) =>
-                  node !== el &&
-                  !el.contains(node) &&
-                  !node.contains(el) &&
-                  node !== refEl &&
-                  !node.contains(refEl as Node) &&
-                  !refEl!.contains(node) &&
-                  !node.textContent?.includes('%') &&
-                  parsePrice(node.textContent || '')
-              ) ||
-              null;
+      // Search for reference (original) price
+      // Look for <s>, <del>, line-through style, or "was", "mrp", "original"
+      const refEl = container.querySelector('s, del, .line-through, [style*="line-through"], .original-price, .was-price, .mrp');
+      const refText = refEl?.textContent || '';
+      const refParsed = parsePrice(refText);
 
-            if (currEl) {
-              currParsed = parsePrice(currEl.textContent || '');
-              if (currParsed && refParsed.amount > currParsed.amount) {
-                break; // Found both!
-              }
-            }
-          }
-        }
-        container = container.parentElement;
-      }
+      // Search for current (sale) price
+      const currEl = container.querySelector('.current-price, .sale-price, .final-price, .now-price') ||
+                     Array.from(container.querySelectorAll('span, strong, b, div')).find(
+                       (node) => node !== refEl && !node.contains(refEl as Node) && parsePrice(node.textContent || '')
+                     );
+      const currText = currEl?.textContent || '';
+      const currParsed = parsePrice(currText);
 
       if (refParsed && currParsed && refParsed.amount > currParsed.amount) {
         const reference = refParsed.amount;

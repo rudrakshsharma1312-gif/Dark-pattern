@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ScanResult, Detection } from '../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'motion/react';
+import { ScanResult } from '../types';
 import { ScoreRing } from './ScoreRing';
 import { FindingCard } from './FindingCard';
+import { AITextRenderer, AISkeletonLoader, AICodeBlock } from './AITextRenderer';
 import { EthicalViewEngine } from '../engine/ethical-view';
 import { scannerInstance } from '../engine/orchestrator';
 import { generateExtensionZip } from '../extension-package/build-extension';
@@ -13,9 +15,12 @@ import {
   FileJson,
   FileText,
   CheckCircle2,
-  AlertTriangle,
   Play,
-  Cpu,
+  Globe,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
 } from 'lucide-react';
 
 interface ExtensionSimulatorProps {
@@ -39,23 +44,62 @@ export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
   const [historyItems, setHistoryItems] = useState<ScanResult[]>([]);
   const [downloadingZip, setDownloadingZip] = useState(false);
   const [aiExplainEnabled, setAiExplainEnabled] = useState(true);
+  const [briefOpen, setBriefOpen] = useState(false);
+  const [briefMode, setBriefMode] = useState<'formatted' | 'json'>('formatted');
 
-  // Initialize ethical view engine with toggle callback
-  const [ethicalEngine] = useState(() => new EthicalViewEngine((state) => {
-    setEthicalViewOn(state === 'ON');
-  }));
+  const [ethicalEngine] = useState(
+    () =>
+      new EthicalViewEngine((state) => {
+        setEthicalViewOn(state === 'ON');
+      })
+  );
 
-  // Load history on mount
   useEffect(() => {
     setHistoryItems(scannerInstance.getHistory());
   }, []);
 
+  const formattedAuditBrief = useMemo(() => {
+    if (!scanResult) return '';
+    if (scanResult.detections.length === 0) {
+      return `## Audit Brief · ${scanResult.domain}
+
+No deceptive patterns were flagged across **${scanResult.rawCandidatesCount} inspected elements**.
+
+- **Pricing transparency:** No mismatched discount arithmetic detected
+- **Urgency signals:** No frozen countdown timers observed
+- **Consent controls:** Add-on checkboxes remain unchecked by default`;
+    }
+
+    const tableRows = scanResult.detections
+      .map(
+        (d) =>
+          `| \`${d.categoryId}\` | ${d.categoryName} | ${Math.round(d.confidence * 100)}% | ${d.source} |`
+      )
+      .join('\n');
+
+    const observations = scanResult.detections
+      .map((d, idx) => `${idx + 1}. **${d.categoryName}:** ${d.aiExplanation || d.explanation}`)
+      .join('\n');
+
+    return `## Audit Brief · ${scanResult.domain}
+
+Scanned **${scanResult.rawCandidatesCount} elements** in \`${scanResult.scanDurationMs}ms\` with a unified risk score of **${scanResult.risk_score}/100** (${scanResult.level}).
+
+| Code | Pattern | Confidence | Signal |
+| --- | --- | --- | --- |
+${tableRows}
+
+### Key Observations
+${observations}
+
+> Screening summary only. Toggle **Ethical View** above to annotate these items directly on the storefront.`;
+  }, [scanResult]);
+
   const handleStartScan = async (fastForwardTimer = false) => {
     setIsScanning(true);
     setScanStepMessage('Extracting visible candidate elements...');
-    setScanSecondsLeft(fastForwardTimer ? 0 : 3); // realistic 3s observation for interactive preview
+    setScanSecondsLeft(fastForwardTimer ? 0 : 3);
 
-    // Countdown simulation for observation window
     if (!fastForwardTimer) {
       await new Promise<void>((resolve) => {
         let left = 3;
@@ -73,11 +117,15 @@ export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
     setScanStepMessage('Verifying rule evidence (DP-1 to DP-4)...');
     await new Promise((r) => setTimeout(r, 200));
 
-    setScanStepMessage('Running text classifier ML inference...');
+    setScanStepMessage(
+      aiExplainEnabled
+        ? 'Running ML inference & formatting AI explanations...'
+        : 'Running text classifier ML inference...'
+    );
     await new Promise((r) => setTimeout(r, 100));
 
-    // Execute scan
-    const container = testContainerRef.current || document.getElementById('test-shop-container') || document.body;
+    const container =
+      testContainerRef.current || document.getElementById('test-shop-container') || document.body;
     const result = await scannerInstance.scan({
       container,
       domain: currentDomain,
@@ -90,14 +138,14 @@ export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
     setHistoryItems(scannerInstance.getHistory());
     setIsScanning(false);
 
-    // If Ethical View was already ON, re-apply with new detections
     if (ethicalViewOn) {
       ethicalEngine.apply(result.detections, container, result.risk_score, result.level);
     }
   };
 
   const handleToggleEthicalView = () => {
-    const container = testContainerRef.current || document.getElementById('test-shop-container') || document.body;
+    const container =
+      testContainerRef.current || document.getElementById('test-shop-container') || document.body;
     if (ethicalViewOn) {
       ethicalEngine.restore();
       setEthicalViewOn(false);
@@ -114,8 +162,8 @@ export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       const origOutline = el.style.outline;
-      el.style.outline = '4px solid #5B9BE0';
-      el.style.transition = 'outline 0.3s ease';
+      el.style.outline = '3px solid var(--accent)';
+      el.style.transition = 'outline 0.2s ease';
       setTimeout(() => {
         el.style.outline = origOutline;
       }, 1600);
@@ -195,35 +243,25 @@ ${scanResult.detections
   };
 
   return (
-    <div className="w-full bg-[#FFFFFF] border border-[#E1E8F0] rounded-[24px] shadow-sm flex flex-col overflow-hidden">
-      {/* Extension Simulator Chrome Header */}
-      <div className="bg-[#F6F9FC] border-b border-[#E1E8F0] px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#DCEBFA] border border-[#9CC5EE] flex items-center justify-center text-[#1D4E89]">
-            <Shield className="w-4 h-4" />
+    <div className="w-full glass-panel rounded-[24px] flex flex-col overflow-hidden">
+      {/* Extension Simulator Header */}
+      <div className="border-b border-[var(--line-card)] px-5 py-3.5 flex items-center justify-between gap-3 bg-gradient-to-r from-[var(--bg-bar-from)] to-[var(--bg-bar-to)]">
+        <div className="min-w-0">
+          <div className="font-display font-bold text-sm text-[var(--ink-900)] truncate">
+            DarkGuard AI
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-display font-bold text-sm text-[#1F2A37]">
-                DarkGuard AI
-              </span>
-              <span className="text-[10px] font-mono font-semibold bg-[#EDF2F8] text-[#5F6E80] px-1.5 py-0.2 rounded">
-                v0.3.0
-              </span>
-            </div>
-            <div className="text-[11px] text-[#5F6E80] flex items-center gap-1">
-              <Cpu className="w-3 h-3 text-[#14513A]" />
-              <span>TF-IDF Logistic ML · SHA-256 Valid</span>
-            </div>
+          <div className="text-[11px] text-[var(--ink-500)] truncate">
+            TF-IDF Logistic ML · SHA-256 Verified
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setHistoryOpen(!historyOpen)}
-            className="p-1.5 text-[#5F6E80] hover:text-[#1F2A37] hover:bg-[#EDF2F8] rounded-lg transition-colors cursor-pointer"
+            className="glass-control p-2 text-[var(--ink-700)] hover:text-[var(--ink-900)] rounded-full cursor-pointer"
             title="Scan History (last 20 scans)"
+            aria-label="Toggle scan history"
           >
             <History className="w-4 h-4" />
           </button>
@@ -232,97 +270,97 @@ ${scanResult.detections
             type="button"
             onClick={handleDownloadExtension}
             disabled={downloadingZip}
-            className="px-2.5 py-1.5 bg-white border border-[#C9D4E0] hover:bg-[#F6F9FC] text-[#1F2A37] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+            className="glass-control px-3 py-1.5 text-[var(--ink-900)] text-xs font-semibold rounded-full flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             title="Download unpacked Chrome/Edge extension ZIP"
           >
-            <Download className="w-3.5 h-3.5 text-[#1D4E89]" />
+            <Download className="w-3.5 h-3.5 text-[var(--accent)]" />
             <span className="hidden sm:inline">
-              {downloadingZip ? 'Packaging...' : 'Download Extension (.zip)'}
+              {downloadingZip ? 'Packing...' : 'Export .zip'}
             </span>
           </button>
         </div>
       </div>
 
       {/* Target Domain Bar */}
-      <div className="px-4 py-2 bg-white border-b border-[#E1E8F0] flex items-center justify-between text-xs">
+      <div className="px-5 py-2.5 bg-[var(--bg-sunken)] border-b border-[var(--line-subtle)] flex items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2 truncate">
-          <span className="w-2 h-2 rounded-full bg-[#14513A]" />
-          <span className="text-[#3D4B5C] font-mono truncate">{currentDomain}</span>
+          <Globe className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
+          <span className="text-[var(--ink-700)] font-mono truncate">{currentDomain}</span>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <label className="flex items-center gap-1 text-[11px] text-[#5F6E80] cursor-pointer">
-            <input
-              type="checkbox"
-              checked={aiExplainEnabled}
-              onChange={(e) => setAiExplainEnabled(e.target.checked)}
-              className="rounded border-[#C9D4E0] text-[#1D4E89] w-3 h-3"
-            />
-            <span>AI Rewrite</span>
-          </label>
-        </div>
+        <label className="flex items-center gap-1.5 text-[11px] text-[var(--ink-500)] hover:text-[var(--ink-900)] cursor-pointer shrink-0 select-none">
+          <input
+            type="checkbox"
+            checked={aiExplainEnabled}
+            onChange={(e) => setAiExplainEnabled(e.target.checked)}
+            className="rounded border-[var(--line-strong)] accent-[#E6B85C] w-3.5 h-3.5"
+          />
+          <span>AI Rewrite</span>
+        </label>
       </div>
 
-      {/* History Drawer Modal */}
+      {/* History Drawer */}
       {historyOpen && (
-        <div className="p-4 bg-[#F6F9FC] border-b border-[#E1E8F0] text-xs animate-in slide-in-from-top duration-200">
+        <div className="p-4 bg-[var(--bg-sunken)] border-b border-[var(--line-card)] text-xs ai-reveal-enter">
           <div className="flex items-center justify-between mb-3">
-            <span className="font-display font-bold text-sm text-[#1F2A37]">
-              Local Scan History (Max 20 scans)
+            <span className="font-display font-semibold text-sm text-[var(--ink-900)]">
+              Local Scan History (Max 20)
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={() => {
                   scannerInstance.clearHistory();
                   setHistoryItems([]);
                 }}
-                className="text-[11px] text-[#8A2845] hover:underline cursor-pointer"
+                className="text-[11px] text-[var(--rose-ink)] hover:underline cursor-pointer"
               >
                 Clear history
               </button>
               <button
+                type="button"
                 onClick={() => setHistoryOpen(false)}
-                className="text-[#5F6E80] hover:text-[#1F2A37] font-bold ml-2"
+                className="text-[var(--ink-500)] hover:text-[var(--ink-900)] cursor-pointer p-1"
+                aria-label="Close history"
               >
-                ✕
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
           {historyItems.length === 0 ? (
-            <p className="text-[#5F6E80] italic py-2">No previous scans found in storage.</p>
+            <p className="text-[var(--ink-500)] py-2">No previous scans found in storage.</p>
           ) : (
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
               {historyItems.map((scan) => (
-                <div
+                <button
+                  type="button"
                   key={scan.id}
                   onClick={() => {
                     setScanResult(scan);
                     setHistoryOpen(false);
                   }}
-                  className="p-2.5 bg-white border border-[#E1E8F0] rounded-xl hover:border-[#9CC5EE] cursor-pointer flex items-center justify-between transition-colors shadow-2xs"
+                  className="w-full text-left p-2.5 chrome-card rounded-[12px] cursor-pointer flex items-center justify-between"
                 >
                   <div className="truncate pr-2">
-                    <span className="font-semibold text-[#1F2A37] block truncate">
+                    <span className="font-semibold text-[var(--ink-900)] block truncate">
                       {scan.domain} {scan.url_path}
                     </span>
-                    <span className="text-[10px] text-[#5F6E80]">
+                    <span className="text-[11px] text-[var(--ink-500)] tabular">
                       {new Date(scan.timestamp).toLocaleTimeString()} · {scan.detections.length} issue(s)
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        scan.risk_score >= 50
-                          ? 'bg-[#FCE0D6] text-[#8A3A1F]'
-                          : scan.risk_score >= 25
-                          ? 'bg-[#FBF0C9] text-[#6B4E00]'
-                          : 'bg-[#D9F2E6] text-[#14513A]'
-                      }`}
-                    >
-                      {scan.risk_score} ({scan.level})
-                    </span>
-                  </div>
-                </div>
+                  <span
+                    className={`text-xs font-mono font-semibold tabular shrink-0 ${
+                      scan.risk_score >= 50
+                        ? 'text-[var(--peach-ink)]'
+                        : scan.risk_score >= 25
+                        ? 'text-[var(--butter-ink)]'
+                        : 'text-[var(--mint-ink)]'
+                    }`}
+                  >
+                    {scan.risk_score} · {scan.level}
+                  </span>
+                </button>
               ))}
             </div>
           )}
@@ -330,60 +368,52 @@ ${scanResult.detections
       )}
 
       {/* Main Extension Body */}
-      <div className="p-4 sm:p-6 flex flex-col gap-6">
-        {/* If no scan run yet */}
+      <div className="p-5 sm:p-6 flex flex-col gap-6">
+        {/* Ready State */}
         {!scanResult && !isScanning && (
           <div className="py-8 flex flex-col items-center justify-center text-center max-w-sm mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-[#DCEBFA] border border-[#9CC5EE] flex items-center justify-center text-[#1D4E89] mb-4">
-              <Shield className="w-7 h-7" />
-            </div>
-            <h3 className="font-display font-bold text-lg text-[#1F2A37] mb-1">
+            <motion.div
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-14 h-14 rounded-full bg-gradient-to-b from-[var(--bg-emblem-from)] to-[var(--bg-emblem-to)] border border-[var(--accent-border)] shadow-md flex items-center justify-center text-[var(--accent)] mb-4"
+            >
+              <Shield className="w-6 h-6" />
+            </motion.div>
+            <h3 className="font-display font-bold text-lg text-[var(--ink-900)] mb-1.5">
               Ready to Audit Current Page
             </h3>
-            <p className="text-xs text-[#5F6E80] mb-5 leading-relaxed">
-              DarkGuard AI combines rule evidence with a TF-IDF text classifier to detect fake urgency, misleading discounts, confirm shaming, and pre-selected extras.
+            <p className="text-xs text-[var(--ink-500)] mb-6 leading-relaxed">
+              Combines deterministic rule evidence with an on-device TF-IDF text classifier to flag fake urgency, misleading discounts, confirm shaming, and pre-selected extras.
             </p>
-            <button
+            <motion.button
               type="button"
+              whileHover={{ y: -1.5, scale: 1.02 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ duration: 0.14 }}
               onClick={() => handleStartScan(false)}
-              className="w-full py-3 bg-[#DCEBFA] border border-[#9CC5EE] hover:bg-[#c6dff8] text-[#1D4E89] font-bold text-sm rounded-[14px] transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+              className="btn-primary-tactile w-full py-3 px-5 text-[#111318] font-semibold text-sm rounded-full flex items-center justify-center gap-2 cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Scan this page</span>
-            </button>
+            </motion.button>
           </div>
         )}
 
-        {/* Scan In-Progress State */}
+        {/* Skeleton Loading State while scanning & generating AI responses */}
         {isScanning && (
-          <div className="py-8 flex flex-col items-center justify-center text-center">
-            <div className="w-10 h-10 border-3 border-[#EDF2F8] border-t-[#1D4E89] rounded-full animate-spin mb-4" />
-            <h3 className="font-display font-semibold text-base text-[#1F2A37] mb-1">
-              Auditing Page Elements
-            </h3>
-            <p className="text-xs text-[#5F6E80] mb-3">{scanStepMessage}</p>
-            {scanSecondsLeft > 0 && (
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xs font-mono font-bold text-[#1D4E89] bg-[#DCEBFA] px-2.5 py-1 rounded-full">
-                  Observing countdown stability: {scanSecondsLeft}s
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleStartScan(true)}
-                  className="text-xs text-[#1D4E89] hover:underline cursor-pointer font-medium mt-1"
-                >
-                  Skip observation wait (fast-forward)
-                </button>
-              </div>
-            )}
-          </div>
+          <AISkeletonLoader
+            title="Auditing Page & Generating Insights"
+            subtitle={scanStepMessage}
+            secondsLeft={scanSecondsLeft}
+            onFastForward={() => handleStartScan(true)}
+          />
         )}
 
-        {/* Scan Results View */}
+        {/* Results View */}
         {scanResult && !isScanning && (
-          <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+          <div className="flex flex-col gap-5 ai-reveal-enter">
             {/* Top Score Ring Area */}
-            <div className="bg-[#F6F9FC] border border-[#E1E8F0] rounded-[20px] p-5 flex flex-col items-center justify-center">
+            <div className="chrome-card rounded-[20px] p-5 flex flex-col items-center justify-center">
               <ScoreRing
                 score={scanResult.risk_score}
                 level={scanResult.level}
@@ -392,48 +422,46 @@ ${scanResult.detections
             </div>
 
             {/* Ethical View Reversible Switch */}
-            <div className="bg-white border border-[#E1E8F0] rounded-[16px] p-4 flex items-center justify-between shadow-2xs">
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="font-display font-bold text-sm text-[#1F2A37]">
+            <div className="chrome-card rounded-[18px] p-4 flex items-center justify-between gap-4">
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-display font-bold text-sm text-[var(--ink-900)]">
                     Ethical View
                   </span>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      ethicalViewOn
-                        ? 'bg-[#D9F2E6] text-[#14513A]'
-                        : 'bg-[#EDF2F8] text-[#5F6E80]'
-                    }`}
-                  >
-                    {ethicalViewOn ? 'ACTIVE ON PAGE' : 'ORIGINAL DOM'}
+                  <span aria-hidden="true" className="text-[var(--ink-300)]">·</span>
+                  <span className={ethicalViewOn ? 'text-[var(--mint-ink)] font-semibold' : 'text-[var(--ink-500)]'}>
+                    {ethicalViewOn ? 'Active on page' : 'Original DOM'}
                   </span>
                 </div>
-                <span className="text-xs text-[#5F6E80] mt-0.5">
-                  Annotate deceptive patterns with approved templates. 100% reversible.
+                <span className="text-xs text-[var(--ink-500)] mt-0.5">
+                  Annotate patterns with verified templates. Reversible.
                 </span>
               </div>
 
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -1.5, scale: 1.02 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.14 }}
                 onClick={handleToggleEthicalView}
-                className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                className={`px-4 py-2 text-xs font-semibold rounded-full cursor-pointer whitespace-nowrap shrink-0 ${
                   ethicalViewOn
-                    ? 'bg-[#1D4E89] text-white shadow-sm'
-                    : 'bg-[#DCEBFA] border border-[#9CC5EE] text-[#1D4E89] hover:bg-[#c6dff8]'
+                    ? 'glass-control text-[var(--ink-900)]'
+                    : 'btn-primary-tactile text-[#111318]'
                 }`}
               >
                 {ethicalViewOn ? 'Show original' : 'Apply Ethical View'}
-              </button>
+              </motion.button>
             </div>
 
-            {/* Re-Scan Bar */}
+            {/* Re-Scan & Export Bar */}
             <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() => handleStartScan(false)}
-                className="px-3 py-1.5 bg-[#EDF2F8] hover:bg-[#E1E8F0] text-[#1F2A37] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="glass-control px-3.5 py-1.5 text-[var(--ink-900)] text-xs font-semibold rounded-full flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3.5 h-3.5 text-[var(--accent)]" />
                 <span>Re-scan page</span>
               </button>
 
@@ -441,41 +469,123 @@ ${scanResult.detections
                 <button
                   type="button"
                   onClick={handleExportJSON}
-                  className="px-2.5 py-1.5 text-xs text-[#1D4E89] hover:bg-[#DCEBFA]/50 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                  className="glass-control px-3 py-1.5 text-xs text-[var(--ink-700)] hover:text-[var(--ink-900)] rounded-full flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
-                  <FileJson className="w-3.5 h-3.5" />
+                  <FileJson className="w-3.5 h-3.5 text-[var(--ink-500)]" />
                   <span>JSON</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleExportMarkdown}
-                  className="px-2.5 py-1.5 text-xs text-[#1D4E89] hover:bg-[#DCEBFA]/50 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                  className="glass-control px-3 py-1.5 text-xs text-[var(--ink-700)] hover:text-[var(--ink-900)] rounded-full flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
-                  <FileText className="w-3.5 h-3.5" />
+                  <FileText className="w-3.5 h-3.5 text-[var(--ink-500)]" />
                   <span>Markdown</span>
                 </button>
               </div>
             </div>
 
+            {/* Interactive Collapsible AI Audit Brief & Formatted Markdown Viewer */}
+            <div className="chrome-card rounded-[18px] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setBriefOpen((v) => !v)}
+                className="w-full px-4 py-3 flex items-center justify-between gap-2 text-left hover:bg-[var(--hover-tint)] transition-colors cursor-pointer"
+                aria-expanded={briefOpen}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                  <span className="font-display font-semibold text-xs chrome-text-gradient truncate">
+                    Formatted AI Audit Brief &amp; Inspector
+                  </span>
+                </div>
+                {briefOpen ? (
+                  <ChevronUp className="w-4 h-4 text-[var(--ink-500)] shrink-0" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-[var(--ink-500)] shrink-0" />
+                )}
+              </button>
+
+              {briefOpen && (
+                <div className="px-4 pb-4 pt-2 border-t border-[var(--line-subtle)] flex flex-col gap-3 ai-reveal-enter">
+                  {/* View mode switcher */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setBriefMode('formatted')}
+                      className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
+                        briefMode === 'formatted'
+                          ? 'bg-[#E6B85C] text-[#111318]'
+                          : 'bg-[var(--bg-sunken)] text-[var(--ink-500)] hover:text-[var(--ink-900)]'
+                      }`}
+                    >
+                      Formatted Brief
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBriefMode('json')}
+                      className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
+                        briefMode === 'json'
+                          ? 'bg-[#E6B85C] text-[#111318]'
+                          : 'bg-[var(--bg-sunken)] text-[var(--ink-500)] hover:text-[var(--ink-900)]'
+                      }`}
+                    >
+                      JSON Output
+                    </button>
+                  </div>
+
+                  {/* Smooth-scrolling long response container */}
+                  <div className="max-h-72 overflow-y-auto scroll-smooth pr-1">
+                    {briefMode === 'formatted' ? (
+                      <AITextRenderer
+                        content={formattedAuditBrief}
+                        showCopyButton
+                        copyLabel="Copy brief"
+                      />
+                    ) : (
+                      <AICodeBlock
+                        code={JSON.stringify(
+                          {
+                            domain: scanResult.domain,
+                            risk_score: scanResult.risk_score,
+                            level: scanResult.level,
+                            detections: scanResult.detections.map((d) => ({
+                              id: d.categoryId,
+                              name: d.categoryName,
+                              confidence: d.confidence,
+                              aiExplanation: d.aiExplanation || d.explanation,
+                            })),
+                          },
+                          null,
+                          2
+                        )}
+                        language="json"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Findings Section */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-display font-bold text-sm text-[#1F2A37]">
+                <h4 className="font-display font-bold text-sm text-[var(--ink-900)]">
                   Findings ({scanResult.detections.length})
                 </h4>
-                <span className="text-[11px] text-[#5F6E80]">
-                  Scan took {scanResult.scanDurationMs}ms
+                <span className="text-[11px] font-mono text-[var(--ink-500)] tabular">
+                  {scanResult.scanDurationMs}ms
                 </span>
               </div>
 
               {scanResult.detections.length === 0 ? (
-                <div className="bg-[#D9F2E6]/40 border border-[#8FD1B0] rounded-[16px] p-5 text-center flex flex-col items-center">
-                  <CheckCircle2 className="w-8 h-8 text-[#14513A] mb-2" />
-                  <p className="font-display font-semibold text-sm text-[#14513A]">
+                <div className="bg-[var(--mint-surface)] border border-[var(--mint-line)] rounded-[16px] p-5 text-center flex flex-col items-center">
+                  <CheckCircle2 className="w-7 h-7 text-[var(--mint-ink)] mb-2" />
+                  <p className="font-display font-semibold text-sm text-[var(--mint-ink)]">
                     No dark patterns detected
                   </p>
-                  <p className="text-xs text-[#3D4B5C] mt-1">
-                    The pricing, countdown timers, decline options, and checkboxes on this page adhere to transparent design standards.
+                  <p className="text-xs text-[var(--ink-700)] mt-1 leading-relaxed">
+                    Pricing, countdown timers, decline options, and add-on checkboxes adhere to transparent design standards.
                   </p>
                 </div>
               ) : (
@@ -493,11 +603,11 @@ ${scanResult.detections
               )}
             </div>
 
-            {/* Mandatory Disclaimer Banner per Section 6.9 */}
-            <div className="bg-[#E8E3F8] border border-[#B9ABE8] rounded-[16px] p-3 text-xs text-[#1F2A37] flex items-start gap-2">
-              <Shield className="w-4 h-4 text-[#4B3A8C] shrink-0 mt-0.5" />
-              <p className="text-[#3D4B5C] leading-relaxed">
-                <strong>Disclaimer:</strong> DarkGuard AI is a screening tool, not a legal certification. Findings represent observable signals and do not constitute legal proof of deceptive intent.
+            {/* Screening Disclaimer */}
+            <div className="glass-recessed rounded-[14px] p-3 text-xs text-[var(--ink-700)] flex items-start gap-2.5">
+              <Shield className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                <strong className="text-[var(--ink-900)]">Disclaimer:</strong> DarkGuard AI is a screening tool, not a legal certification. Findings represent observable signals and do not constitute legal proof of deceptive intent.
               </p>
             </div>
           </div>

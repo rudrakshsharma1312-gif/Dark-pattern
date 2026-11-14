@@ -14,23 +14,21 @@ export const ConfidenceBand: React.FC<ConfidenceBandProps> = ({
 }) => {
   const percent = Math.round(confidence * 100);
   const totalSegments = 10;
-  const filledCount = Math.min(10, Math.max(1, Math.round((confidence * 10))));
+  const filledCount = Math.min(10, Math.max(1, Math.round(confidence * 10)));
 
-  // Line colors per severity token
-  // Minor: Butter (#EBD27A), Moderate: Peach (#F1A98F), Major: Rose (#E8A0B5)
-  let fillColor = '#F1A98F'; // Moderate default
-  if (severity === 1) fillColor = '#EBD27A';
-  else if (severity === 3) fillColor = '#E8A0B5';
+  let fillColor = 'var(--peach-ink)'; // Moderate
+  if (severity === 1) fillColor = 'var(--butter-ink)'; // Minor
+  else if (severity === 3) fillColor = 'var(--rose-ink)'; // Major
 
   if (isUncertain) {
-    fillColor = '#EBD27A'; // Butter
+    fillColor = 'var(--butter-ink)';
   }
 
   return (
     <div
       className={`inline-flex items-center gap-2 text-xs select-none ${
         isUncertain
-          ? 'p-1 rounded-md border border-dashed border-[#EBD27A] bg-[#FBF0C9]/40'
+          ? 'px-2 py-1 rounded-lg border border-dashed border-[var(--butter-line)] bg-[var(--butter-surface)]'
           : ''
       }`}
       role="meter"
@@ -39,29 +37,29 @@ export const ConfidenceBand: React.FC<ConfidenceBandProps> = ({
       aria-valuemax={100}
       aria-label={`Confidence ${percent} percent`}
     >
-      <span className="text-[#5F6E80] text-[11px] font-medium tracking-wide">
+      <span className="text-[var(--ink-500)] text-[11px] font-medium tracking-wide">
         Confidence
       </span>
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-1">
         {Array.from({ length: totalSegments }).map((_, i) => {
           const isFilled = i < filledCount;
           return (
             <div
               key={i}
-              className="w-2.5 h-3.5 rounded-2xs transition-all duration-200"
+              className="w-2 h-3 rounded-[2px] transition-all duration-200"
               style={{
-                backgroundColor: isFilled ? fillColor : '#EDF2F8',
+                backgroundColor: isFilled ? fillColor : 'var(--band-track)',
               }}
             />
           );
         })}
       </div>
-      <span className="font-mono tabular text-[#1F2A37] font-semibold text-[11px]">
+      <span className="font-mono tabular text-[var(--ink-900)] font-semibold text-[11px]">
         {percent}%
       </span>
       {isUncertain && (
-        <span className="text-[10px] uppercase font-semibold text-[#6B4E00] bg-[#FBF0C9] px-1.5 py-0.2 rounded">
-          Uncertain
+        <span className="text-[11px] font-medium text-[var(--butter-ink)]">
+          · Uncertain
         </span>
       )}
     </div>

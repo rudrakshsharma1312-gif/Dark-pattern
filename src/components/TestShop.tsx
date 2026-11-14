@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, ShieldCheck, Clock, Check, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ShoppingBag, ShieldCheck, Clock, Check, AlertCircle, Package, X } from 'lucide-react';
 
 export interface ProductScenario {
   id: string;
@@ -50,7 +51,7 @@ export const PRODUCTS: ProductScenario[] = [
       id: 'warranty-2yr',
       label: 'Add 2-Year Accidental Damage & Extended Protection Plan ($19.99)',
       price: 19.99,
-      isPreselected: true, // Pre-selected extra!
+      isPreselected: true,
     },
     declineButtonText: "No thanks, I don't care about audio quality",
     isDeclineShaming: true,
@@ -158,7 +159,7 @@ export const PRODUCTS: ProductScenario[] = [
       id: 'gift-wrap',
       label: 'Optional Japanese furoshiki fabric gift wrapping ($4.00)',
       price: 4.0,
-      isPreselected: false, // Unchecked! Clean practice
+      isPreselected: false,
     },
     declineButtonText: 'No thanks',
     isDeclineShaming: false,
@@ -228,11 +229,12 @@ export const TestShop: React.FC<TestShopProps> = ({
   );
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [activeTab, setActiveTab] = useState<'details' | 'planted_notes'>('details');
+  const [imgFailed, setImgFailed] = useState(false);
 
   useEffect(() => {
     setIsAddonChecked(Boolean(currentProduct.addonOption?.isPreselected));
     setShowDeclineModal(false);
+    setImgFailed(false);
   }, [currentProduct.id]);
 
   const handleAddToCart = () => {
@@ -245,59 +247,69 @@ export const TestShop: React.FC<TestShopProps> = ({
   return (
     <div
       id="test-shop-container"
-      className="w-full bg-[#FFFFFF] border border-[#E1E8F0] rounded-[24px] overflow-hidden shadow-sm"
+      className="w-full glass-panel rounded-[24px] overflow-hidden"
       data-action-area="true"
     >
       {/* Test Shop Top Navigation Bar */}
-      <div className="bg-[#F6F9FC] border-b border-[#E1E8F0] px-6 py-3 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="font-display font-bold text-lg text-[#1F2A37] tracking-tight">
+      <div className="bg-gradient-to-r from-[var(--bg-bar-from)] to-[var(--bg-bar-to)] border-b border-[var(--line-card)] px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3 text-xs">
+          <span className="font-display font-bold text-base text-[var(--ink-900)] tracking-tight whitespace-nowrap">
             Apex Goods Demo Shop
           </span>
-          <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#EDF2F8] text-[#5F6E80] font-mono">
+          <span aria-hidden="true" className="text-[var(--ink-300)]">·</span>
+          <span className="text-[var(--ink-500)] font-mono">
             demo.darkguard.shop
           </span>
         </div>
 
-        {/* Product scenario selector pills */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#EDF2F8] rounded-xl">
-          {PRODUCTS.map((prod) => (
-            <button
-              key={prod.id}
-              onClick={() => onSelectProduct(prod.id)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
-                prod.id === currentProduct.id
-                  ? 'bg-white text-[#1F2A37] shadow-2xs'
-                  : 'text-[#5F6E80] hover:text-[#1F2A37]'
-              }`}
-            >
-              {prod.isPlanted ? '⚠️ Planted: ' : '✓ Clean: '}
-              {prod.name.split(' ')[0]}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-xs text-[#3D4B5C] bg-white border border-[#E1E8F0] px-3 py-1.5 rounded-lg shadow-2xs font-medium">
-            <ShoppingBag className="w-3.5 h-3.5 text-[#1D4E89]" />
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="glass-control flex items-center gap-1.5 text-xs text-[var(--ink-900)] px-3.5 py-1.5 rounded-full font-medium tabular">
+            <ShoppingBag className="w-3.5 h-3.5 text-[var(--accent)]" />
             <span>Cart ({cartCount})</span>
           </div>
         </div>
       </div>
 
+      {/* Product Scenario Segmented Selector */}
+      <div className="px-5 py-3 border-b border-[var(--line-subtle)] bg-[var(--bg-sunken)]">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {PRODUCTS.map((prod) => {
+            const active = prod.id === currentProduct.id;
+            return (
+              <motion.button
+                key={prod.id}
+                type="button"
+                whileHover={{ y: -1.5, scale: 1.02 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.14 }}
+                onClick={() => onSelectProduct(prod.id)}
+                className={`px-3.5 py-1.5 text-xs font-medium rounded-full cursor-pointer whitespace-nowrap ${
+                  active
+                    ? 'btn-primary-tactile text-[#111318] font-semibold'
+                    : 'bg-[var(--bg-pill-muted)] text-[var(--ink-500)] hover:text-[var(--ink-900)] border border-[var(--line-card)]'
+                }`}
+              >
+                {prod.isPlanted ? 'Planted: ' : 'Clean: '}
+                {prod.name.split(' ')[0]}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Scenario Banner */}
       <div
-        className={`px-6 py-2.5 text-xs border-b flex flex-wrap items-center justify-between gap-2 ${
+        className={`px-5 py-2.5 text-xs border-b flex flex-wrap items-center justify-between gap-2 ${
           currentProduct.isPlanted
-            ? 'bg-[#FCE0D6]/40 border-[#F1A98F]/50 text-[#8A3A1F]'
-            : 'bg-[#D9F2E6]/40 border-[#8FD1B0]/50 text-[#14513A]'
+            ? 'bg-[var(--peach-surface)] border-[var(--peach-line)] text-[var(--peach-ink)]'
+            : 'bg-[var(--mint-surface)] border-[var(--mint-line)] text-[var(--mint-ink)]'
         }`}
       >
         <div className="flex items-center gap-2 font-medium">
           {currentProduct.isPlanted ? (
-            <AlertCircle className="w-4 h-4 text-[#8A3A1F]" />
+            <AlertCircle className="w-4 h-4 shrink-0" />
           ) : (
-            <ShieldCheck className="w-4 h-4 text-[#14513A]" />
+            <ShieldCheck className="w-4 h-4 shrink-0" />
           )}
           <span>
             {currentProduct.isPlanted
@@ -305,52 +317,67 @@ export const TestShop: React.FC<TestShopProps> = ({
               : 'Clean Baseline Control Page (Zero dark patterns)'}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[11px]">
-          <span className="font-semibold">{currentProduct.category}</span>
-        </div>
+        <span className="text-[11px] font-medium">{currentProduct.category}</span>
       </div>
 
       {/* Product Content Split */}
-      <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Product Image & Planted Breakdown */}
+      <AnimatePresence mode="wait">
+      <motion.div
+        key={currentProduct.id}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+        className="p-5 md:p-7 grid grid-cols-1 lg:grid-cols-12 gap-7 items-start bg-[var(--bg-shop-body)]"
+      >
+        {/* Left Column: Product Image & Ground Truth Blueprint */}
         <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="w-full h-80 rounded-[20px] overflow-hidden border border-[#E1E8F0] bg-[#EDF2F8] relative">
-            <img
-              src={currentProduct.imageUrl}
-              alt={currentProduct.name}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
-            />
+          <div className="w-full h-72 rounded-[20px] overflow-hidden border border-[var(--line-card)] bg-[var(--bg-surface-solid)] relative shadow-xs">
+            {!imgFailed ? (
+              <img
+                src={currentProduct.imageUrl}
+                alt={currentProduct.name}
+                referrerPolicy="no-referrer"
+                onError={() => setImgFailed(true)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-[var(--bg-emblem-from)] to-[var(--bg-emblem-to)] text-[var(--ink-500)] p-4 text-center">
+                <Package className="w-9 h-9 text-[var(--ink-300)]" />
+                <span className="text-xs font-medium text-[var(--ink-900)]">{currentProduct.name}</span>
+              </div>
+            )}
+
             {currentProduct.hasCountdown && (
               <div
-                className="absolute top-3 left-3 bg-[#1F2A37]/90 text-white backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 shadow-sm timer countdown"
+                className="absolute top-3 left-3 bg-[var(--bg-timer)] text-[var(--ink-900)] backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-1.5 timer countdown border border-[var(--butter-line)]"
                 data-dg-target="timer"
                 data-dg-frozen={currentProduct.isCountdownFrozen ? 'true' : 'false'}
               >
-                <Clock className="w-3.5 h-3.5 text-[#EBD27A]" />
+                <Clock className="w-3.5 h-3.5 text-[var(--butter-ink)]" />
                 <span>Ends in: </span>
-                <span className="font-bold text-[#EBD27A]">
+                <span className="font-bold text-[var(--butter-ink)] tabular">
                   {currentProduct.countdownInitial}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Planted Patterns Inspection Box */}
-          <div className="bg-[#F6F9FC] border border-[#E1E8F0] rounded-[16px] p-4 text-xs">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-display font-semibold text-[#1F2A37]">
+          {/* Ground Truth Blueprint */}
+          <div className="chrome-card rounded-[18px] p-4 text-xs">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="font-display font-semibold text-[var(--ink-900)]">
                 Ground Truth Blueprint
               </span>
-              <span className="text-[10px] uppercase font-bold text-[#5F6E80] tracking-wider">
-                {currentProduct.isPlanted ? 'Planted Anomaly' : 'Clean Reference'}
+              <span className="text-[11px] font-medium text-[var(--ink-500)]">
+                {currentProduct.isPlanted ? 'Planted anomaly' : 'Clean reference'}
               </span>
             </div>
-            <ul className="space-y-1.5 text-[#3D4B5C]">
+            <ul className="space-y-1.5 text-[var(--ink-700)]">
               {currentProduct.plantedSummary.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-1.5">
-                  <span className="text-[#1D4E89] shrink-0 font-bold">•</span>
-                  <span>{item}</span>
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="text-[var(--accent)] shrink-0 font-bold">·</span>
+                  <span className="leading-relaxed">{item}</span>
                 </li>
               ))}
             </ul>
@@ -358,27 +385,27 @@ export const TestShop: React.FC<TestShopProps> = ({
         </div>
 
         {/* Right Column: Product Details & Actions */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="lg:col-span-7 flex flex-col gap-5">
           <div>
-            <div className="text-xs uppercase font-semibold tracking-wider text-[#5F6E80] mb-1">
+            <div className="text-xs font-medium text-[var(--ink-500)] mb-1">
               {currentProduct.category}
             </div>
-            <h1 className="font-display font-bold text-2xl md:text-3xl text-[#1F2A37] tracking-tight leading-tight">
+            <h2 className="font-display font-bold text-2xl text-[var(--ink-900)] tracking-tight leading-tight text-balance">
               {currentProduct.name}
-            </h1>
+            </h2>
           </div>
 
-          {/* Pricing Area with PRD-compliant structure */}
+          {/* Pricing Area with PRD-compliant selectors */}
           <div
-            className="price-container pricing product-pricing p-4 rounded-[16px] bg-[#F6F9FC] border border-[#E1E8F0] flex flex-wrap items-center justify-between gap-4"
+            className="price-container pricing product-pricing chrome-card p-4 rounded-[18px] flex flex-wrap items-center justify-between gap-4"
             data-price-group="true"
           >
             <div className="flex items-baseline gap-3">
-              <span className="current-price font-display font-bold text-3xl text-[#1F2A37]">
+              <span className="current-price font-display font-bold text-3xl text-[var(--ink-900)] tabular">
                 ${currentProduct.currentPrice.toFixed(2)}
               </span>
               {currentProduct.referencePrice && (
-                <span className="reference-price line-through text-[#5F6E80] text-lg font-medium">
+                <span className="reference-price line-through text-[var(--ink-500)] text-base font-medium tabular">
                   was ${currentProduct.referencePrice.toFixed(2)}
                 </span>
               )}
@@ -386,7 +413,7 @@ export const TestShop: React.FC<TestShopProps> = ({
 
             {currentProduct.statedDiscountPercent && (
               <div
-                className="discount badge px-3 py-1 rounded-full text-xs font-bold bg-[#FCE0D6] border border-[#F1A98F] text-[#8A3A1F]"
+                className="discount badge px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[var(--bg-badge-from)] to-[var(--bg-badge-to)] text-[var(--accent)] tabular border border-[var(--accent-border)]"
                 data-dg-target="discount"
               >
                 {currentProduct.statedDiscountPercent}% OFF SPECIAL
@@ -397,7 +424,7 @@ export const TestShop: React.FC<TestShopProps> = ({
           {/* Urgency message text if any */}
           {currentProduct.urgencyText && (
             <div
-              className="urgent bg-[#FBF0C9] border border-[#EBD27A] text-[#6B4E00] px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 font-medium"
+              className="urgent bg-[var(--butter-surface)] border border-[var(--butter-line)] text-[var(--butter-ink)] px-3.5 py-2.5 rounded-[14px] text-xs flex items-center gap-2 font-medium"
               data-dg-target="urgency"
             >
               <Clock className="w-4 h-4 shrink-0" />
@@ -405,15 +432,15 @@ export const TestShop: React.FC<TestShopProps> = ({
             </div>
           )}
 
-          {/* Product description & bullet specs */}
-          <p className="text-sm text-[#3D4B5C] leading-relaxed">
+          {/* Product description & specs */}
+          <p className="text-sm text-[var(--ink-700)] leading-relaxed">
             {currentProduct.description}
           </p>
 
-          <div className="space-y-2 border-t border-b border-[#E1E8F0] py-4 text-xs text-[#3D4B5C]">
+          <div className="space-y-2 border-t border-b border-[var(--line-card)] py-4 text-xs text-[var(--ink-700)]">
             {currentProduct.features.map((feat, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[#14513A]" />
+                <Check className="w-3.5 h-3.5 text-[var(--mint-ink)] shrink-0" />
                 <span>{feat}</span>
               </div>
             ))}
@@ -423,10 +450,10 @@ export const TestShop: React.FC<TestShopProps> = ({
           <div className="product-actions cart-actions flex flex-col gap-4">
             {currentProduct.addonOption && (
               <label
-                className={`flex items-start gap-3 p-3 rounded-xl border text-xs cursor-pointer select-none transition-colors ${
+                className={`flex items-start gap-3 p-3.5 rounded-[14px] border text-xs cursor-pointer select-none transition-colors ${
                   isAddonChecked
-                    ? 'bg-[#DCEBFA]/30 border-[#9CC5EE]'
-                    : 'bg-[#F6F9FC] border-[#E1E8F0]'
+                    ? 'bg-[var(--accent-soft)] border-[var(--accent-border)]'
+                    : 'bg-[var(--bg-surface-solid)] border-[var(--line-card)]'
                 }`}
               >
                 <input
@@ -434,14 +461,14 @@ export const TestShop: React.FC<TestShopProps> = ({
                   id={currentProduct.addonOption.id}
                   checked={isAddonChecked}
                   onChange={(e) => setIsAddonChecked(e.target.checked)}
-                  className="mt-0.5 rounded border-[#C9D4E0] text-[#1D4E89] focus:ring-[#5B9BE0] w-4 h-4"
+                  className="mt-0.5 rounded border-[var(--line-strong)] accent-[#E6B85C] w-4 h-4 shrink-0"
                   data-dg-target="addon"
                 />
                 <div className="flex-1">
-                  <span className="font-semibold text-[#1F2A37] block">
+                  <span className="font-semibold text-[var(--ink-900)] block">
                     {currentProduct.addonOption.label}
                   </span>
-                  <span className="text-[11px] text-[#5F6E80]">
+                  <span className="text-[11px] text-[var(--ink-500)]">
                     {currentProduct.addonOption.isPreselected
                       ? 'Pre-selected option added directly to cart'
                       : 'Optional coverage available on request'}
@@ -451,57 +478,79 @@ export const TestShop: React.FC<TestShopProps> = ({
             )}
 
             <div className="flex flex-col sm:flex-row items-center gap-3">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -1.5, scale: 1.015 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ duration: 0.14 }}
                 onClick={handleAddToCart}
-                className="w-full sm:flex-1 h-12 bg-[#1D4E89] hover:bg-[#153a66] text-white font-semibold text-sm rounded-[14px] transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-primary-tactile w-full sm:flex-1 h-11 text-[#111318] font-semibold text-sm rounded-full flex items-center justify-center gap-2 cursor-pointer tabular whitespace-nowrap"
                 data-buy-button="true"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>
-                  Add to Cart · ${(currentProduct.currentPrice + (isAddonChecked && currentProduct.addonOption ? currentProduct.addonOption.price : 0)).toFixed(2)}
+                  + Add to Cart · ${(currentProduct.currentPrice + (isAddonChecked && currentProduct.addonOption ? currentProduct.addonOption.price : 0)).toFixed(2)}
                 </span>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -1.5 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ duration: 0.14 }}
                 onClick={() => setShowDeclineModal(true)}
-                className="w-full sm:w-auto px-4 h-12 bg-white border border-[#C9D4E0] hover:bg-slate-50 text-[#1F2A37] font-semibold text-xs rounded-[14px] transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 h-11 glass-control text-[var(--ink-900)] font-semibold text-xs rounded-full cursor-pointer whitespace-nowrap"
               >
-                Decline & Options
-              </button>
+                Decline &amp; Options
+              </motion.button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
+      </AnimatePresence>
 
-      {/* Decline / Offer Dismissal Modal (For Demonstrating DP-3 Confirm Shaming) */}
+      {/* Decline / Offer Dismissal Modal */}
+      <AnimatePresence>
       {showDeclineModal && (
-        <div className="fixed inset-0 bg-[#1F2A37]/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-[#E1E8F0] rounded-[24px] max-w-md w-full p-6 shadow-xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.16 }}
+          className="fixed inset-0 bg-[var(--modal-backdrop)] backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 8 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-panel rounded-[24px] max-w-md w-full p-6 flex flex-col gap-4"
+          >
             <div className="flex items-center justify-between">
-              <h3 className="font-display font-bold text-lg text-[#1F2A37]">
+              <h3 className="font-display font-bold text-lg text-[var(--ink-900)]">
                 Wait! Before you continue...
               </h3>
               <button
+                type="button"
                 onClick={() => setShowDeclineModal(false)}
-                className="text-[#5F6E80] hover:text-[#1F2A37] text-sm font-bold"
+                className="text-[var(--ink-500)] hover:text-[var(--ink-900)] p-1 rounded-full cursor-pointer"
+                aria-label="Close modal"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#3D4B5C] leading-relaxed">
+            <p className="text-xs text-[var(--ink-700)] leading-relaxed">
               {currentProduct.isPlanted
                 ? 'Exclusive member benefits and discount guarantees are currently applied to your selection.'
                 : 'You are viewing standard configuration options for your selected product.'}
             </p>
 
-            <div className="flex flex-col gap-2 pt-2">
+            <div className="flex flex-col gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setShowDeclineModal(false)}
-                className="w-full py-2.5 bg-[#DCEBFA] border border-[#9CC5EE] text-[#1D4E89] font-semibold text-xs rounded-xl hover:bg-[#c5e0fa] transition-colors"
+                className="btn-primary-tactile w-full py-2.5 text-[#111318] font-semibold text-xs rounded-full transition-colors cursor-pointer"
               >
                 Keep applied special benefits
               </button>
@@ -510,15 +559,16 @@ export const TestShop: React.FC<TestShopProps> = ({
               <button
                 type="button"
                 onClick={() => setShowDeclineModal(false)}
-                className="w-full py-2 bg-transparent text-[#5F6E80] hover:text-[#1F2A37] text-xs font-medium underline underline-offset-4 cursor-pointer decline-btn secondary-action"
+                className="w-full py-2 bg-transparent text-[var(--ink-500)] hover:text-[var(--ink-900)] text-xs font-medium underline underline-offset-4 cursor-pointer decline-btn secondary-action"
                 data-dg-action="decline"
               >
                 {currentProduct.declineButtonText}
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -146,45 +146,26 @@
     loadingStatusMsg.textContent = 'Extracting candidate elements (buttons, prices, timers)...';
     timerCheckingBox.classList.add('hidden');
 
-    // If extension runtime is available, ensure scripts are injected then trigger scan
+    // If extension runtime is available, send message to content script
     if (typeof chrome !== 'undefined' && chrome.tabs?.sendMessage && activeTabId) {
       try {
-        // Ensure scripts are injected via background service worker
-        chrome.runtime.sendMessage({ action: 'ENSURE_INJECTED', tabId: activeTabId }, (injectResp) => {
-          if (chrome.runtime.lastError || !injectResp || !injectResp.ok) {
-            isScanning = false;
-            scanBtn.disabled = false;
+        // Step 1: Simulated observation prompt for 10s timer verification
+        simulateTimerCheckUI();
+
+        chrome.tabs.sendMessage(activeTabId, { action: 'START_SCAN', observeTimer: true }, (response) => {
+          clearInterval(timerInterval);
+          isScanning = false;
+          scanBtn.disabled = false;
+
+          if (chrome.runtime.lastError || !response) {
+            console.warn('[DarkGuard] Content scanner not connected or page unsupported:', chrome.runtime.lastError?.message);
             showErrorState(
-              injectResp?.error ||
-                'This page restricts extension scripts (e.g., chrome://, edge://, or Web Store pages). Try scanning on an HTTP/HTTPS or local test-site page.'
+              'Content scanner is not yet injected into this tab, or this page restricts extension scripts (e.g., chrome:// URLs). Try scanning on an HTTP/HTTPS or local test-site page.'
             );
             return;
           }
 
-          // Step 1: Real 10-second observation countdown
-          simulateTimerCheckUI();
-
-          chrome.tabs.sendMessage(activeTabId, { action: 'START_SCAN', observeTimer: true }, (response) => {
-            clearInterval(timerInterval);
-            isScanning = false;
-            scanBtn.disabled = false;
-
-            if (chrome.runtime.lastError || !response) {
-              console.warn('[DarkGuard] Content scanner not connected or error:', chrome.runtime.lastError?.message);
-              showErrorState(
-                response?.error ||
-                  'Scanning failed or connection lost. Please reload the page and try again.'
-              );
-              return;
-            }
-
-            renderScanResult(response);
-
-            // Log scan to background history
-            try {
-              chrome.runtime.sendMessage({ action: 'LOG_SCAN', scan: response });
-            } catch {}
-          });
+          renderScanResult(response);
         });
       } catch (err) {
         clearInterval(timerInterval);
@@ -208,7 +189,7 @@
    * Displays the "checking timer..." progress UI while timer observation occurs.
    */
   function simulateTimerCheckUI() {
-    timerObservationCountdown = 10; // Real 10-second countdown matching observation window
+    timerObservationCountdown = 3; // 3 seconds preview for smooth UX
     timerCountdownSecs.textContent = timerObservationCountdown;
     timerCheckingBox.classList.remove('hidden');
     loadingTitle.textContent = 'Verifying Countdown Evidence...';
@@ -265,15 +246,6 @@
     // 4. ML Availability Banner
     if (result.ml_enabled === false || result.classifierChecksumValid === false) {
       mlUnavailableBanner.classList.remove('hidden');
-      const titleEl = document.getElementById('ml-banner-title');
-      const descEl = document.getElementById('ml-banner-desc');
-      if (result.classifierChecksumValid === false) {
-        if (titleEl) titleEl.textContent = 'Text model unavailable';
-        if (descEl) descEl.textContent = 'Model checksum verification failed. Running rules-only scan.';
-      } else {
-        if (titleEl) titleEl.textContent = 'Text model off (Release Gate)';
-        if (descEl) descEl.textContent = 'Text model is off because it did not pass the release gate. Running rules-only scan.';
-      }
     } else {
       mlUnavailableBanner.classList.add('hidden');
     }

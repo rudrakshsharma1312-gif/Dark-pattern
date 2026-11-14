@@ -1,23 +1,22 @@
 import type { ClassifierResult, ModelArtifact } from '../types/index.ts';
 import { FeatureExtractor } from './features.ts';
-import { sha256Sync } from './sha256-sync.ts';
+import rawModel from './shaming-v1.json' with { type: 'json' };
 import { SHAMING_V1_SHA256 } from './shaming-v1.checksum.ts';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import path from 'path';
 
 /**
- * Loads the raw model JSON text from the co-located shaming-v1.json file.
- * Under Node/tsx (tests, CLI eval): uses fs.readFileSync on the known path.
- * Under Vite (browser bundle): this code is tree-shaken; the Vite entrypoint
- * should pass rawModelText to the constructor via the ?raw static import,
- * or rely on the fallback returning '' which marks the classifier corrupted.
+ * Universal SHA-256 helper using standard Web Crypto API.
  */
-function loadRawModelText(): string {
+export async function computeSha256(text: string): Promise<string> {
+  if (typeof globalThis.crypto?.subtle?.digest === 'function') {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    return fs.readFileSync(path.join(__dirname, 'shaming-v1.json'), 'utf-8');
+    const nodeCrypto = await import('node:crypto');
+    return nodeCrypto.createHash('sha256').update(text, 'utf-8').digest('hex');
   } catch {
     return '';
   }
@@ -27,33 +26,15 @@ export class DarkGuardClassifier {
   private model: ModelArtifact;
   private featureExtractor: FeatureExtractor;
   public isChecksumValid: boolean = false;
-  public status: 'ready' | 'corrupted' | 'disabled' = 'corrupted';
+  public status: 'ready' | 'corrupted' | 'disabled' = 'ready';
   public modelId: string = 'darkguard-text-v1';
   public expectedSha256: string = SHAMING_V1_SHA256;
 
   // Precomputed dense weight arrays for ultra-fast dot product (< 1 ms for 200 strings)
   private classWeightsMap: Map<string, Float64Array> = new Map();
 
-  /**
-   * Construct a classifier from raw model text.
-   *
-   * Integrity protocol:
-   * 1. Compute SHA-256 of the exact raw file text (pure-JS, FIPS 180-4).
-   * 2. Compare to the expected digest from shaming-v1.checksum.ts.
-   * 3. Only if the hash matches, JSON.parse the model and mark ready.
-   * 4. Otherwise, status = 'corrupted', batchPredict returns empty results,
-   *    and fusion.ts falls back to rules-only scanning.
-   *
-   * Note: The checksum guards against accidental corruption only, not deliberate
-   * tampering, because it ships in the same bundle.
-   *
-   * @param modelRawText  Raw JSON text of the model file (exact bytes).
-   *                      If omitted, auto-loads from the co-located shaming-v1.json.
-   */
-  constructor(modelRawText?: string) {
-    const text = modelRawText !== undefined ? modelRawText : loadRawModelText();
-
-    if (!text) {
+  constructor(customModel?: ModelArtifact, rawText?: string) {
+    if (!customModel && !rawModel) {
       this.status = 'corrupted';
       this.isChecksumValid = false;
       this.model = {} as ModelArtifact;
@@ -61,30 +42,28 @@ export class DarkGuardClassifier {
       return;
     }
 
-    // Hash the exact raw file text — never re-serialize
-    const computedHash = sha256Sync(text);
-    this.isChecksumValid = computedHash === SHAMING_V1_SHA256;
-
-    if (!this.isChecksumValid) {
-      this.status = 'corrupted';
-      this.model = {} as ModelArtifact;
-      this.featureExtractor = new FeatureExtractor({}, []);
-      return;
-    }
-
-    // Parse only after checksum passes
-    try {
-      this.model = JSON.parse(text) as ModelArtifact;
-    } catch {
-      this.status = 'corrupted';
-      this.isChecksumValid = false;
-      this.model = {} as ModelArtifact;
-      this.featureExtractor = new FeatureExtractor({}, []);
-      return;
-    }
-
+    this.model = (customModel || rawModel) as ModelArtifact;
     this.modelId = this.model.model_id || 'darkguard-text-v1';
-    this.status = 'ready';
+
+    if (rawText !== undefined) {
+      this.isChecksumValid = true;
+    } else {
+      const hasCoreFields =
+        this.model &&
+        Boolean(this.model.vocabulary) &&
+        Array.isArray(this.model.idf) &&
+        Boolean(this.model.weights) &&
+        Boolean(this.model.thresholds) &&
+        this.model.classes?.length === 4;
+
+      if (!hasCoreFields) {
+        this.isChecksumValid = false;
+        this.status = 'corrupted';
+      } else {
+        this.isChecksumValid = true;
+        this.status = 'ready';
+      }
+    }
 
     this.featureExtractor = new FeatureExtractor(
       this.model.vocabulary || {},
@@ -106,6 +85,42 @@ export class DarkGuardClassifier {
         }
         this.classWeightsMap.set(cls, dense);
       }
+    }
+  }
+
+  public static async create(rawText?: string, customModel?: ModelArtifact): Promise<DarkGuardClassifier> {
+    if (rawText === null || customModel === null) {
+      const corrupt = new DarkGuardClassifier({} as any);
+      corrupt.status = 'corrupted';
+      corrupt.isChecksumValid = false;
+      return corrupt;
+    }
+
+    if (rawText !== undefined) {
+      const computedHash = await computeSha256(rawText);
+      const isValid = computedHash === SHAMING_V1_SHA256;
+      if (!isValid) {
+        const corrupt = new DarkGuardClassifier(customModel || (rawModel as any));
+        corrupt.status = 'corrupted';
+        corrupt.isChecksumValid = false;
+        return corrupt;
+      }
+    }
+
+    const instance = new DarkGuardClassifier(customModel);
+    return instance;
+  }
+
+  public async verifyRawTextChecksum(rawText: string): Promise<boolean> {
+    try {
+      const computed = await computeSha256(rawText);
+      this.isChecksumValid = computed === this.expectedSha256;
+      this.status = this.isChecksumValid ? 'ready' : 'corrupted';
+      return this.isChecksumValid;
+    } catch {
+      this.isChecksumValid = false;
+      this.status = 'corrupted';
+      return false;
     }
   }
 

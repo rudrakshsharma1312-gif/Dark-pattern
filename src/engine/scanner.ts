@@ -23,40 +23,16 @@ export function extractCandidates(rootElement: HTMLElement = document.body): Can
 
   // Helper to check visibility
   const isElementVisible = (el: HTMLElement): boolean => {
-    if (!el) return false;
-    const win = el.ownerDocument?.defaultView || (typeof window !== 'undefined' ? window : null);
-    if (!win) return true;
-    if (typeof win.getComputedStyle !== 'function') return true;
-
-    // Check element and all ancestors up to body
-    let current: HTMLElement | null = el;
-    while (current && current.tagName !== 'BODY') {
-      const s = win.getComputedStyle(current);
-      if (
-        s.display === 'none' ||
-        s.visibility === 'hidden' ||
-        parseFloat(s.opacity || '1') === 0
-      ) {
-        return false;
-      }
-      current = current.parentElement;
+    if (!el || !el.getBoundingClientRect) return false;
+    const style = window.getComputedStyle(el);
+    if (
+      style.display === 'none' ||
+      style.visibility === 'hidden' ||
+      parseFloat(style.opacity || '1') === 0
+    ) {
+      return false;
     }
-
-    if (!el.getBoundingClientRect) return true;
     const rect = el.getBoundingClientRect();
-
-    const isJsdom = typeof win.navigator !== 'undefined' && /jsdom/i.test(win.navigator.userAgent || '');
-    if (isJsdom) {
-      // In JSDOM, default Element.prototype.getBoundingClientRect returns 0x0 because JSDOM lacks a layout engine
-      // If getBoundingClientRect has been explicitly mocked on the element, respect its dimensions
-      const isMocked = el.getBoundingClientRect !== win.Element?.prototype?.getBoundingClientRect;
-      if (isMocked) {
-        return rect.width > 0 && rect.height > 0;
-      }
-      return true;
-    }
-
-    // In a real browser, element must have non-zero dimensions
     return rect.width > 0 && rect.height > 0;
   };
 
@@ -76,6 +52,7 @@ export function extractCandidates(rootElement: HTMLElement = document.body): Can
     'input[type="checkbox"]',
     'input[type="radio"]',
     '[role="button"]',
+    '[data-dg-target]',
     '.price',
     '.discount',
     '.timer',
@@ -95,8 +72,8 @@ export function extractCandidates(rootElement: HTMLElement = document.body): Can
   let refCounter = 1;
 
   elements.forEach((el) => {
-    // If element is inside an existing Ethical View node or test harness bar, ignore it
-    if (el.closest('[data-dg-owner]')) return;
+    // If element is inside an existing Ethical View node, ignore it
+    if (el.closest('[data-dg-owner="ethical-view"]')) return;
     if (isSensitive(el)) return;
     if (!isElementVisible(el)) return;
 
@@ -143,10 +120,6 @@ export function extractCandidates(rootElement: HTMLElement = document.body): Can
       if (firstClass) selector += `.${firstClass}`;
     }
 
-    const win = el.ownerDocument?.defaultView || (typeof window !== 'undefined' ? window : null);
-    const scrollX = win?.scrollX || 0;
-    const scrollY = win?.scrollY || 0;
-
     candidates.push({
       ref,
       tag,
@@ -154,8 +127,8 @@ export function extractCandidates(rootElement: HTMLElement = document.body): Can
       text: cleanText,
       attributes,
       rect: {
-        x: Math.round(rect.left + scrollX),
-        y: Math.round(rect.top + scrollY),
+        x: Math.round(rect.left + window.scrollX),
+        y: Math.round(rect.top + window.scrollY),
         w: Math.round(rect.width),
         h: Math.round(rect.height),
       },
