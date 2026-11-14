@@ -180,11 +180,6 @@ This project was built following the 12-hour hackathon work division across thre
 
 ---
 
-## 10. 3-Minute Hackathon Demo Script
 
-* **0:00 – 0:40 (Member C)**: Open [`test-site/planted-urgency-01.html`](test-site/planted-urgency-01.html). Click **Scan this page**. Highlight the frozen `00:14:59` timer and the high risk score gauge.
-* **0:40 – 1:15 (Member A)**: Switch to [`test-site/planted-discount-01.html`](test-site/planted-discount-01.html). Click finding to locate the fake `70% OFF` claim. Explain the arithmetic proof ($400 down to $200 is actually 50%).
-* **1:15 – 1:45 (Member C)**: Enable **Ethical View**. Show contextual note callouts and top banner. Click **Show original** to demonstrate 100% non-destructive page restoration.
-* **1:45 – 2:10 (Member A)**: Open clean control page [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html). Run scan. Demonstrate that DarkGuard reports 0 findings and does not "cry wolf".
 * **2:10 – 2:50 (Member B)**: Present the rules-only vs rules+ML evaluation table and model card. Explain on-device TF-IDF classification and SHA-256 fallback protection.
 * **2:50 – 3:00 (All)**: Closing summary on consumer privacy (nothing leaves the browser) and future roadmap.
