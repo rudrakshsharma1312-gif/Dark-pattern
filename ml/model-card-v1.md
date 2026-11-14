@@ -17,6 +17,8 @@
   - **DP-3:** Confirm Shaming (`shaming`)
   - **DP-4:** Pre-selected Extras (`addon_extra`)
 - **Pipeline Integration:** Runs locally in the browser as a fast propose-stage signal. Text probabilities are forwarded to Member A's `fusion.js` where they are fused with deterministic DOM rule evidence.
+  - *DP-2 Constraint:* DP-2 receives **no contribution from ML** in production because `fusion.ts` explicitly drops discount wording signals without deterministic arithmetic verification from `dp2-discount.ts`.
+  - *Detector Scope:* Rules-only recall for DP-2 (4 of 10 pages) and DP-4 (5 of 11 pages) is constrained by Member A's deterministic detector regex and DOM matching logic, not Member B's ML files.
 - **Out of Scope:**
   - Definitive legal determinations of deceptive intent.
   - Multi-page semantic reasoning or full article text.
@@ -54,11 +56,11 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
 
 | Category | Class | Threshold | Precision | Recall | F1 Score | ROC AUC | Test Positives | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| DP-1 | `urgency` | 0.48 | 0.833 | 0.968 | 0.896 | 0.995 | 31 | PASS |
-| DP-3 | `shaming` | 0.44 | 0.912 | 1.000 | 0.954 | 0.999 | 31 | PASS |
-| DP-4 | `addon_extra` | 0.62 | 1.000 | 0.806 | 0.893 | 0.997 | 31 | PASS |
-| DP-2 | `discount_wording` | 0.50 | 0.935 | 1.000 | 0.967 | 0.998 | 29 | PASS |
-| **Macro Average** | **All Classes** | — | **0.920** | **0.944** | **0.927** | **0.997** | **122** | **PASS** |
+| DP-1 | `urgency` | 0.48 | 0.833 | 0.968 (30 of 31) | 0.896 | 0.995 | 31 | PASS |
+| DP-3 | `shaming` | 0.44 | 0.912 | 1.000 (31 of 31) | 0.954 | 0.999 | 31 | PASS |
+| DP-4 | `addon_extra` | 0.62 | 1.000 | 0.806 (25 of 31) | 0.893 | 0.997 | 31 | PASS |
+| DP-2 | `discount_wording` | 0.50 | 0.935 | 1.000 (29 of 29) | 0.967 | 0.998 | 29 | PASS |
+| **Macro Average** | **All Classes** | — | **0.920** | **0.944** (115 of 122) | **0.927** | **0.997** | **122** | **PASS** |
 
 ### Per-Site Generalization (Unseen Test Sites)
 - **`site-H` (47 strings):** Urgency P=0.929 R=1.000; Shaming P=0.889 R=1.000; Extras P=1.000 R=0.857; Discounts P=1.000 R=1.000.
@@ -67,38 +69,52 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
 
 ---
 
-## 5. Leakage & Near-Neighbor Analysis
+## 5. System-Level Evaluation (Rules vs. Rules+ML on 30 Pages)
 
-- **Word-Bigram Jaccard Distribution:** Across all 168 test strings compared against all 509 train strings, mean Jaccard similarity is **0.254** (median **0.222**).
-- **High-Similarity Pairs ($> 0.70$):** Only **4 out of 168 test strings (2.4%)** share $>0.70$ Jaccard similarity with a training string. All 4 pairs agree 100% on their ground-truth labels.
-- **Performance on Filtered Test Subset ($N=164$, Jaccard $\le 0.70$):** Macro Precision = **0.931**, Macro Recall = **0.935**, Macro F1 = **0.930**. Generalization is robust beyond near-neighbor phrasing.
+> **Statistical Sample Size Context:** Each category contains only approximately 10 positive planted pages (DP-1: 11, DP-2: 10, DP-3: 10, DP-4: 11). Consequently, differences of 1–2 pages are within statistical noise.
+
+| Category | Detection Mode | Precision | Recall (Planted Pages) | F1 Score | Negative-Page False Alarm Rate |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **DP-1 Fake Urgency** | Rules-only | 1.000 (7 of 7) | 0.636 (7 of 11) | 0.778 | 0.000 (0 of 19) |
+| | **Rules + ML** | **0.846** (11 of 13) | **1.000** (11 of 11) | **0.917** | **0.105** (2 of 19) |
+| **DP-2 Misleading Discount** | Rules-only | 1.000 (4 of 4) | 0.400 (4 of 10) | 0.571 | 0.000 (0 of 20) |
+| | **Rules + ML** | **1.000** (4 of 4) | **0.400** (4 of 10) | **0.571** | **0.000** (0 of 20) |
+| **DP-3 Confirm Shaming** | Rules-only | 1.000 (8 of 8) | 0.800 (8 of 10) | 0.889 | 0.000 (0 of 20) |
+| | **Rules + ML** | **0.909** (10 of 11) | **1.000** (10 of 10) | **0.952** | **0.050** (1 of 20) |
+| **DP-4 Pre-selected Extras** | Rules-only | 1.000 (5 of 5) | 0.455 (5 of 11) | 0.625 | 0.000 (0 of 19) |
+| | **Rules + ML** | **0.900** (9 of 10) | **0.818** (9 of 11) | **0.857** | **0.053** (1 of 19) |
+| **MACRO AVERAGE** | Rules-only | 1.000 | 0.573 (24 of 42) | 0.728 | 0.000 (0 of 78) |
+| | **Rules + ML** | **0.914** | **0.804** (34 of 42) | **0.856** | **0.052** (4 of 78) |
+
+- **Clean Page-Level False Alarm Rate:** **30.0% (3 of 10 clean pages had $\ge 1$ false detection)**.
+- **Clean Element Detection-Level False Alarm Rate:** **17.4% (4 false detections out of 23 total candidate elements)**. In Rules-only mode, this rate is **0.0% (0 of 23)**.
 
 ---
 
 ## 6. Real-World Probe Dataset (`eval/real-sample.csv`, N=50)
 
-- **Provenance:** Hand-picked probe of 50 strings written as look-alikes of live e-commerce UI patterns (Amazon, Booking.com, Best Buy, ASOS, Shein, Apple, Muji). **Not collected via live crawling and not claimed as representative of real-world production distribution.**
+- **Provenance:** Hand-picked probe of 50 strings written from memory as look-alikes of live e-commerce UI patterns (Amazon, Booking.com, Best Buy, ASOS, Shein, Apple, Muji). **Not collected via live crawling and not claimed as representative of real-world production distribution.**
 - **Strict Constraint:** Never used for training, validation, or threshold tuning.
 - **ML-Only Probe Metrics:**
-  - `urgency`: P=0.909, R=1.000, F1=0.952
-  - `shaming`: P=1.000, R=1.000, F1=1.000
-  - `addon_extra`: P=1.000, R=0.500, F1=0.667 (5 TP, 5 FN)
-  - `discount_wording`: P=0.909, R=1.000, F1=0.952
-  - **Macro Average:** Precision = **0.955**, Recall = **0.875**, F1 = **0.893**.
-  - **Clean String False-Alarm Rate:** 0 / 10 (0.0%).
+  - `urgency`: P=0.909, R=1.000, F1=0.952 (10 of 10)
+  - `shaming`: P=1.000, R=1.000, F1=1.000 (10 of 10)
+  - `addon_extra`: P=1.000, R=0.500, F1=0.667 (5 of 10)
+  - `discount_wording`: P=0.909, R=1.000, F1=0.952 (10 of 10)
+  - **Macro Average:** Precision = **0.955**, Recall = **0.875** (35 of 40), F1 = **0.893**.
+  - **Clean String False-Alarm Rate:** 0 of 10 (0.0%).
 
 ---
 
-## 7. Known Weaknesses & Limitations
+## 7. Known Weaknesses & Missing Hard Negatives
 
-1. **Clean String False-Alarm Rate on Neutral Strings (18.4%):**
-   - Out of 49 neutral test strings in `strings.csv`, 9 strings (**18.4%**) triggered at least one class threshold (e.g. `"Buy it now"` triggered urgency; `"No thanks I already have insurance"` triggered shaming; `"Price $29.99"` triggered discount wording).
-2. **Pre-selected Extras Recall on Unconventional Domains (50.0% on probe):**
-   - The conservative threshold (0.62) tuned for high precision missed airline baggage/seat-assignment copy lacking explicit warranty/protection terms.
-3. **Clean Page False Positives without Container Context:**
-   - Isolated strings like `"No thanks"` and `"In stock"` fire when evaluated outside of their modal or inventory containers.
-4. **Sample Size Limitations:**
-   - Test set ($N=168$) and hand-picked probe ($N=50$) are modest in size.
+1. **Missing Hard Negatives & Statistical Shortcuts:**
+   - `"no thanks"` in training data was 90% positive (18 shaming vs. 2 neutral), causing the model to learn a shortcut on isolated refusal buttons (`"No thanks"` fired shaming with $p=0.861$).
+   - `"stock"` carries a heavy positive weight (+1.731) from scarcity copy, causing isolated `"In stock"` to fire urgency ($p=0.690$).
+   - `"each"` was absent from the vocabulary (0 training occurrences), causing `"$36.00 each"` to normalize entirely onto token `"00"`, which carries a +2.870 add-on weight and fired with $p=0.894$.
+2. **Neutral Test String False-Alarm Rate (18.4%):**
+   - 9 out of 49 neutral test strings in `strings.csv` triggered at least one class threshold.
+3. **Pre-selected Extras Recall on Travel Copy (50.0% on probe):**
+   - High threshold (0.62) missed airline luggage and seat options that lacked warranty terms.
 
 ---
 
@@ -110,11 +126,11 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
 
 ---
 
-## 9. Final Release Gate Status (Rules vs. Rules+ML on 30 Pages)
+## 9. Final Release Gate Status (ML-R9)
 
 - **Training Gate (on `strings.csv`):** PASSED (Precision: 0.920, Recall: 0.944, FP rate: 0.046).
 - **Final System Release Gate (on 30 pages in `eval/run.ts`):** **FAILED**.
   - Macro Precision: **0.914** ($\ge 0.85$, PASS)
   - Macro Recall: **0.804** ($\ge 0.70$, PASS)
-  - Clean Page False Alarms: **+3 pages** (FAILED: target is $\le 0$).
+  - Clean Page False Alarms: **+3 clean pages (4 detections)** (FAILED: target is $\le 0$).
 - **Deployment Recommendation:** **Ship with ML disabled by default (`ml_enabled: false`)** to ensure zero false positives on verified clean shopping sites.
