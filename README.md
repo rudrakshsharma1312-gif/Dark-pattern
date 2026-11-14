@@ -151,7 +151,7 @@ The test website is **100% offline and standalone** with zero external dependenc
 
 ---
 
-## 8. Integration Architecture & Team Responsibilities
+## 8. Integration Architecture
 
 This project was built following the 12-hour hackathon work division across three specialized team roles:
 
@@ -161,10 +161,6 @@ This project was built following the 12-hour hackathon work division across thre
 | **Member B** | **ML & Evaluation Engineer** | Dataset labeling (`ml/data/strings.csv`), TF-IDF logistic regression model (`ml/train.py`, `shaming-v1.json`), JS classifier (`ml/classifier.js`), checksum integrity verification, and evaluation report runner (`eval/run.js`). |
 | **Member C** | **Product & Demo Lead** | 14-page test website (`test-site/`), extension popup (`popup/`), suspicious element highlighter (`content/highlighter.js`), Ethical View engine (`content/ethical-view.js`, `ethical-view.css`, `templates.json`), landing page (`landing/`), and documentation (`README.md`). |
 
-### Current Integration Status & Known Dependencies
-* **Member C components (Test site, popup UI, highlighter, Ethical View, landing page)** are fully implemented and verified.
-* **Member A integration**: Live scanning communication relies on Member A's content script injection (`START_SCAN` message handler). When testing standalone or before Member A's injection is merged, the popup features an integrated **Load Sample Demo Result** fallback so judges can evaluate the complete UI flow without blocking.
-* **Member B integration**: The ML classifier is connected via `features.js` and `classifier.js`. If the model file is disabled or fails checksum verification, the popup cleanly falls back to rule-only verification and displays the **"Text model unavailable"** status banner.
 
 ---
 
