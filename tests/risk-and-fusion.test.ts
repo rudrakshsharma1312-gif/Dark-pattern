@@ -289,5 +289,76 @@ describe('Risk Calculation & Fusion Engine Suite', () => {
 
       expect(detections.length).toBe(0);
     });
+
+    it('DP-1 text-only urgency when ML is off: informational note with score contribution 0 and ET-URG-02', () => {
+      const ev: RuleEvidence = {
+        ruleId: 'DP-1',
+        ruleName: 'Fake Urgency & Scarcity',
+        category: 'fake_urgency',
+        candidateRef: 'c-1',
+        evidenceCode: 'urgency_text_only',
+        confidence: 0.5,
+        severity: 2,
+        details: { initialValue: 'Only 3 left in stock - order soon.' },
+        explanation: 'Urgency message: no visible stock or deadline indicator on this page supports this claim.',
+      };
+
+      const detections = fuseDetections({
+        candidates: [candidate],
+        ruleEvidence: [ev],
+        classifierResults: [],
+        classifierAvailable: false,
+      });
+
+      expect(detections.length).toBe(1);
+      const det = detections[0];
+      expect(det.templateId).toBe('ET-URG-02');
+      expect(det.source).toBe('rule');
+      expect(det.confidence).toBe(0.5);
+      expect(det.severity).toBe(2);
+      expect(det.details?.scoreContributionZero).toBe(true);
+
+      const risk = calculateRiskScore(detections);
+      expect(risk.score).toBe(0);
+      expect(risk.level).toBe('Low');
+    });
+
+    it('DP-1 text-only urgency when ML agrees: counts toward risk score with source rule+ml', () => {
+      const ev: RuleEvidence = {
+        ruleId: 'DP-1',
+        ruleName: 'Fake Urgency & Scarcity',
+        category: 'fake_urgency',
+        candidateRef: 'c-1',
+        evidenceCode: 'urgency_text_only',
+        confidence: 0.5,
+        severity: 2,
+        details: { initialValue: 'Only 3 left in stock - order soon.' },
+        explanation: 'Urgency message: no visible stock or deadline indicator on this page supports this claim.',
+      };
+
+      const mlResults: ClassifierResult[] = [
+        {
+          candidateRef: 'c-1',
+          probabilities: { urgency: 0.85, shaming: 0.05, addon_extra: 0.02, discount_wording: 0.01 },
+          topClass: 'fake_urgency',
+          topProbability: 0.85,
+        },
+      ];
+
+      const detections = fuseDetections({
+        candidates: [candidate],
+        ruleEvidence: [ev],
+        classifierResults: mlResults,
+        classifierAvailable: true,
+      });
+
+      expect(detections.length).toBe(1);
+      const det = detections[0];
+      expect(det.source).toBe('rule+ml');
+      expect(det.details?.scoreContributionZero).toBeFalsy();
+
+      const risk = calculateRiskScore(detections);
+      expect(risk.score).toBeGreaterThan(0);
+    });
   });
 });

@@ -862,12 +862,23 @@
         }
       }
       let templateId = "ET-URG-01";
-      if (ev.evidenceCode === "frozen_countdown") templateId = "ET-URG-01";
-      else if (ev.evidenceCode === "urgency_text_only") templateId = "ET-URG-02";
-      else if (ev.evidenceCode === "arithmetic_mismatch") templateId = "ET-DISC-01";
-      else if (ev.evidenceCode === "unlabeled_reference") templateId = "ET-DISC-02";
-      else if (ev.evidenceCode === "shaming_phrase") templateId = "ET-CONF-01";
-      else if (ev.evidenceCode === "preselected_addon") templateId = "ET-EXTRA-01";
+      let isInformational = false;
+      if (ev.evidenceCode === "frozen_countdown") {
+        templateId = "ET-URG-01";
+      } else if (ev.evidenceCode === "urgency_text_only") {
+        templateId = "ET-URG-02";
+        if (source === "rule") {
+          isInformational = true;
+        }
+      } else if (ev.evidenceCode === "arithmetic_mismatch") {
+        templateId = "ET-DISC-01";
+      } else if (ev.evidenceCode === "unlabeled_reference") {
+        templateId = "ET-DISC-02";
+      } else if (ev.evidenceCode === "shaming_phrase") {
+        templateId = "ET-CONF-01";
+      } else if (ev.evidenceCode === "preselected_addon") {
+        templateId = "ET-EXTRA-01";
+      }
       let sellerQuestion;
       if (ev.category === "fake_urgency") {
         sellerQuestion = "Is this promotion or timer linked to an actual inventory limit?";
@@ -892,9 +903,12 @@
         evidenceSnippet: candidate?.text || "",
         elementSelector: candidate?.selector || "",
         elementRect: candidate?.rect,
-        details: ev.details,
+        details: {
+          ...ev.details,
+          ...isInformational ? { scoreContributionZero: true, isInformational: true } : {}
+        },
         sellerQuestion,
-        isUncertain: false
+        isUncertain: isInformational ? true : false
       });
     }
     if (classifierAvailable) {
@@ -983,6 +997,7 @@
       let maxConfidence = 0;
       let isAllClassifierOnly = true;
       for (const d of dets) {
+        if (d.details?.scoreContributionZero) continue;
         if (d.severity > maxSeverity) maxSeverity = d.severity;
         if (d.confidence > maxConfidence) maxConfidence = d.confidence;
         if (d.source !== "ml") isAllClassifierOnly = false;

@@ -49,6 +49,7 @@ export function calculateRiskScore(detections: Detection[]): RiskCalculation {
     let isAllClassifierOnly = true;
 
     for (const d of dets) {
+      if (d.details?.scoreContributionZero) continue;
       if (d.severity > maxSeverity) maxSeverity = d.severity;
       if (d.confidence > maxConfidence) maxConfidence = d.confidence;
       if (d.source !== 'ml') isAllClassifierOnly = false;
