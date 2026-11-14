@@ -4,94 +4,71 @@ import path from 'path';
 import { JSDOM } from 'jsdom';
 import { DarkGuardScanner } from '../src/engine/orchestrator';
 
-describe('Real-Site False-Positive Hardening Analysis', () => {
+describe('Real-World Clean Fixtures Regression Suite (Score 0 Expected)', () => {
   const fixturesDir = path.resolve(__dirname, 'fixtures/real-world-clean');
 
-  it('scans clean-from-pricing.html with 0 false positives', async () => {
-    const html = fs.readFileSync(path.join(fixturesDir, 'clean-from-pricing.html'), 'utf-8');
-    const dom = new JSDOM(html, { url: 'http://localhost:3000/clean-from-pricing.html' });
+  const cleanFixtures = [
+    {
+      file: 'clean-from-pricing.html',
+      name: 'Clean From Pricing ($49 range & honest MSRP)',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-polite-decline.html',
+      name: 'Clean Polite Decline (No thanks / Maybe later)',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-newsletter-checkbox.html',
+      name: 'Clean Newsletter & Terms Checkboxes',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-free-shipping.html',
+      name: 'Clean Free Shipping Over $50 Banner',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-sale-ends-sunday.html',
+      name: 'Clean Sale Ends Sunday (No timer)',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-remember-me.html',
+      name: 'Clean Remember Me Login Checkbox',
+      expectedDetections: 0,
+    },
+    {
+      file: 'clean-stock-urgency.html',
+      name: 'Clean Stock Urgency (Only 3 left in stock)',
+      // Text-only urgency produces an informational note (ET-URG-02) but zero score contribution
+      expectedDetections: 1,
+      isInformationalOnly: true,
+    },
+  ];
+
+  it.each(cleanFixtures)('produces 0 risk score on $name ($file)', async (fixture) => {
+    const html = fs.readFileSync(path.join(fixturesDir, fixture.file), 'utf-8');
+    const dom = new JSDOM(html, { url: `http://localhost:3000/${fixture.file}` });
     try {
       const scanner = new DarkGuardScanner();
       const result = await scanner.scan({
         container: dom.window.document.body,
         domain: 'localhost',
-        urlPath: '/clean-from-pricing.html',
+        urlPath: `/${fixture.file}`,
         observeMs: 1500,
         mlEnabled: false,
       });
 
-      expect(result.detections.length).toBe(0);
+      // All honest real-world clean fixtures must produce Risk Score 0 and Low band
       expect(result.risk_score).toBe(0);
-    } finally {
-      dom.window.close();
-    }
-  });
+      expect(result.level).toBe('Low');
+      expect(result.detections.length).toBe(fixture.expectedDetections);
 
-  it('scans clean-polite-decline.html with 0 false positives', async () => {
-    const html = fs.readFileSync(path.join(fixturesDir, 'clean-polite-decline.html'), 'utf-8');
-    const dom = new JSDOM(html, { url: 'http://localhost:3000/clean-polite-decline.html' });
-    try {
-      const scanner = new DarkGuardScanner();
-      const result = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: '/clean-polite-decline.html',
-        observeMs: 1500,
-        mlEnabled: false,
-      });
-
-      // Simple "No thanks" / "Maybe later" should NOT trigger confirm_shaming in rules mode
-      const shamingHits = result.detections.filter((d) => d.categoryId === 'DP-3');
-      expect(shamingHits.length).toBe(0);
-      expect(result.detections.length).toBe(0);
-    } finally {
-      dom.window.close();
-    }
-  });
-
-  it('analyzes clean-stock-urgency.html for text-only urgency false alarm', async () => {
-    const html = fs.readFileSync(path.join(fixturesDir, 'clean-stock-urgency.html'), 'utf-8');
-    const dom = new JSDOM(html, { url: 'http://localhost:3000/clean-stock-urgency.html' });
-    try {
-      const scanner = new DarkGuardScanner();
-      const result = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: '/clean-stock-urgency.html',
-        observeMs: 1500,
-        mlEnabled: false,
-      });
-
-      // DP-1 flags static "Only 3 left in stock" with confidence 0.50 (text-only rule match)
-      expect(result.detections.length).toBe(1);
-      const flag = result.detections[0];
-      expect(flag.categoryId).toBe('DP-1');
-      expect(flag.confidence).toBe(0.5);
-      expect(flag.source).toBe('rule');
-    } finally {
-      dom.window.close();
-    }
-  });
-
-  it('analyzes clean-newsletter-checkbox.html for preselected extra keyword collision', async () => {
-    const html = fs.readFileSync(path.join(fixturesDir, 'clean-newsletter-checkbox.html'), 'utf-8');
-    const dom = new JSDOM(html, { url: 'http://localhost:3000/clean-newsletter-checkbox.html' });
-    try {
-      const scanner = new DarkGuardScanner();
-      const result = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: '/clean-newsletter-checkbox.html',
-        observeMs: 1500,
-        mlEnabled: false,
-      });
-
-      // DP-4 flags because "subscribe" in "Subscribe to our weekly product newsletter" matches addon keyword
-      expect(result.detections.length).toBe(1);
-      const flag = result.detections[0];
-      expect(flag.categoryId).toBe('DP-4');
-      expect(flag.confidence).toBe(0.85);
-      expect(flag.details?.addonLabel).toContain('Subscribe to our weekly product newsletter');
+      if (fixture.isInformationalOnly) {
+        expect(result.detections[0].templateId).toBe('ET-URG-02');
+        expect(result.detections[0].details?.scoreContributionZero).toBe(true);
+      }
     } finally {
       dom.window.close();
     }

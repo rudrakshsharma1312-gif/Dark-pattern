@@ -13,7 +13,10 @@ async function analyzeRealWorldCleanFixtures() {
     'clean-stock-urgency.html',
     'clean-from-pricing.html',
     'clean-newsletter-checkbox.html',
-    'clean-polite-decline.html'
+    'clean-polite-decline.html',
+    'clean-free-shipping.html',
+    'clean-sale-ends-sunday.html',
+    'clean-remember-me.html',
   ];
 
   console.log('='.repeat(80));
