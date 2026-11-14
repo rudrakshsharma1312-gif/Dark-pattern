@@ -118,8 +118,8 @@ The server will start at `http://localhost:3000`.
 The test website is **100% offline and standalone** with zero external dependencies.
 
 1. **Hosted Live Deployments**:
-   * **GitHub Pages**: `https://<username>.github.io/<repo>/test-site/` (Test Bed) and `https://<username>.github.io/<repo>/` (Landing Page)
-   * **Vercel Preview**: `https://<project-name>.vercel.app/test-site/` (Alternative preview via `vercel.json`)
+   * **GitHub Pages**: `https://aditri-web.github.io/Dark-pattern/test-site/` (Test Bed) and `https://aditri-web.github.io/Dark-pattern/` (Landing Page)
+   * **Vercel Preview**: `https://dark-pattern.vercel.app/test-site/` (Alternative preview via `vercel.json`)
 2. **Local Static Server**:
    * Serve `test-site/` directly using standard static server:
      ```bash
