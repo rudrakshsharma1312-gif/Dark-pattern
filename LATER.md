@@ -18,3 +18,6 @@ Items and architectural enhancements logged for future development:
 5. **Multi-Page Flow Tracking:**
    - Detect sneak-into-basket and subscription traps that span the product page, cart, and final payment screen.
 
+6. **Machine Learning Model v2 Roadmap (`eval/reports/LATER-ml.md`):**
+   - Detailed plan for retraining with numeric normalization (`NUM`), minimum known-token coverage thresholds, general hard-negative neutral patterns, double-blind annotation, and mandatory evaluation disclosure rules. See full document at [eval/reports/LATER-ml.md](file:///Users/aditrisingh/Dark-pattern/eval/reports/LATER-ml.md).
+
