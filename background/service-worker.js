@@ -36,12 +36,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       try {
         const tab = await chrome.tabs.get(tabId);
-        if (!tab || !tab.url) {
+        if (!tab) {
           sendResponse({ ok: false, error: 'Cannot access active tab details.' });
           return;
         }
 
-        if (isRestrictedUrl(tab.url)) {
+        if (!tab.url || isRestrictedUrl(tab.url)) {
           sendResponse({
             ok: false,
             error: 'This page restricts extension scripts (e.g., chrome://, edge://, or Web Store pages). Please scan on an HTTP, HTTPS, or local test-site page.',
