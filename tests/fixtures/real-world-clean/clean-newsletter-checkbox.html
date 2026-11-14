@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clean Checkout Preferences - Real World Pattern</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .checkout-form { max-width: 450px; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+    .option-group { margin-bottom: 12px; }
+    .option-group label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+    .btn-submit { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <form class="checkout-form">
+    <h2>Order Preferences</h2>
+    <div class="option-group">
+      <label>
+        <input type="checkbox" name="newsletter" checked>
+        Subscribe to our weekly product newsletter
+      </label>
+    </div>
+    <div class="option-group">
+      <label>
+        <input type="checkbox" name="save_address" checked>
+        Save shipping address to my account profile
+      </label>
+    </div>
+    <div class="option-group">
+      <label>
+        <input type="checkbox" name="terms" checked>
+        I agree to the Terms of Service and Privacy Policy
+      </label>
+    </div>
+    <button type="button" class="btn-submit">Place Order</button>
+  </form>
+</body>
+</html>

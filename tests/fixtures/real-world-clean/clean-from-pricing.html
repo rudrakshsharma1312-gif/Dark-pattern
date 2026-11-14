@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clean From Pricing - Real World Pattern</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .plan-card { max-width: 450px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+    .price-range { font-size: 26px; font-weight: bold; color: #222; }
+    .period { font-size: 14px; color: #666; }
+    .bundle-section { margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px; }
+    .original-price { text-decoration: line-through; color: #888; margin-right: 8px; }
+    .current-price { font-size: 20px; font-weight: bold; color: #0a84ff; }
+    .msrp { font-size: 12px; color: #777; }
+    .btn-select { background: #0070f3; color: white; border: none; border-radius: 6px; padding: 10px 20px; margin-top: 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="plan-card">
+    <h2>Cloud Backup & Storage</h2>
+    <p>Flexible cloud tiers for individuals and teams.</p>
+    <div>
+      <span class="price-range">From $49.00</span>
+      <span class="period">/ year</span>
+    </div>
+
+    <div class="bundle-section">
+      <h3>Pro Bundle with Unlimited Sync</h3>
+      <p>Annual commitment discounted plan:</p>
+      <div>
+        <span class="original-price">$120.00</span>
+        <span class="current-price">$99.00</span>
+        <span class="msrp">(MSRP $120.00)</span>
+      </div>
+    </div>
+
+    <button class="btn-select">Select Plan</button>
+  </div>
+</body>
+</html>
