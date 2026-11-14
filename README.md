@@ -1,4 +1,4 @@
-# DarkGuard AI 🛡️
+# DarkGuard AI 
 > Intelligent On-Device Auditor for Deceptive E-Commerce Design Patterns
 
 [![Project Status](https://img.shields.io/badge/Status-12--Hour%20Hackathon%20Build-blue)](#)
@@ -117,13 +117,62 @@ The server will start at `http://localhost:3000`.
 
 The test website is **100% offline and standalone** with zero external dependencies.
 
-1. **Direct File URL (No Server Required)**:
-   * Open `file:///c:/Users/gur83/Dark-pattern/test-site/index.html` in Chrome or Edge, or double-click [`test-site/index.html`](test-site/index.html).
-2. **Via Local Server**:
-   * Navigate to `http://localhost:3000/test-site/index.html` (or `npx serve test-site`).
-3. **Navigating the 14 Pages**:
-   * Use the **Evaluation Matrix Hub** at `test-site/index.html` to filter between the **8 planted pages** and **6 clean control pages**.
+1. **Hosted Live Deployments**:
+   * **GitHub Pages**: `https://aditri-web.github.io/Dark-pattern/test-site/` (Test Bed) and `https://aditri-web.github.io/Dark-pattern/` (Landing Page)
+   * **Vercel Preview**: `https://<your-project>.vercel.app/test-site/` (Placeholder until project is deployed via Vercel)
+2. **Local Static Server**:
+   * Serve `test-site/` directly using standard static server:
+     ```bash
+     npx serve test-site
+     ```
+     Navigate to `http://localhost:3000` (or the printed port).
+   * Or run development server:
+     ```bash
+     npm run dev
+     ```
+3. **Direct File URL (Zero Setup)**:
+   * Open `test-site/index.html` directly in Chrome or Edge by double-clicking [`test-site/index.html`](test-site/index.html).
+4. **Navigating the 16 Scenarios**:
+   * Use the **Evaluation Matrix Hub** at `test-site/index.html` to explore the **Featured Combined Demo** (`planted-combined-01.html`), the **8 single-pattern planted pages**, and the **7 clean control pages** (including `clean-ticking-timer.html`).
    * Each page includes a top inspection bar detailing the specific dark pattern under test and quick-jump links.
+
+### Automated Test & Verification Commands
+- `npm test`: Runs Vitest across all test suites (detectors, hint independence, privacy, contract, and real-world clean fixtures).
+- `npm run verify:pages`: Runs the 16-page end-to-end verification script (`scripts/verify-all-pages.ts`) against the test site, checking all 9 planted and 7 clean pages with DOM restoration.
+- `npm run eval:real`: Runs real engine evaluation on our own test bed (detectors were tuned on these pages), n=23 pages, rules-only. *Limitation: Real-site performance on live web stores has not been measured.*
+- `npm run package:extension`: Bundles `content/scanner.js`, validates manifest paths, and creates `dist/darkguard-extension.zip`.
+
+---
+
+## 6b. Manual Verification Checklist for Loaded Unpacked Extension
+
+Follow this checklist to verify DarkGuard AI in Google Chrome or Microsoft Edge:
+
+1. **Load Unpacked Extension**:
+   * Open `chrome://extensions` (or `edge://extensions`).
+   * Enable **Developer mode** (toggle in upper right).
+   * Click **Load unpacked** and select the repository root directory (where `manifest.json` resides).
+   * Confirm **DarkGuard AI** (v0.3.0) appears in the extensions list. Pin its icon to the toolbar.
+2. **ActiveTab Dynamic Injection Test**:
+   * Open [`test-site/planted-urgency-01.html`](test-site/planted-urgency-01.html) in a tab.
+   * Click the DarkGuard toolbar icon.
+   * Click **Scan this page**.
+   * Verify the **10-second countdown** UI observes the timer digits.
+   * Verify detection of **DP-1 Fake Urgency** with a 0–100 risk score and findings card.
+3. **Highlighter Verification**:
+   * Click the **Locate** button on the finding card.
+   * Verify the page smoothly scrolls to the countdown timer and displays the animated pulse outline (`🛡️ Detected Suspicious Element`).
+4. **Ethical View & Exact Restoration Verification**:
+   * Toggle the **Ethical View** switch.
+   * Confirm the lavender top banner and contextual note callouts appear.
+   * Click **Show original** in the banner.
+   * Verify 100% exact DOM restoration: all notes and outline classes are stripped with zero residual layout artifacts.
+5. **Clean Baseline Check (No False Positives)**:
+   * Open [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html).
+   * Run a scan. Verify **0 findings** are reported and the risk level is **Low (0/100)**.
+6. **Restricted Page Safety Gate**:
+   * Open `chrome://extensions` and click **Scan this page**.
+   * Verify the popup displays a graceful error message indicating the browser restricts extension scripts on internal pages.
 
 ---
 
@@ -151,7 +200,7 @@ The test website is **100% offline and standalone** with zero external dependenc
 
 ---
 
-## 8. Integration Architecture & Team Responsibilities
+## 8. Integration Architecture
 
 This project was built following the 12-hour hackathon work division across three specialized team roles:
 
@@ -162,9 +211,9 @@ This project was built following the 12-hour hackathon work division across thre
 | **Member C** | **Product & Demo Lead** | 14-page test website (`test-site/`), extension popup (`popup/`), suspicious element highlighter (`content/highlighter.js`), Ethical View engine (`content/ethical-view.js`, `ethical-view.css`, `templates.json`), landing page (`landing/`), and documentation (`README.md`). |
 
 ### Current Integration Status & Known Dependencies
-* **Member C components (Test site, popup UI, highlighter, Ethical View, landing page)** are fully implemented and verified.
-* **Member A integration**: Live scanning communication relies on Member A's content script injection (`START_SCAN` message handler). When testing standalone or before Member A's injection is merged, the popup features an integrated **Load Sample Demo Result** fallback so judges can evaluate the complete UI flow without blocking.
-* **Member B integration**: The ML classifier is connected via `features.js` and `classifier.js`. If the model file is disabled or fails checksum verification, the popup cleanly falls back to rule-only verification and displays the **"Text model unavailable"** status banner.
+* **Core Extension Engine (Member A)**: Complete and fully integrated. Background service worker handles MV3 dynamic script injection (`chrome.scripting.executeScript`) on user click, avoiding static `<all_urls>` permissions. Bundled into `content/scanner.js`.
+* **UI Components (Member C)**: Popup UI, interactive circular risk gauge, suspicious element highlighter (`content/highlighter.js`), and safe Ethical View engine (`content/ethical-view.js`) are fully wired and functional.
+* **Production Release Gate Decision (ML Shipped OFF)**: As documented in the Model Card (`ml/model-card-v1.md`), the ML text classifier is shipped **OFF** (`ml_enabled: false`) by release gate decision. While the trained model is packaged with SHA-256 integrity validation, rules-only achieved 0 false alarms across all clean fixture pages, whereas ML increased false positive risk on neutral strings. The extension and demo run in deterministic, high-precision **rules-only mode**.
 
 ---
 
@@ -180,11 +229,22 @@ This project was built following the 12-hour hackathon work division across thre
 
 ---
 
-## 10. 3-Minute Hackathon Demo Script
 
-* **0:00 – 0:40 (Member C)**: Open [`test-site/planted-urgency-01.html`](test-site/planted-urgency-01.html). Click **Scan this page**. Highlight the frozen `00:14:59` timer and the high risk score gauge.
-* **0:40 – 1:15 (Member A)**: Switch to [`test-site/planted-discount-01.html`](test-site/planted-discount-01.html). Click finding to locate the fake `70% OFF` claim. Explain the arithmetic proof ($400 down to $200 is actually 50%).
-* **1:15 – 1:45 (Member C)**: Enable **Ethical View**. Show contextual note callouts and top banner. Click **Show original** to demonstrate 100% non-destructive page restoration.
-* **1:45 – 2:10 (Member A)**: Open clean control page [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html). Run scan. Demonstrate that DarkGuard reports 0 findings and does not "cry wolf".
-* **2:10 – 2:50 (Member B)**: Present the rules-only vs rules+ML evaluation table and model card. Explain on-device TF-IDF classification and SHA-256 fallback protection.
-* **2:50 – 3:00 (All)**: Closing summary on consumer privacy (nothing leaves the browser) and future roadmap.
+## 10. Demo Walkthrough
+
+* **Live Demo on Combined Page**: Open the featured combined demo page [`test-site/planted-combined-01.html`](test-site/planted-combined-01.html). Click **Scan this page**.
+  - Show the 10-second temporal observation window actively monitoring the countdown digits.
+  - Observe the **High Risk Score of 66/100** (exceeding the 50+ High threshold) generated by all 4 dark patterns firing together without artificial weight inflation.
+  - Highlight each finding card: DP-1 Frozen Timer (`00:14:59`), DP-2 Arithmetic Mismatch (Stated 70% vs actual 50%), DP-3 Confirm Shaming Decline ("No thanks, I prefer paying full price"), and DP-4 Pre-Selected Warranty Checkbox (+$49.99).
+* **Suspicious Element Highlighter & Ethical View**:
+  - Click **Locate** on any card to show the smooth scroll and non-destructive animated pulse outline (`🛡️ Detected Suspicious Element`).
+  - Toggle **Ethical View** ON: demonstrate the lavender top banner and in-context educational notes placed adjacent to deceptive elements.
+  - Click **Show original** in the banner: demonstrate 100% exact DOM restoration with zero residual layout shifts or altered styles.
+* **Clean Control Baseline - Zero False Alarms**:
+  - Open clean control page [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html) or [`test-site/clean-ticking-timer.html`](test-site/clean-ticking-timer.html).
+  - Run scan. Demonstrate that DarkGuard reports **0 findings (Risk Score: 0, Low)**, proving that genuinely decrementing timers and honest pricing are never falsely flagged.
+* **Architecture & ML Release Gate Disclosure**:
+  - Present the architectural design: lightweight Manifest V3 with dynamic `activeTab` injection and zero static URL permissions.
+  - Transparently disclose the **ML Release Gate decision**: ML is shipped OFF (`ml_enabled: false`) to guarantee zero false positives, with the demo running purely on deterministic, verified rules.
+* **Closing Summary**:
+  - Emphasize total on-device consumer privacy (zero data leaves the client) and reversibility.

@@ -228,3 +228,15 @@ Maximum two classes per string is the practical limit. If you think three apply,
 | Button text that is both a main CTA and an add-on (`"Buy now + warranty"`) | Label `addon_extra` only if the add-on is explicit. |
 | Strings with HTML entities or punctuation only | Label `neutral` and exclude from training if text is fewer than 3 tokens after tokenization. |
 
+---
+
+## 8. Proposed Labeling Rule: Refusal Deferrals vs. Confirm Shaming (Proposed, Not Applied)
+
+> **Status:** Proposed rule for future dataset revisions (v2). **NOT APPLIED to strings.csv v1.** The current dataset was labeled before this rule was codified.
+
+| Case | Proposed Classification | Rationale |
+|---|---|---|
+| **Polite / Neutral Opt-Out:** Plain refusal, postponement, or dismissal without emotional manipulation (e.g. `"I'll think about it"`, `"No, I'll think about it"`, `"Maybe later"`, `"No thanks"`) | `neutral` | The refusal button merely opts out of the interaction. Without explicit self-disparaging phrasing or penalty framing, it is not confirm shaming. |
+| **Confirm Shaming:** Refusal copy forcing the user to actively affirm an undesirable trait, state a preference for higher expense, or forfeit an entitlement (e.g. `"No thanks, I prefer paying full price"`, `"I don't care about audio quality"`, `"Decline and assume full financial risk"`) | `shaming` | Deceptive manipulation is embedded in the affirmation forced onto the shopper. |
+
+

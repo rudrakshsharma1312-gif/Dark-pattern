@@ -12,3 +12,6 @@ __pycache__/
 *.py[cod]
 ml/.venv/
 ml/artifacts/
+
+# Test / Browser caches
+.playwright-e2e-session/

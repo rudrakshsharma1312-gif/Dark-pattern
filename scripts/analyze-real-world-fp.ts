@@ -48,7 +48,7 @@ async function analyzeRealWorldCleanFixtures() {
 
       console.log(`\n📄 Fixture: ${file}`);
       console.log(`   Detections count: ${scanResult.detections.length}`);
-      console.log(`   Risk Score: ${scanResult.risk_score} (Band: ${scanResult.risk_band})`);
+      console.log(`   Risk Score: ${scanResult.risk_score} (Level: ${scanResult.level})`);
 
       if (scanResult.detections.length > 0) {
         scanResult.detections.forEach((d, idx) => {

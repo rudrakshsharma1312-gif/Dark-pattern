@@ -18,6 +18,8 @@ const extensionPath = path.join(rootDir, 'dist/darkguard-unpacked');
 const testSiteDir = path.join(rootDir, 'test-site');
 const userDataDir = path.join(rootDir, '.playwright-e2e-session');
 
+declare const chrome: any;
+
 interface ConsoleError {
   source: string;
   text: string;
@@ -160,7 +162,7 @@ async function runE2ESmokeTests() {
     return await popupPage.evaluate(
       async ({ substring, timeout }) => {
         const tabs = await chrome.tabs.query({});
-        const targetTab = tabs.find((t) => t.url && t.url.includes(substring));
+        const targetTab = tabs.find((t: any) => t.url && t.url.includes(substring));
         if (!targetTab || !targetTab.id) {
           throw new Error(`Target tab not found for url substring: ${substring}`);
         }
@@ -358,7 +360,7 @@ async function runE2ESmokeTests() {
 
     const restrictedTestResult = await popupPage.evaluate(async () => {
       const tabs = await chrome.tabs.query({});
-      const restTab = tabs.find((t) => !t.url || t.url.startsWith('chrome://'));
+      const restTab = tabs.find((t: any) => !t.url || t.url.startsWith('chrome://'));
       if (!restTab || !restTab.id) {
         return { handled: false, error: 'Restricted tab not found in chrome.tabs' };
       }

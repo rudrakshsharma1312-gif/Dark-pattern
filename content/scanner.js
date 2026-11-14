@@ -220,7 +220,7 @@
         const el = candidate.element;
         const text = candidate.text;
         const statedMatch = text.match(/(\d{1,2})\s*%\s*(?:off|discount|save|savings)/i) || text.match(/(?:save|off)\s*(\d{1,2})\s*%/i);
-        if (!statedMatch) continue;
+        if (!statedMatch || !el) continue;
         const statedPercent = parseInt(statedMatch[1], 10);
         let container = el?.parentElement || null;
         let refEl = null;
@@ -385,6 +385,7 @@
         const isCheckedByDefault = Boolean(candidate.attributes.checked);
         if (!isCheckedByDefault) continue;
         const el = candidate.element;
+        if (!el) continue;
         const label = candidate.text || el?.labels?.[0]?.textContent || el?.closest("label")?.textContent || el?.parentElement?.textContent || "";
         const matchesAddon = ADDON_KEYWORDS.test(label);
         if (!matchesAddon) continue;

@@ -1,13 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { DarkGuardClassifier, computeSha256 } from '../../src/ml/classifier.ts';
+import { DarkGuardClassifier } from '../../src/ml/classifier.ts';
+import { sha256Sync } from '../../src/ml/sha256-sync.ts';
+import { SHAMING_V1_SHA256 } from '../../src/ml/shaming-v1.checksum.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function runTests() {
+function runTests() {
   console.log('=== DarkGuard ML: Speed and Fallback Verification Tests ===\n');
+
+  const jsonPath = path.join(__dirname, '..', '..', 'src', 'ml', 'shaming-v1.json');
+  const validRawText = fs.readFileSync(jsonPath, 'utf-8');
 
   // ---------------------------------------------------------------------------
   // Test A: Speed Budget (200 strings under 5 ms)
@@ -18,69 +23,111 @@ async function runTests() {
   const lines = csvContent.split('\n').filter((l) => l.trim().length > 0).slice(1, 201);
 
   const candidates = lines.map((l, i) => {
-    // Extract text between quotes or split by comma
     const match = l.match(/"([^"]+)"/);
     const text = match ? match[1] : l.split(',')[1] || 'Sample text';
     return { ref: `cand-${i}`, text };
   });
 
-  const classifier = new DarkGuardClassifier();
+  // Construct from valid raw text (proves the checksum is computed and passes)
+  const classifier = new DarkGuardClassifier(validRawText);
+  console.log(`  Classifier status: ${classifier.status}, checksumValid: ${classifier.isChecksumValid}`);
 
-  // Warmup
-  classifier.batchPredict(candidates.slice(0, 10));
+  // Warmup (5 full runs on all 200 strings)
+  for (let w = 0; w < 5; w++) {
+    classifier.batchPredict(candidates);
+  }
 
-  // Timed run
-  const { results, elapsedMs } = classifier.batchPredict(candidates);
-  console.log(`Classified ${results.length} strings in ${elapsedMs.toFixed(3)} ms`);
-  console.log(`Average latency per candidate: ${(elapsedMs / candidates.length).toFixed(4)} ms`);
+  // 20 timed benchmark runs
+  const latencies: number[] = [];
+  for (let r = 0; r < 20; r++) {
+    const start = performance.now();
+    classifier.batchPredict(candidates);
+    latencies.push(performance.now() - start);
+  }
 
-  if (elapsedMs < 5.0) {
-    console.log(`✅ Test A PASSED: ${elapsedMs.toFixed(3)} ms is within < 5.0 ms budget\n`);
+  latencies.sort((a, b) => a - b);
+  const median = latencies[Math.floor(latencies.length / 2)];
+  const min = latencies[0];
+  const max = latencies[latencies.length - 1];
+  const mean = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+
+  console.log(`  20 Runs on 200 candidate strings:`);
+  console.log(`    Median latency: ${median.toFixed(3)} ms`);
+  console.log(`    Mean latency:   ${mean.toFixed(3)} ms`);
+  console.log(`    Min latency:    ${min.toFixed(3)} ms`);
+  console.log(`    Max latency:    ${max.toFixed(3)} ms`);
+  console.log(`    Per-candidate:  ${(median / candidates.length).toFixed(4)} ms/candidate`);
+
+  if (median < 5.0) {
+    console.log(`✅ Test A PASSED: Median ${median.toFixed(3)} ms is within < 5.0 ms budget (Max: ${max.toFixed(3)} ms)\n`);
   } else {
-    console.warn(`⚠️ Test A WARNING: ${elapsedMs.toFixed(3)} ms exceeded 5.0 ms target\n`);
+    console.error(`❌ Test A FAILED: Median ${median.toFixed(3)} ms exceeded 5.0 ms limit\n`);
+    process.exit(1);
   }
 
   // ---------------------------------------------------------------------------
-  // Test B: Corrupted Checksum Fallback
+  // Test B: Corrupted Model Fallback – mutate one weight value in the raw text
   // ---------------------------------------------------------------------------
-  console.log('--- Test B: Checksum Fallback Test ---');
-  const jsonPath = path.join(__dirname, '..', '..', 'src', 'ml', 'shaming-v1.json');
-  const validRawText = fs.readFileSync(jsonPath, 'utf-8');
+  console.log('--- Test B: Corrupted Model Fallback (weight mutation) ---');
 
-  // Verify valid raw text passes
-  const validInstance = await DarkGuardClassifier.create(validRawText);
-  console.log(`Valid raw text status: ${validInstance.status}, isChecksumValid: ${validInstance.isChecksumValid}`);
+  // Find a real weight value and flip one digit to prove the hash changes
+  const weightMatch = validRawText.match(/"values":\s*\[\s*(-?\d+\.\d+)/s);
+  if (!weightMatch) {
+    console.error('❌ Test B FAILED: could not find a weight value to mutate');
+    process.exit(1);
+  }
+  const originalWeight = weightMatch[1];
+  // Flip the last digit: e.g. "1.23456" → "1.23457" (or "1.23450" if it was 1)
+  const lastChar = originalWeight[originalWeight.length - 1];
+  const newLastChar = lastChar === '9' ? '0' : String(Number(lastChar) + 1);
+  const mutatedWeight = originalWeight.slice(0, -1) + newLastChar;
+  const corruptedRawText = validRawText.replace(originalWeight, mutatedWeight);
 
-  // Now mutate raw text
-  const corruptedRawText = validRawText.replace('"sublinear_tf": true', '"sublinear_tf": false');
-  const corruptInstance = await DarkGuardClassifier.create(corruptedRawText);
-  console.log(`Corrupted text status: ${corruptInstance.status}, isChecksumValid: ${corruptInstance.isChecksumValid}`);
+  console.log(`  Original weight: ${originalWeight}`);
+  console.log(`  Mutated  weight: ${mutatedWeight}`);
+
+  // Prove the hashes really differ
+  const originalHash = sha256Sync(validRawText);
+  const corruptedHash = sha256Sync(corruptedRawText);
+  console.log(`  Original hash: ${originalHash.slice(0, 16)}...`);
+  console.log(`  Corrupted hash: ${corruptedHash.slice(0, 16)}...`);
+  console.log(`  Hashes differ: ${originalHash !== corruptedHash}`);
+
+  if (originalHash === corruptedHash) {
+    console.error('❌ Test B FAILED: hashes should differ after mutation!');
+    process.exit(1);
+  }
+
+  // Construct classifier from corrupted text — must reject
+  const corruptInstance = new DarkGuardClassifier(corruptedRawText);
+  console.log(`  Corrupted classifier status: ${corruptInstance.status}, checksumValid: ${corruptInstance.isChecksumValid}`);
 
   const fallbackResult = corruptInstance.batchPredict(candidates.slice(0, 5));
-  console.log(`Corrupt instance batchPredict results count: ${fallbackResult.results.length}`);
+  console.log(`  Corrupt batchPredict results count: ${fallbackResult.results.length}`);
 
   const testBPassed =
-    validInstance.status === 'ready' &&
+    originalHash === SHAMING_V1_SHA256 &&
+    originalHash !== corruptedHash &&
     corruptInstance.status === 'corrupted' &&
     corruptInstance.isChecksumValid === false &&
     fallbackResult.results.length === 0;
 
   if (testBPassed) {
-    console.log('✅ Test B PASSED: Damaged checksum rejected, falls back to empty results (rules-only scan)\n');
+    console.log('✅ Test B PASSED: Mutated weight → different hash → status corrupted → empty results\n');
   } else {
     console.error('❌ Test B FAILED\n');
     process.exit(1);
   }
 
   // ---------------------------------------------------------------------------
-  // Test C: Missing / Null Model Fallback
+  // Test C: Missing / Empty Model Fallback
   // ---------------------------------------------------------------------------
   console.log('--- Test C: Missing Model Fallback Test ---');
-  const missingInstance = await DarkGuardClassifier.create(null as any, null as any);
-  console.log(`Missing model status: ${missingInstance.status}, isChecksumValid: ${missingInstance.isChecksumValid}`);
+  const missingInstance = new DarkGuardClassifier('');
+  console.log(`  Missing model status: ${missingInstance.status}, checksumValid: ${missingInstance.isChecksumValid}`);
 
   const missingResult = missingInstance.batchPredict(candidates.slice(0, 5));
-  console.log(`Missing instance batchPredict results count: ${missingResult.results.length}`);
+  console.log(`  Missing batchPredict results count: ${missingResult.results.length}`);
 
   const testCPassed =
     missingInstance.status === 'corrupted' &&
@@ -88,9 +135,31 @@ async function runTests() {
     missingResult.results.length === 0;
 
   if (testCPassed) {
-    console.log('✅ Test C PASSED: Missing model returns status corrupted and empty results\n');
+    console.log('✅ Test C PASSED: Empty model text → status corrupted → empty results\n');
   } else {
     console.error('❌ Test C FAILED\n');
+    process.exit(1);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Test D: Valid model constructed from raw text passes checksum
+  // ---------------------------------------------------------------------------
+  console.log('--- Test D: Valid Model Raw Text Verification ---');
+  const validInstance = new DarkGuardClassifier(validRawText);
+  console.log(`  Valid classifier status: ${validInstance.status}, checksumValid: ${validInstance.isChecksumValid}`);
+
+  const validResult = validInstance.batchPredict([{ ref: 'test', text: 'Hurry! Deal ends soon!' }]);
+  console.log(`  Valid batchPredict results count: ${validResult.results.length}`);
+
+  const testDPassed =
+    validInstance.status === 'ready' &&
+    validInstance.isChecksumValid === true &&
+    validResult.results.length === 1;
+
+  if (testDPassed) {
+    console.log('✅ Test D PASSED: Valid raw text → hash matches → status ready → results returned\n');
+  } else {
+    console.error('❌ Test D FAILED\n');
     process.exit(1);
   }
 
@@ -98,4 +167,3 @@ async function runTests() {
 }
 
 runTests();
-

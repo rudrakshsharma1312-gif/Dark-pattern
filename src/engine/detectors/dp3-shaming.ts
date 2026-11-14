@@ -57,19 +57,19 @@ export const DP3ShamingDetector = {
     for (const candidate of ctx.candidates) {
       const lowerText = candidate.text.toLowerCase().trim();
 
-      // Check if element is a decline-style button, link, or label
+      // Check if element is an interactive decline-style button, link, or label
       const isDeclineElement =
         candidate.tag === 'button' ||
         candidate.tag === 'a' ||
         candidate.role === 'button' ||
         candidate.attributes.type === 'button' ||
-        candidate.element?.classList.contains('decline-btn') ||
-        candidate.element?.classList.contains('secondary-action') ||
-        candidate.element?.getAttribute('data-dg-action') === 'decline' ||
         candidate.nearPrimaryAction ||
         lowerText.startsWith('no') ||
         lowerText.includes('skip') ||
-        lowerText.includes('cancel');
+        lowerText.includes('cancel') ||
+        lowerText.includes('decline') ||
+        lowerText.includes('pass') ||
+        lowerText.includes('reject');
 
       if (!isDeclineElement && !candidate.nearPrimaryAction) {
         continue;
