@@ -109,7 +109,7 @@ flowchart LR
 ```
 
 1. **Scanner Engine**: Filters rendered DOM candidates ($<200$ chars, visible tags, geometry). Never reads input values or checkout forms.
-2. **Temporal Observation & Scan Duration (DP-1)**: When timer digits are detected, DarkGuard samples the text across a deterministic 10-second observation window ($\Delta t \ge 10\text{ s}$). If values do not decrement, it flags a frozen countdown. Real decrementing timers pass without detection. A full scan takes **approximately 11 seconds** because of this mandatory 10-second observation window. Outside of this observation window, the synchronous processing pipeline (candidate extraction, rules DP-1–DP-4, fusion, and risk scoring) executes in under 10 ms (measured at 8.5 ms in [`eval/reports/eval-results.json`](eval/reports/eval-results.json)).
+2. **Temporal Observation & Scan Duration (DP-1)**: When timer digits are detected, DarkGuard samples the text across a deterministic 10-second observation window ($\Delta t \ge 10\text{ s}$). If values do not decrement, it flags a frozen countdown. Real decrementing timers pass without detection. A full scan takes **approximately 11 seconds** because of the 10-second DP-1 observation window; execution time outside of the observation window has not been separately benchmarked in a real browser.
 3. **Risk Formula & Category Weights**:
    $$\text{Risk Score} = \min\left(100, \sum_{i=1}^{4} w_i \times \text{Severity}_i \times \text{Confidence}_i \times 33.3\right)$$
    | Category | Weight ($w_i$) | Rationale |
@@ -131,24 +131,16 @@ flowchart LR
 ## 5. Honest Status & Results
 
 ### ML Architecture & Release Gate Disclosure (ML-R9)
-DarkGuard AI was architected with a hybrid engine: deterministic DOM rules and an on-device text classifier (`src/ml/classifier.ts`, weight array loaded from `src/ml/shaming-v1.json`). The text model is **TF-IDF (sublinear word unigrams and adjacent word bigrams, max 4,000 features) + one-vs-rest logistic regression running in plain JavaScript**. It is **not TensorFlow.js** and requires no external ML runtimes or GPU acceleration.
+DarkGuard AI was architected with a hybrid engine: deterministic DOM rules and an on-device text classifier (`src/ml/classifier.ts`, weight array loaded from `src/ml/shaming-v1.json`). The text model is **TF-IDF (sublinear word unigrams and adjacent word bigrams; 2,521 fitted features, max 4,000) + one-vs-rest logistic regression running in plain JavaScript**. It is **not TensorFlow.js** and requires no external ML runtimes or GPU acceleration.
 
-#### Release Gate Criteria (ML-R9)
-Evaluated in [`eval/run.ts`](eval/run.ts) across 30 labeled fixture pages (20 planted, 10 clean controls):
-1. **Precision Check**: Macro precision on pages $\ge 0.85$ (achieved **0.914** &rarr; **PASS**).
-2. **Recall Check**: Macro recall on pages $\ge 0.70$ (achieved **0.804** in [`eval/reports/ablation.md`](eval/reports/ablation.md) and [`ml/model-card-v1.md`](ml/model-card-v1.md), with micro recall at 0.810 [34 of 42 planted instances]; recorded as **0.705** in [`eval/reports/eval-results.json`](eval/reports/eval-results.json) where DP-2 arithmetic rules are evaluated without rendered DOM context &rarr; **PASS**).
-3. **Clean-Page False Alarm Check**: Zero increase in false-positive rate over rules-only on clean pages (`cleanFpRulesPlusML <= cleanFpRulesOnly`, i.e., $\le 0$ false alarm increase).
-   - Rules-only clean page false alarms: **0 of 10 clean pages (0.0%)** (42 total candidate elements on 10 pages, 0 flagged).
-   - Rules + ML clean page false alarms: **3 of 10 clean pages (30.0%)** with 4 false detections across those 3 pages (2 on `eval-clean-02`, 1 on `eval-clean-04`, 1 on `eval-clean-06`).
-   - Clean page false alarm increase: **+3 clean pages (4 detections)** &rarr; **FAIL**.
+#### Release Gate Outcome (ML-R9)
+Evaluated across 30 labeled fixture pages (20 planted, 10 clean controls) per [`ml/model-card-v1.md`](ml/model-card-v1.md):
+- **Macro Precision on Pages**: **0.914** (criterion $\ge 0.85$ &rarr; **PASS**)
+- **Macro Recall on Pages**: **0.804** (Micro Recall: **0.810**, 34 of 42 planted instances caught; criterion $\ge 0.70$ &rarr; **PASS**)
+- **Clean-Page False Alarm Check**: **FAILED** (0 of 10 clean pages flagged with rules only vs. 3 of 10 clean pages flagged with rules + ML; criterion was zero increase in false-positive rate over rules-only)
+- **Gate Outcome**: **FAILED** (shipped with `ml_enabled: false` by default; the extension operates in verified rules-only mode)
 
-#### System Release Gate Result: FAILED
-Because the text model introduced 4 false detections across 3 clean pages (+30.0% clean page false-alarm rate), the system **FAILED the release gate**.
-
-#### Engineering Decision: Ship Rules-Only by Default
-To protect consumer trust and avoid penalizing legitimate merchants, the extension ships with the text classifier **DISABLED by default** (`ml_enabled: false`). The default shipped extension operates purely as a deterministic, zero-network, rule-based engine.
-
-Detailed documentation and error analysis: [`ml/model-card-v1.md`](ml/model-card-v1.md), [`eval/reports/ablation.md`](eval/reports/ablation.md), and [`eval/reports/eval-results.json`](eval/reports/eval-results.json).
+Complete evaluation reports and metrics: [`ml/model-card-v1.md`](ml/model-card-v1.md), [`eval/reports/ablation.md`](eval/reports/ablation.md), and [`eval/reports/eval-results.json`](eval/reports/eval-results.json). Technical reconciliation notes between evaluation artifacts are documented in [`docs/EVAL_NOTES.md`](docs/EVAL_NOTES.md).
 
 ### Curated Test Bed Evaluation
 Results on our curated test bed (23 pages: 16 test-site scenarios in [`test-site/`](test-site/) + 7 real-world clean fixtures in [`tests/fixtures/real-world-clean/`](tests/fixtures/real-world-clean/); evaluated via `npm run eval:real` in rules-only mode):
@@ -297,4 +289,5 @@ Dark-pattern/
 <!-- TODO: Choose and add an open-source or proprietary LICENSE file to the repository root (e.g. MIT, Apache-2.0, or All Rights Reserved). -->
 - **License**: No `LICENSE` file is currently present in the repository root; all rights are reserved by the authors until an official open-source license is chosen.
 - **Third-Party Libraries**: Built using open-source packages: React & Vite (MIT), esbuild (MIT), Tailwind CSS (MIT), Lucide React (ISC), Vitest (MIT), Playwright (Apache 2.0), and Python scientific libraries (scikit-learn, numpy, pandas under BSD).
-- **Training Data**: The experimental text model was trained on 823 proprietary, hand-labeled short UI strings created for this project; no public dataset was used.
+<!-- TODO: Team to confirm and document how the training strings were originally generated (e.g. written by hand, harvested from audits, or AI-assisted). -->
+- **Training Data**: The experimental text model was trained on 823 short UI strings created for this project across 10 simulated merchant sites, labeled per [`ml/labeling.md`](ml/labeling.md) by a single annotator (Member B). No external or public dataset was used.
