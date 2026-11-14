@@ -1,0 +1,243 @@
+{
+  "combined_high_risk": {
+    "id": "scan-combined-01",
+    "domain": "novastore.local",
+    "url_path": "/planted-combined-01.html",
+    "timestamp": "2026-11-14T09:09:06.667Z",
+    "risk_score": 66,
+    "level": "High",
+    "model_version": "darkguard-text-v1",
+    "ml_enabled": false,
+    "detections": [
+      {
+        "id": "det-DP-1-dg-23-mwg6oz57",
+        "category": "fake_urgency",
+        "categoryId": "DP-1",
+        "categoryName": "Fake Urgency & Scarcity",
+        "candidateRef": "dg-23",
+        "severity": 3,
+        "confidence": 0.9,
+        "source": "rule",
+        "explanation": "Timer check: countdown did not change during a 10-second observation window.",
+        "templateId": "ET-URG-01",
+        "evidenceSnippet": "Hurry! Flash Deal reserved in cart for limited time: 00:14:59",
+        "elementSelector": "div.timer-container",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "observedSeconds": 10,
+          "initialValue": "00:14:59",
+          "finalValue": "00:14:59"
+        },
+        "sellerQuestion": "Is this promotion or timer linked to an actual inventory limit?",
+        "isUncertain": false
+      },
+      {
+        "id": "det-DP-2-dg-26-mwg6oz57",
+        "category": "misleading_discount",
+        "categoryId": "DP-2",
+        "categoryName": "Misleading Discount Calculation",
+        "candidateRef": "dg-26",
+        "severity": 2,
+        "confidence": 0.9,
+        "source": "rule",
+        "explanation": "Price check: current price $200, reference price $400. The page states 70% off; the calculated discount is 50%.",
+        "templateId": "ET-DISC-01",
+        "evidenceSnippet": "70% OFF",
+        "elementSelector": "span.discount-badge",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "currentPrice": 200,
+          "referencePrice": 400,
+          "statedPercent": 70,
+          "calculatedPercent": 50,
+          "currencySymbol": "$"
+        },
+        "sellerQuestion": "Can you clarify why the stated discount is 70% when the price calculation indicates 50%?",
+        "isUncertain": false
+      },
+      {
+        "id": "det-DP-3-dg-35-mwg6oz57",
+        "category": "confirm_shaming",
+        "categoryId": "DP-3",
+        "categoryName": "Confirm Shaming Decline Phrasing",
+        "candidateRef": "dg-35",
+        "severity": 2,
+        "confidence": 0.7,
+        "source": "rule",
+        "explanation": "Wording note: this decline option uses guilt-inducing language designed to pressure the user. Choosing it still performs the button's original action.",
+        "templateId": "ET-CONF-01",
+        "evidenceSnippet": "No thanks, I prefer paying full price",
+        "elementSelector": "button.decline-btn",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "matchedPhrase": "no thanks, i prefer paying full price"
+        },
+        "sellerQuestion": "Can I opt out or decline without accepting self-deprecating terms?",
+        "isUncertain": false
+      },
+      {
+        "id": "det-DP-4-dg-31-mwg6oz57",
+        "category": "preselected_extra",
+        "categoryId": "DP-4",
+        "categoryName": "Pre-selected Extras & Add-ons",
+        "candidateRef": "dg-31",
+        "severity": 2,
+        "confidence": 0.85,
+        "source": "rule",
+        "explanation": "Pre-selected extra: this option was checked by default near the purchase control. Review it before continuing.",
+        "templateId": "ET-EXTRA-01",
+        "evidenceSnippet": "",
+        "elementSelector": "input#addon-warranty",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "addonLabel": "Add 3-Year Extended Warranty & Protection Plan\n                  +$49.99\n                \n          "
+        },
+        "sellerQuestion": "Was this add-on or protection policy pre-selected automatically?",
+        "isUncertain": false
+      }
+    ],
+    "rawCandidatesCount": 42,
+    "scanDurationMs": 217,
+    "classifierChecksumValid": true,
+    "coverage": {
+      "checked": 42,
+      "total": 42,
+      "details": "Checked visible pricing, timers, decline buttons, and checkbox options."
+    }
+  },
+  "clean_low_risk": {
+    "id": "scan-clean-coffee",
+    "domain": "novastore.local",
+    "url_path": "/clean-coffee-maker.html",
+    "timestamp": "2026-11-14T09:09:06.790Z",
+    "risk_score": 0,
+    "level": "Low",
+    "model_version": "darkguard-text-v1",
+    "ml_enabled": false,
+    "detections": [],
+    "rawCandidatesCount": 41,
+    "scanDurationMs": 97,
+    "classifierChecksumValid": true,
+    "coverage": {
+      "checked": 41,
+      "total": 41,
+      "details": "Checked visible pricing, timers, decline buttons, and checkbox options."
+    }
+  },
+  "rules_only_release_gate": {
+    "id": "scan-rules-only-release-gate",
+    "domain": "novastore.local",
+    "url_path": "/planted-urgency-01.html",
+    "timestamp": "2026-11-14T09:09:06.900Z",
+    "risk_score": 27,
+    "level": "Moderate",
+    "model_version": "darkguard-text-v1",
+    "ml_enabled": false,
+    "detections": [
+      {
+        "id": "det-DP-1-dg-23-mwg6ozbo",
+        "category": "fake_urgency",
+        "categoryId": "DP-1",
+        "categoryName": "Fake Urgency & Scarcity",
+        "candidateRef": "dg-23",
+        "severity": 3,
+        "confidence": 0.9,
+        "source": "rule",
+        "explanation": "Timer check: countdown did not change during a 10-second observation window.",
+        "templateId": "ET-URG-01",
+        "evidenceSnippet": "Hurry! Flash Deal reserved in cart for limited time: 00:14:59",
+        "elementSelector": "div.timer-container",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "observedSeconds": 10,
+          "initialValue": "00:14:59",
+          "finalValue": "00:14:59"
+        },
+        "sellerQuestion": "Is this promotion or timer linked to an actual inventory limit?",
+        "isUncertain": false
+      }
+    ],
+    "rawCandidatesCount": 51,
+    "scanDurationMs": 88,
+    "classifierChecksumValid": true,
+    "coverage": {
+      "checked": 51,
+      "total": 51,
+      "details": "Checked visible pricing, timers, decline buttons, and checkbox options."
+    }
+  },
+  "corrupted_checksum": {
+    "id": "scan-corrupted-checksum",
+    "domain": "novastore.local",
+    "url_path": "/planted-discount-01.html",
+    "timestamp": "2026-11-14T09:09:06.986Z",
+    "risk_score": 18,
+    "level": "Low",
+    "model_version": "darkguard-text-v1",
+    "ml_enabled": false,
+    "detections": [
+      {
+        "id": "det-DP-2-dg-22-mwg6oze1",
+        "category": "misleading_discount",
+        "categoryId": "DP-2",
+        "categoryName": "Misleading Discount Calculation",
+        "candidateRef": "dg-22",
+        "severity": 2,
+        "confidence": 0.9,
+        "source": "rule",
+        "explanation": "Price check: current price $200, reference price $400. The page states 70% off; the calculated discount is 50%.",
+        "templateId": "ET-DISC-01",
+        "evidenceSnippet": "70% OFF",
+        "elementSelector": "span.discount-badge",
+        "elementRect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "details": {
+          "currentPrice": 200,
+          "referencePrice": 400,
+          "statedPercent": 70,
+          "calculatedPercent": 50,
+          "currencySymbol": "$"
+        },
+        "sellerQuestion": "Can you clarify why the stated discount is 70% when the price calculation indicates 50%?",
+        "isUncertain": false
+      }
+    ],
+    "rawCandidatesCount": 42,
+    "scanDurationMs": 69,
+    "classifierChecksumValid": false,
+    "coverage": {
+      "checked": 42,
+      "total": 42,
+      "details": "Checked visible pricing, timers, decline buttons, and checkbox options."
+    }
+  }
+}
