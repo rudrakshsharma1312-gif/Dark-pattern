@@ -101,7 +101,7 @@
     "recallCheck": true,
     "fpRateCheck": false
   },
-  "latencyMs": 8.3,
+  "latencyMs": 10.4,
   "testedPagesCount": 30,
   "plantedCount": 20,
   "cleanCount": 10
