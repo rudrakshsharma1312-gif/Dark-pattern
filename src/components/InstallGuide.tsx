@@ -1,26 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
-import { Download } from 'lucide-react';
-import { generateExtensionZip } from '../extension-package/build-extension';
+import { Download, ShieldCheck, Terminal } from 'lucide-react';
 
 export const InstallGuide: React.FC = () => {
-  const [downloading, setDownloading] = useState(false);
-
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      const blob = await generateExtensionZip();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'darkguard-ai-extension.zip';
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setDownloading(false);
-    }
-  };
-
   return (
     <div className="w-full glass-panel rounded-[24px] p-6 sm:p-8 flex flex-col gap-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--line-card)] pb-6">
@@ -37,60 +19,52 @@ export const InstallGuide: React.FC = () => {
           </p>
         </div>
 
-        <motion.button
-          type="button"
+        <motion.a
+          href="downloads/darkguard-extension.zip"
+          download="darkguard-extension.zip"
           whileHover={{ y: -1.5, scale: 1.02 }}
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.14 }}
-          onClick={handleDownload}
-          disabled={downloading}
-          className="btn-primary-tactile px-5 py-3 text-[#111318] font-semibold text-xs rounded-full flex items-center gap-2 self-start md:self-auto cursor-pointer whitespace-nowrap shrink-0"
+          className="btn-primary-tactile px-5 py-3 text-[#111318] font-semibold text-xs rounded-full flex items-center gap-2 self-start md:self-auto cursor-pointer whitespace-nowrap shrink-0 no-underline"
+          title="Download ready-to-load extension ZIP"
         >
           <Download className="w-4 h-4" />
-          <span>{downloading ? 'Creating ZIP Package...' : 'Download Extension (.zip)'}</span>
-        </motion.button>
+          <span>Download Extension (.zip)</span>
+        </motion.a>
       </div>
 
-      {/* 4 Step Visual Flow */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="chrome-card p-4 rounded-[18px] flex flex-col">
-          <div className="text-xs font-mono font-bold text-[var(--accent)] mb-2">Step 01</div>
+      {/* Two Supported Install Methods */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="chrome-card p-5 rounded-[18px] flex flex-col border border-[var(--accent-border)] bg-[var(--accent-soft)]/20">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[var(--accent)] mb-2">
+            <Download className="w-4 h-4" />
+            <span>Method A: Website Download (.zip)</span>
+          </div>
           <h3 className="font-display font-bold text-sm text-[var(--ink-900)] mb-1">
-            Download &amp; Unzip
+            Download, Unzip &amp; Load Unpacked
           </h3>
-          <p className="text-xs text-[var(--ink-500)] leading-relaxed">
-            Download <code className="text-[var(--accent)]">darkguard-ai-extension.zip</code> and extract the contents to a folder on your computer.
-          </p>
+          <ol className="text-xs text-[var(--ink-700)] list-decimal list-inside space-y-1.5 mt-2 leading-relaxed">
+            <li>Download <code className="text-[var(--accent)]">darkguard-extension.zip</code> and extract it to a folder.</li>
+            <li>In Chrome or Brave, navigate to <code className="text-[var(--accent)]">chrome://extensions</code> (or <code className="text-[var(--accent)]">edge://extensions</code> in Edge).</li>
+            <li>Toggle ON <strong>Developer mode</strong> in the top-right corner.</li>
+            <li>Click <strong>Load unpacked</strong> and select the unzipped directory.</li>
+          </ol>
         </div>
 
-        <div className="chrome-card p-4 rounded-[18px] flex flex-col">
-          <div className="text-xs font-mono font-bold text-[var(--peach-ink)] mb-2">Step 02</div>
+        <div className="chrome-card p-5 rounded-[18px] flex flex-col border border-[var(--line-card)] bg-[var(--bg-sunken)]">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[var(--mint-ink)] mb-2">
+            <Terminal className="w-4 h-4" />
+            <span>Method B: From Clone (30 Seconds — Zero Build)</span>
+          </div>
           <h3 className="font-display font-bold text-sm text-[var(--ink-900)] mb-1">
-            Open Extensions Page
+            Select extension-dist/ Directly
           </h3>
-          <p className="text-xs text-[var(--ink-500)] leading-relaxed">
-            In Chrome navigate to <code className="text-[var(--accent)]">chrome://extensions</code> (or <code className="text-[var(--accent)]">edge://extensions</code> in Microsoft Edge).
-          </p>
-        </div>
-
-        <div className="chrome-card p-4 rounded-[18px] flex flex-col">
-          <div className="text-xs font-mono font-bold text-[var(--mint-ink)] mb-2">Step 03</div>
-          <h3 className="font-display font-bold text-sm text-[var(--ink-900)] mb-1">
-            Developer Mode
-          </h3>
-          <p className="text-xs text-[var(--ink-500)] leading-relaxed">
-            Toggle the <strong className="text-[var(--ink-900)]">Developer mode</strong> switch in the upper-right corner of the extensions manager.
-          </p>
-        </div>
-
-        <div className="chrome-card p-4 rounded-[18px] flex flex-col">
-          <div className="text-xs font-mono font-bold text-[var(--rose-ink)] mb-2">Step 04</div>
-          <h3 className="font-display font-bold text-sm text-[var(--ink-900)] mb-1">
-            Load Unpacked
-          </h3>
-          <p className="text-xs text-[var(--ink-500)] leading-relaxed">
-            Click <strong className="text-[var(--ink-900)]">Load unpacked</strong> in the top-left toolbar and select your extracted directory.
-          </p>
+          <ol className="text-xs text-[var(--ink-700)] list-decimal list-inside space-y-1.5 mt-2 leading-relaxed">
+            <li>Clone the repository: <code className="text-[var(--accent)]">git clone &lt;repo-url&gt;</code></li>
+            <li>Open <code className="text-[var(--accent)]">chrome://extensions</code> and enable <strong>Developer mode</strong>.</li>
+            <li>Click <strong>Load unpacked</strong> and select the <code className="text-[var(--accent)] font-bold">extension-dist</code> folder inside the clone.</li>
+            <li><strong className="text-rose-600">CRITICAL:</strong> Do NOT select the repo root (root has no manifest).</li>
+          </ol>
         </div>
       </div>
 

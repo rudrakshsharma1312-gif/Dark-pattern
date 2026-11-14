@@ -6,7 +6,6 @@ import { FindingCard } from './FindingCard';
 import { AITextRenderer, AISkeletonLoader, AICodeBlock } from './AITextRenderer';
 import { EthicalViewEngine } from '../engine/ethical-view';
 import { scannerInstance } from '../engine/orchestrator';
-import { generateExtensionZip } from '../extension-package/build-extension';
 import {
   Shield,
   Download,
@@ -44,7 +43,6 @@ export const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({
   const [checkedSellerQuestions, setCheckedSellerQuestions] = useState<Set<string>>(new Set());
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyItems, setHistoryItems] = useState<ScanResult[]>([]);
-  const [downloadingZip, setDownloadingZip] = useState(false);
   const [aiExplainEnabled, setAiExplainEnabled] = useState(true);
   const [briefOpen, setBriefOpen] = useState(false);
   const [briefMode, setBriefMode] = useState<'formatted' | 'json'>('formatted');
@@ -227,23 +225,6 @@ ${scanResult.detections
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadExtension = async () => {
-    setDownloadingZip(true);
-    try {
-      const blob = await generateExtensionZip();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'darkguard-ai-extension.zip';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Failed to create extension zip:', err);
-    } finally {
-      setDownloadingZip(false);
-    }
-  };
-
   return (
     <div className="w-full glass-panel rounded-[24px] flex flex-col overflow-hidden">
       {/* Extension Simulator Header */}
@@ -290,18 +271,17 @@ ${scanResult.detections
             <History className="w-4 h-4" />
           </button>
 
-          <button
-            type="button"
-            onClick={handleDownloadExtension}
-            disabled={downloadingZip}
-            className="glass-control px-3 py-1.5 text-[var(--ink-900)] text-xs font-semibold rounded-full flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-            title="Download unpacked Chrome/Edge extension ZIP"
+          <a
+            href="downloads/darkguard-extension.zip"
+            download="darkguard-extension.zip"
+            className="glass-control px-3 py-1.5 text-[var(--ink-900)] text-xs font-semibold rounded-full flex items-center gap-1.5 cursor-pointer whitespace-nowrap no-underline"
+            title="Download ready-to-load extension ZIP"
           >
             <Download className="w-3.5 h-3.5 text-[var(--accent)]" />
             <span className="hidden sm:inline">
-              {downloadingZip ? 'Packing...' : 'Export .zip'}
+              Export .zip
             </span>
-          </button>
+          </a>
         </div>
       </div>
 

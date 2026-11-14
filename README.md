@@ -122,51 +122,65 @@ DarkGuard AI combines deterministic rule detectors with an optional on-device te
 
 ---
 
-## Install in 2 minutes
+## Install the Extension
 
-DarkGuard AI runs in **Google Chrome** and **Microsoft Edge**. No store account is needed. You need **Node.js and npm** installed to build the extension package.
+DarkGuard AI runs in **Google Chrome**, **Brave**, and **Microsoft Edge**. We provide two officially supported installation methods, both delivering the **identical, single-source verified extension build**:
 
-### Step 1: Get the code and build the extension
+### Method A: From Website (.zip Download)
+1. Download the extension archive: [**`darkguard-extension.zip`**](https://rudrakshsharma1312-gif.github.io/Dark-pattern/downloads/darkguard-extension.zip)
+2. Extract the downloaded ZIP archive to a folder on your computer.
+3. Open your browser's extensions manager:
+   - **Chrome / Brave:** Navigate to `chrome://extensions`
+   - **Edge:** Navigate to `edge://extensions`
+4. Toggle ON **Developer mode** (top-right corner).
+5. Click **Load unpacked** (top-left) and select the extracted folder.
+6. Pin DarkGuard AI to your browser toolbar!
 
-```bash
-git clone https://github.com/rudrakshsharma1312-gif/Dark-pattern.git
-cd Dark-pattern
-npm install
-npm run package:extension
-```
-
-This creates a clean, zero-network extension folder at `dist/darkguard-unpacked/`.
-
-### Step 2: Load it in your browser
-
-1. Open the extensions page:
-   - **Chrome:** type `chrome://extensions` in the address bar
-   - **Edge:** type `edge://extensions` in the address bar
-2. Turn on **Developer mode** (toggle at the top right in Chrome, bottom left in Edge).
-3. Click **Load unpacked**.
-4. Select the folder **`dist/darkguard-unpacked`**.
-5. **DarkGuard AI** now appears in your extension list.
-
-### Step 3: Pin it and scan
-
-1. Click the puzzle-piece icon in the toolbar and **pin** the DarkGuard AI shield.
-2. Start the local test server:
+### Method B: From Clone (30 Seconds — Zero Build Required)
+The repository tracks the pre-compiled, runtime-ready extension in `extension-dist/`. You do **not** need Node.js or npm to run it from a clone:
+1. Clone the repository:
    ```bash
-   npm run serve:site
+   git clone https://github.com/rudrakshsharma1312-gif/Dark-pattern.git
    ```
-3. Open `http://localhost:8080/Dark-pattern/test-site/planted-combined-01.html`.
-4. Click the shield, then **Scan this page**.
-5. Wait about 10 seconds while it says "Checking timer...". That is the urgency check at work.
+2. Open `chrome://extensions` (or `edge://extensions`).
+3. Toggle ON **Developer mode** in the top-right corner.
+4. Click **Load unpacked**, and select the **`extension-dist`** directory inside your cloned repository.
+   > **⚠️ IMPORTANT:** Do **NOT** select the repository root folder. To prevent accidental misconfiguration, the repository root contains no `manifest.json` and will fail with `"Manifest file is missing"`. Always select the `extension-dist/` subfolder.
+5. Pin the shield icon to your toolbar!
+
+---
+
+### How to Confirm Your Build
+Open the DarkGuard AI popup or inspect the extension card on `chrome://extensions`.
+- The popup footer displays: `Build 0.3.0 (<content-hash>)`
+- The extension card shows version: `0.3.0 (<content-hash>)`
+- The content hash is a deterministic SHA-256 fingerprint computed across all runtime files.
+
+### How to Update After a Git Pull
+1. Pull latest changes: `git pull`
+2. Open `chrome://extensions`
+3. Click the circular **↺ (Reload)** button on the DarkGuard AI card.
+4. Close and reopen the popup.
 
 ### Troubleshooting
 
-| Problem | Fix |
+| Issue | Cause & Solution |
 |---|---|
-| "Manifest file is missing or unreadable" | You selected the wrong folder. Select `dist/darkguard-unpacked`, not the repository root. |
-| The folder `dist/darkguard-unpacked` does not exist | Run `npm run package:extension` first. |
-| You already loaded an older build | On the extensions page, click the **reload** icon on the DarkGuard AI card, then close and reopen the popup. |
-| Scan does nothing on a test page opened from your disk (`file://`) | Open the extension's **Details** page and turn on **Allow access to file URLs**, or use `npm run serve:site`. |
-| The popup says the browser restricts extensions on this page | Browsers block extensions on `chrome://`, `edge://` and Web Store pages. Try a normal website. |
+| **"Manifest file is missing or unreadable"** | You selected the wrong directory (e.g. the repository root). Select `extension-dist/` (or the folder extracted from the website zip). |
+| **Developer Mode Disabled** | Turn on the **Developer mode** toggle in the upper-right corner of `chrome://extensions`. |
+| **Scan does nothing on local `file://` pages** | Chromium blocks extensions on local files by default. Go to `chrome://extensions` &rarr; click **Details** on DarkGuard AI &rarr; toggle ON **"Allow access to file URLs"**. |
+| **"Cannot scan this page" / Restricted URL** | Browsers forbid extension execution on internal system pages (`chrome://*`, `edge://*`, and Chrome Web Store). Open an HTTP/HTTPS website or one of our test-site pages. |
+| **Stale results or old UI** | Click the **↺ (Reload)** button on the extension card in `chrome://extensions`, then close and reopen the extension popup. |
+
+### For Developers: Rebuilding & Verifying from Source
+If modifying detectors, the popup UI, or content scripts:
+```bash
+npm install
+npm run package:extension   # Packages into extension-dist/ and downloads/darkguard-extension.zip
+npm run verify:extension    # Cryptographically verifies extension-dist parity against source
+npm test                    # Runs 80 unit & invariant tests
+npm run verify:links        # Validates all site links and served zip parity
+```
 
 ---
 
@@ -226,8 +240,9 @@ Dark-pattern/
 ├── landing/           Landing page and install walkthrough
 ├── scripts/           Build, packaging and verification tooling
 ├── docs/              Specifications, including the extension contract
-├── dist/              Packaged extension (darkguard-unpacked, zip)
-└── .github/workflows/ GitHub Pages workflow
+├── extension-dist/    Single source runtime extension (load unpacked here)
+├── downloads/         Packaged extension archives for direct download
+└── .github/workflows/ GitHub Pages and CI workflows
 ```
 
 ## Built with

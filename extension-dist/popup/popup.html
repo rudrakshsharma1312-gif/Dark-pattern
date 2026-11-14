@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkGuard AI Auditor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header with Branding -->
+    <header class="popup-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="brand-title">DarkGuard AI</span>
+          <span class="brand-sub">Design Auditor</span>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="version-tag">v0.3.0</span>
+      </div>
+    </header>
+
+    <!-- Tab / Site Context Bar -->
+    <div class="site-status-bar">
+      <div class="tab-info">
+        <span class="tab-indicator-dot"></span>
+        <span id="tab-url" class="tab-domain" title="Current tab">Current Page</span>
+      </div>
+      <button id="scan-btn" class="btn-scan">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span>Scan this page</span>
+      </button>
+    </div>
+
+    <!-- MAIN VIEWS CONTAINER -->
+    <main class="content-viewport">
+
+      <!-- 1. IDLE / READY STATE -->
+      <section id="idle-view" class="state-view">
+        <div class="idle-card">
+          <div class="idle-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <path d="m8 11 2 2 4-4"/>
+            </svg>
+          </div>
+          <h3>Ready to Scan</h3>
+          <p>DarkGuard analyzes visible countdown timers, discount arithmetic, decline phrasing, and pre-selected add-ons.</p>
+          <div class="privacy-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>100% on-device • No personal data leaves browser</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. LOADING & TIMER OBSERVATION STATE -->
+      <section id="loading-view" class="state-view hidden">
+        <div class="loading-card">
+          <div class="spinner-ring"></div>
+          <h3 id="loading-title">Scanning Page...</h3>
+          <p id="loading-status-msg">Extracting visible buttons, prices, and labels...</p>
+          
+          <!-- Checking Timer Notification Banner -->
+          <div id="timer-checking-box" class="timer-checking-box hidden">
+            <div class="timer-checking-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>Checking timer...</span>
+            </div>
+            <p>Observing countdown timer (<span id="timer-countdown-seconds">10</span>s observation window) to verify if value changes or remains frozen.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. RESULTS VIEW (Score Gauge + Findings) -->
+      <section id="results-view" class="state-view hidden">
+
+        <!-- Top Gauge Score Card -->
+        <div class="score-card">
+          <div class="gauge-container">
+            <svg width="140" height="140" class="gauge-svg">
+              <circle cx="70" cy="70" r="58" class="gauge-track"/>
+              <circle cx="70" cy="70" r="58" id="gauge-bar" class="gauge-fill"/>
+            </svg>
+            <div class="gauge-center-content">
+              <span id="score-number" class="score-number">--</span>
+              <span class="score-title">RISK SCORE</span>
+            </div>
+          </div>
+
+          <div class="score-metadata">
+            <div class="level-header">
+              <span class="level-caption">Risk Assessment:</span>
+              <span id="risk-level-badge" class="risk-level-badge level-low">Low</span>
+            </div>
+            <p id="risk-summary-text" class="risk-summary-text">Analyzing page design integrity...</p>
+            <div class="score-stats-row">
+              <span id="stat-elements-checked" class="stat-pill">0 elements checked</span>
+              <span id="stat-scan-time" class="stat-pill">0ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner: Text Model Unavailable / Disabled -->
+        <div id="ml-unavailable-banner" class="alert-banner ml-alert hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <div class="alert-content">
+            <strong id="ml-banner-title">Text model off (Release Gate)</strong>
+            <span id="ml-banner-desc">Text model is off because it did not pass the release gate. Running rules-only scan.</span>
+          </div>
+        </div>
+
+        <!-- Ethical View Interactive Toggle -->
+        <div class="ethical-view-bar">
+          <div class="ethical-info">
+            <div class="ethical-title-row">
+              <span class="shield-mini">🛡️</span>
+              <strong>Ethical View</strong>
+            </div>
+            <span class="ethical-sub">Annotate suspicious elements on page</span>
+          </div>
+          <label class="switch-toggle" title="Toggle Ethical View on page">
+            <input type="checkbox" id="ethical-toggle-cb">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <!-- Findings Section -->
+        <div class="findings-header-row">
+          <h4 id="findings-count-title">Findings (0)</h4>
+          <span class="findings-hint">Click finding to highlight element</span>
+        </div>
+
+        <div id="findings-container" class="findings-scroll-area">
+          <!-- Dynamically populated finding cards -->
+        </div>
+
+        <!-- Empty State (No Dark Patterns Found) -->
+        <div id="empty-state-card" class="empty-state-card hidden">
+          <div class="clean-shield-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <h4>No Dark Patterns Detected</h4>
+          <p>All tested prices, countdown timers, button wording, and add-on checkboxes appear honest and transparent.</p>
+        </div>
+
+        <!-- Export Actions Row -->
+        <div class="export-actions-row">
+          <button id="btn-export-json" class="btn-quiet">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export JSON</span>
+          </button>
+          <button id="btn-export-md" class="btn-quiet">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span>Export Markdown</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. ERROR STATE -->
+      <section id="error-view" class="state-view hidden">
+        <div class="error-card">
+          <div class="error-icon-wrap">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h3>Scan Unavailable</h3>
+          <p id="error-msg-text">Cannot scan this page. Ensure you are on an active e-commerce or HTTP/HTTPS website.</p>
+          <div class="error-actions">
+            <button id="btn-retry-scan" class="btn-secondary-action">Retry Scan</button>
+            <button id="btn-load-demo-result" class="btn-demo-action">Load Sample Demo Result</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <span>DarkGuard AI Auditor • Automated screening, not legal certification.</span>
+      <span id="footer-build-stamp" class="footer-build-stamp"></span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

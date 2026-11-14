@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 
@@ -7,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const siteDir = path.join(rootDir, '_site');
+const extensionDistDir = path.join(rootDir, 'extension-dist');
 
 function copyRecursiveSync(src: string, dest: string) {
   if (!fs.existsSync(src)) return;
@@ -32,6 +35,12 @@ copyRecursiveSync(path.join(rootDir, 'test-site'), path.join(siteDir, 'test-site
 const distWeb = path.join(rootDir, 'dist-web');
 if (fs.existsSync(distWeb)) {
   copyRecursiveSync(distWeb, path.join(siteDir, 'app'));
+}
+
+const downloadsDir = path.join(rootDir, 'downloads');
+if (fs.existsSync(downloadsDir)) {
+  copyRecursiveSync(downloadsDir, path.join(siteDir, 'downloads'));
+  copyRecursiveSync(downloadsDir, path.join(siteDir, 'app', 'downloads'));
 }
 
 const mockOrigin = 'http://localhost:8080';
@@ -155,10 +164,54 @@ while (toVisit.length > 0) {
 }
 
 console.log(`\nChecked ${visited.size} internal pages & views.`);
-if (errors.length === 0) {
-  console.log('✅ ZERO 404s detected across all links & assets under /Dark-pattern/ subpath!');
-  process.exit(0);
-} else {
+if (errors.length > 0) {
   console.error(`❌ Found ${errors.length} broken links/assets:`, JSON.stringify(errors, null, 2));
   process.exit(1);
 }
+
+console.log('✅ ZERO 404s detected across all links & assets under /Dark-pattern/ subpath!');
+
+// 3. Verify that the served zip matches extension-dist/ folder contents
+console.log('\n[Zip Parity Check] Verifying served _site/downloads/darkguard-extension.zip matches extension-dist/ ...');
+const servedZip = path.join(siteDir, 'downloads', 'darkguard-extension.zip');
+if (!fs.existsSync(servedZip)) {
+  console.error(`❌ Missing served zip: ${servedZip}`);
+  process.exit(1);
+}
+
+const verifyZipTmp = path.join(rootDir, 'node_modules', '.tmp', 'pages-crawler-zip');
+fs.rmSync(verifyZipTmp, { recursive: true, force: true });
+fs.mkdirSync(verifyZipTmp, { recursive: true });
+execSync(`unzip -q "${servedZip}" -d "${verifyZipTmp}"`);
+
+function getFilesRec(dir, base = dir) {
+  const files = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...getFilesRec(full, base));
+    } else {
+      files.push(path.relative(base, full));
+    }
+  }
+  return files;
+}
+
+const distFiles = getFilesRec(extensionDistDir).sort();
+for (const rel of distFiles) {
+  const zipFileOnDisk = path.join(verifyZipTmp, rel);
+  if (!fs.existsSync(zipFileOnDisk)) {
+    console.error(`❌ File ${rel} missing in served zip!`);
+    process.exit(1);
+  }
+  const h1 = crypto.createHash('sha256').update(fs.readFileSync(path.join(extensionDistDir, rel))).digest('hex');
+  const h2 = crypto.createHash('sha256').update(fs.readFileSync(zipFileOnDisk)).digest('hex');
+  if (h1 !== h2) {
+    console.error(`❌ File hash mismatch in served zip for ${rel}: dist=${h1}, zip=${h2}`);
+    process.exit(1);
+  }
+}
+fs.rmSync(verifyZipTmp, { recursive: true, force: true });
+
+console.log(`✅ VERIFIED: Served zip contains all ${distFiles.length} files matching extension-dist/ 100% byte-for-byte!`);
+process.exit(0);

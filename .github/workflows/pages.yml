@@ -37,6 +37,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Package Extension
+        run: npm run package:extension
+
+      - name: Verify Extension Parity
+        run: npm run verify:extension
+
       - name: Build Web Application
         run: npm run build:web
 
@@ -45,7 +51,7 @@ jobs:
 
       - name: Assemble Public Pages Artifact
         run: |
-          mkdir -p _site/test-site _site/landing _site/app
+          mkdir -p _site/test-site _site/landing _site/app _site/downloads _site/app/downloads
           # Landing page at root and at /landing/
           cp -r landing/* _site/
           cp -r landing/* _site/landing/
@@ -53,6 +59,14 @@ jobs:
           cp -r dist-web/* _site/app/
           # Test site at /test-site/
           cp -r test-site/* _site/test-site/
+          # Published extension zip & build info at /downloads/ and /app/downloads/
+          cp downloads/darkguard-extension.zip _site/downloads/darkguard-extension.zip
+          cp downloads/darkguard-extension.zip _site/app/downloads/darkguard-extension.zip
+          ZIP_SHA=$(sha256sum downloads/darkguard-extension.zip | awk '{print $1}')
+          echo "Commit: ${{ github.sha }}" > _site/downloads/build-info.txt
+          echo "Build-Date: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> _site/downloads/build-info.txt
+          echo "ZIP-SHA256: ${ZIP_SHA}" >> _site/downloads/build-info.txt
+          cp _site/downloads/build-info.txt _site/app/downloads/build-info.txt
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3

@@ -66,9 +66,21 @@
   const GAUGE_CIRCUMFERENCE = 2 * Math.PI * GAUGE_RADIUS; // ~364.42
 
   document.addEventListener('DOMContentLoaded', () => {
+    initBuildStamp();
     initTabContext();
     initEventListeners();
   });
+
+  function initBuildStamp() {
+    try {
+      const manifest = typeof chrome !== 'undefined' && chrome.runtime?.getManifest?.();
+      const stampEl = document.getElementById('footer-build-stamp');
+      if (stampEl && manifest) {
+        const stamp = manifest.version_name || manifest.version;
+        stampEl.textContent = ` • Build ${stamp}`;
+      }
+    } catch (_) {}
+  }
 
   async function initTabContext() {
     if (typeof chrome !== 'undefined' && chrome.tabs?.query) {
