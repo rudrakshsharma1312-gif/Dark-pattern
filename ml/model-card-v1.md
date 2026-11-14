@@ -95,3 +95,4 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
 
 - Integrity is verified via SHA-256 byte comparison against `shaming-v1.sha256`.
 - If the model file is missing or corrupted, `classifier.ts` sets `status = 'corrupted'` and `batchPredict()` returns empty results, causing `fusion.js` to execute a pure rules-only scan without throwing runtime exceptions.
+

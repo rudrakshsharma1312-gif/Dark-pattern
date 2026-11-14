@@ -17,3 +17,4 @@ Items and architectural enhancements logged for future development:
 
 5. **Multi-Page Flow Tracking:**
    - Detect sneak-into-basket and subscription traps that span the product page, cart, and final payment screen.
+

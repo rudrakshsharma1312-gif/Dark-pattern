@@ -67,3 +67,4 @@ In strict adherence to the project guidelines:
 
 The extension ships with **rules-only active by default**, and the ML classifier available as an opt-in toggle in the settings. The popup displays:
 > *"Text model unavailable (Release gate: clean page false-positive threshold exceeded). Running in verified Rules-Only mode."*
+
