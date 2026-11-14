@@ -25,7 +25,7 @@
       "resources": [
         "content/ethical-view.css",
         "content/templates.json",
-        "src/ml/shaming-v1.json"
+        "content/shaming-v1.json"
       ],
       "matches": [
         "<all_urls>"
