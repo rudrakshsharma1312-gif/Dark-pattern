@@ -72,7 +72,7 @@ def main():
         "Price $32.00, in stock, ships in 2-3 business days",
         "Decline gift wrap and continue without saving",
         "Flash Sale: 02:45:00 remaining",
-        "Save 40% was 4999 now 3999",
+        "Save 35% slashed from 4500 to 2925",
         "Add $4.99 priority shipping insurance",
         "No, I prefer full price",
         "Retail price $4.50",
@@ -81,7 +81,11 @@ def main():
         "No thanks, I will pay full price",
         "Save up to 60% on selected items",
         "100% recyclable outer carton packaging",
-        "Tick-tock! Your reserved item expires in 00:08:45"
+        "Tick-tock! Your reserved item expires in 00:08:45",
+        "Café deal",
+        "सिर्फ आज",
+        "₹499 only",
+        "Save 50% — limited time"
     ]
 
     vocabulary = payload['vocabulary']

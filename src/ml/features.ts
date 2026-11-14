@@ -38,11 +38,13 @@ export class FeatureExtractor {
 
     const ngrams: string[] = [];
 
-    // Word tokens: replace non-word, non-whitespace, non-hyphen with space
-    // Preserves hyphenated words ("2-year", "pre-checked", "add-on"),
-    // handles prices ("$19.99" -> "19", "99"), and preserves single characters ("a").
+    // Unicode-aware word tokenization:
+    // Matches Python extract_unigrams_and_bigrams.
+    // Retains Unicode letters (\p{L}), numbers (\p{N}), combining marks (\p{M}),
+    // hyphens (-), underscores (_), and whitespace (\s).
+    // Replaces all currency symbols, em-dashes, and punctuation with spaces.
     const words = text
-      .replace(/[^\w\s-]/g, ' ')
+      .replace(/[^\p{L}\p{N}\p{M}\s_-]/gu, ' ')
       .split(/\s+/)
       .filter((w) => w.length > 0);
 
