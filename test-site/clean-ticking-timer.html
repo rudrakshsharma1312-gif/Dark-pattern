@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Ticking Countdown Timer | NovaStore Control</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Judge Inspection Header -->
+  <aside class="test-suite-bar" data-dg-owner="test-site-nav">
+    <div class="test-suite-inner">
+      <div class="test-suite-left">
+        <span class="test-badge clean">Clean Control: Active Ticking Timer</span>
+        <span class="test-note">Element under test: <strong>Genuinely decrementing timer (ticks every 1,000ms from 00:15:00)</strong></span>
+      </div>
+      <div class="test-suite-right">
+        <a href="index.html" class="test-nav-link">All Test Pages</a>
+        <a href="planted-urgency-01.html" class="test-nav-link">Planted Frozen Timer &rarr;</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Store Header -->
+  <header class="site-header">
+    <div class="header-main-inner">
+      <a href="index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m10 15 5-3-5-3v6z"></path>
+        </svg>
+        <span>NOVA<span class="tag">STORE</span></span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Product Detail View -->
+  <main class="site-container product-layout">
+    <div class="product-info-wrap">
+      <div class="product-info">
+        <span class="product-eyebrow">Studio Equipment</span>
+        <h1 class="product-title">NovaPro Broadcast Mic Boom Arm</h1>
+
+        <!-- Active ticking countdown timer (ticks every 1 second) -->
+        <div class="timer-container timer countdown">
+          <div class="timer-text-wrap">
+            <span class="timer-label">Standard Shipping Order Cutoff:</span>
+            <span class="timer-digits" id="live-timer">00:15:00</span>
+          </div>
+        </div>
+
+        <div class="price-container pricing product-pricing">
+          <span class="current-price sale-price">$89.00</span>
+        </div>
+
+        <div class="product-actions">
+          <div class="cta-row">
+            <button type="button" class="btn btn-primary add-to-cart">Add to Bag</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let remainingSeconds = 900; // 15:00
+    const timerEl = document.getElementById('live-timer');
+    if (timerEl) {
+      setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          const m = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
+          const s = String(remainingSeconds % 60).padStart(2, '0');
+          timerEl.textContent = `00:${m}:${s}`;
+        }
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>
