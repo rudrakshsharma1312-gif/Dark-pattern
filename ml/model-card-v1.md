@@ -135,4 +135,4 @@ Thresholds were tuned on the validation split (`val`) to satisfy target precisio
   - Macro Precision: **0.914** ($\ge 0.85$, PASS)
   - Macro Recall: **0.804** \| Micro Recall: **0.810** (34 of 42 instances, PASS)
   - Clean Page False Alarms: **+3 clean pages (4 detections)** (FAILED: target is $\le 0$).
-- **Deployment Recommendation:** **Ship with ML disabled by default (`ml_enabled: false`)** to ensure zero false positives on verified clean shopping sites.
+- **Deployment Recommendation:** **Ship with ML disabled by default (`ml_enabled: false`)**. Rules-only produced 0 false flags on the 10 clean fixture pages; this is not a guarantee for real sites.

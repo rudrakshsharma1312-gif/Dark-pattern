@@ -169,12 +169,12 @@ function runEvaluation() {
   const avgRoPrec = categoryMetrics.reduce((acc, m) => acc + m.rulesOnly.precision, 0) / 4;
   const avgRoRec = categoryMetrics.reduce((acc, m) => acc + m.rulesOnly.recall, 0) / 4;
   const avgRoF1 = (2 * avgRoPrec * avgRoRec) / (avgRoPrec + avgRoRec || 1);
+  const avgRoFpRate = categoryMetrics.reduce((acc, m) => acc + m.rulesOnly.falsePositiveRate, 0) / 4;
 
   const avgRmPrec = categoryMetrics.reduce((acc, m) => acc + m.rulesPlusML.precision, 0) / 4;
   const avgRmRec = categoryMetrics.reduce((acc, m) => acc + m.rulesPlusML.recall, 0) / 4;
   const avgRmF1 = (2 * avgRmPrec * avgRmRec) / (avgRmPrec + avgRmRec || 1);
-
-  const fpRateClean = cleanPageCount > 0 ? cleanFpRulesPlusML / cleanPageCount : 0;
+  const avgRmFpRate = categoryMetrics.reduce((acc, m) => acc + m.rulesPlusML.falsePositiveRate, 0) / 4;
 
   const precisionCheck = avgRmPrec >= 0.85;
   const recallCheck = avgRmRec >= 0.70;
@@ -189,13 +189,13 @@ function runEvaluation() {
         precision: Number(avgRoPrec.toFixed(3)),
         recall: Number(avgRoRec.toFixed(3)),
         f1: Number(avgRoF1.toFixed(3)),
-        falsePositiveRate: 0,
+        falsePositiveRate: Number(avgRoFpRate.toFixed(3)),
       },
       rulesPlusML: {
         precision: Number(avgRmPrec.toFixed(3)),
         recall: Number(avgRmRec.toFixed(3)),
         f1: Number(avgRmF1.toFixed(3)),
-        falsePositiveRate: Number(fpRateClean.toFixed(3)),
+        falsePositiveRate: Number(avgRmFpRate.toFixed(3)),
       },
     },
     releaseGate: {
@@ -230,10 +230,14 @@ function runEvaluation() {
   }
 
   console.log(
-    `${'OVERALL MACRO'.padEnd(24)} | ${'Rules-only'.padEnd(10)} | ${result.overall.rulesOnly.precision.toFixed(3).padStart(9)} | ${result.overall.rulesOnly.recall.toFixed(3).padStart(8)} | ${result.overall.rulesOnly.f1.toFixed(3).padStart(8)} | ${result.overall.rulesOnly.falsePositiveRate.toFixed(3).padStart(8)}`
+    `${'OVERALL MACRO'.padEnd(24)} | ${'Rules-only'.padEnd(10)} | ${result.overall.rulesOnly.precision.toFixed(3).padStart(9)} | ${result.overall.rulesOnly.recall.toFixed(3).padStart(8)} | ${result.overall.rulesOnly.f1.toFixed(3).padStart(8)} | ${'-'.padStart(8)}`
   );
   console.log(
-    `${'OVERALL MACRO'.padEnd(24)} | ${'Rules + ML'.padEnd(10)} | ${result.overall.rulesPlusML.precision.toFixed(3).padStart(9)} | ${result.overall.rulesPlusML.recall.toFixed(3).padStart(8)} | ${result.overall.rulesPlusML.f1.toFixed(3).padStart(8)} | ${result.overall.rulesPlusML.falsePositiveRate.toFixed(3).padStart(8)}`
+    `${'OVERALL MACRO'.padEnd(24)} | ${'Rules + ML'.padEnd(10)} | ${result.overall.rulesPlusML.precision.toFixed(3).padStart(9)} | ${result.overall.rulesPlusML.recall.toFixed(3).padStart(8)} | ${result.overall.rulesPlusML.f1.toFixed(3).padStart(8)} | ${'-'.padStart(8)}`
+  );
+  console.log('-'.repeat(74));
+  console.log(
+    `Clean pages with at least one false flag: rules-only ${cleanFpRulesOnly} of ${cleanPageCount}, rules+ML ${cleanFpRulesPlusML} of ${cleanPageCount}`
   );
 
   console.log('\n=== RELEASE GATE CHECK (ML-R9) ===');
