@@ -7,9 +7,9 @@
 **A privacy-first Chrome & Edge extension that spots dark patterns on shopping pages, shows the proof, and lets you read the page honestly with one click.**
 
 ![Chrome and Edge](https://img.shields.io/badge/Chrome%20%7C%20Edge-Manifest%20V3-4F46E5)
-![On-device](https://img.shields.io/badge/Runs-100%25%20in%20your%20browser-10B981)
+![On-device](https://img.shields.io/badge/Runs-In%20your%20browser-10B981)
 ![Patterns](https://img.shields.io/badge/Dark%20patterns-4%20detected-F59E0B)
-![Test bed](https://img.shields.io/badge/Test%20site-14%20pages-8B5CF6)
+![Test bed](https://img.shields.io/badge/Test%20site-Planted%20%2B%20clean%20pages-8B5CF6)
 ![Hackathon](https://img.shields.io/badge/Built%20in-12--hour%20hackathon-0EA5E9)
 
 [**Install in 2 minutes**](#install-in-2-minutes) · [**Try it yourself**](#try-it-yourself) · [**How it works**](#how-it-works) · [**Results**](#results-the-honest-numbers) · [**Roadmap**](#roadmap)
@@ -78,7 +78,7 @@ flowchart LR
 
 - **Scanner** lists the visible candidates (text, tag, position, selector). It never reads input values.
 - **Rule detectors** collect evidence you can verify. This is the trusted core.
-- **Text model (optional, off by default)** reads short button and label wording. It cannot prove anything, so its hits are shown as *possible pattern, low certainty* and count at half weight in the score.
+- **Text model (optional, off by default)** reads short button and label wording. It cannot prove anything, so its hits are shown as *possible pattern, low certainty* and count at half weight in the score. The shipped build sets `ml_enabled: false`, so scans run in rules-only mode.
 - **Fusion** merges everything into one list. Each detection keeps its source: rule or ML.
 - **Risk score** combines detections using four category weights.
 
@@ -91,7 +91,7 @@ We tested on **30 labeled fixture pages**: 20 with planted patterns (42 planted 
 | **Rules only (shipped)** | **24 / 42** (57.1%) | **0 / 10** |
 | Rules + text model | 34 / 42 (81.0%) | 3 / 10 |
 
-**Why the text model ships turned off:** it found 10 more patterns, but every extra catch was low certainty and it put false flags on 3 of 10 clean pages. A tool that raises false alarms loses trust, so we kept the verified rules and documented the fix.
+**Why the text model ships turned off:** it found 10 more patterns, but every extra catch was low certainty and it put false flags on 3 of 10 clean pages. A tool that raises false alarms loses trust, so we kept the verified rules and documented the fix in the model card.
 
 Rules-only recall by category: DP-1 0.64 · DP-2 0.40 · DP-3 0.80 · DP-4 0.45 (precision 1.00 on these pages).
 
@@ -106,6 +106,7 @@ Rules-only recall by category: DP-1 0.64 · DP-2 0.40 · DP-3 0.80 · DP-4 0.45 
 ## Privacy and safety
 
 - **No data leaves the browser.** No backend, no account, no analytics.
+- **Minimal permissions.** The extension uses `activeTab`: the scanner is injected only when you click Scan, and it has no standing access to every site you visit.
 - **The scanner ignores sensitive inputs** (passwords, email, card, CVV, address fields) and never reads what you type.
 - **Ethical View safety rules**
   1. Never changes price text or numbers.
@@ -146,9 +147,8 @@ git clone https://github.com/rudrakshsharma1312-gif/Dark-pattern.git
 
 1. Click the puzzle-piece icon in the toolbar and **pin** the DarkGuard AI shield.
 2. Open any shopping page, or one of our [test pages](#try-it-yourself).
-3. **Refresh the page once** (tabs that were already open before install do not get the scanner).
-4. Click the shield, then **Scan this page**.
-5. Wait about 10 seconds while it says "Checking timer...". That is the urgency check at work.
+3. Click the shield, then **Scan this page**.
+4. Wait about 10 seconds while it says "Checking timer...". That is the urgency check at work.
 
 ### Troubleshooting
 
@@ -156,15 +156,14 @@ git clone https://github.com/rudrakshsharma1312-gif/Dark-pattern.git
 |---|---|
 | "Manifest file is missing or unreadable" | You selected the wrong folder. Pick the one that directly contains `manifest.json`. |
 | Scan does nothing on a test page opened from your disk (`file://`) | Open the extension's **Details** page and turn on **Allow access to file URLs**. Or serve the test site locally: `npx serve test-site`. |
-| Scan does nothing on a page that was already open | Refresh the page, then scan again. |
-| Cannot scan `chrome://` or Web Store pages | Browsers block extensions on those pages. Try a normal website. |
+| The popup says the browser restricts extensions on this page | Browsers block extensions on `chrome://`, `edge://` and Web Store pages. Try a normal website. |
 | You pulled new code | On the extensions page, click the **reload** icon on the DarkGuard AI card, then refresh your test page. |
 
 ---
 
 ## Try it yourself
 
-We built a **14-page offline test site** so you can see every pattern, and see the tool stay quiet on honest pages. Open `test-site/index.html` (the hub), or jump straight in:
+We built an **offline test site** with planted and clean pages so you can see every pattern, and see the tool stay quiet on honest pages. Open `test-site/index.html` (the hub), or jump straight in:
 
 | Try this page | What is planted | What you should see |
 |---|---|---|
@@ -172,11 +171,13 @@ We built a **14-page offline test site** so you can see every pattern, and see t
 | [`planted-discount-01.html`](test-site/planted-discount-01.html) | "70% off" where $400 to $200 is really 50% | DP-2 finding with the arithmetic |
 | [`planted-shaming-01.html`](test-site/planted-shaming-01.html) | "No thanks, I prefer paying full price" | DP-3 finding with the matched phrase |
 | [`planted-extras-01.html`](test-site/planted-extras-01.html) | A pre-checked $49.99 warranty | DP-4 finding, checkbox highlighted |
+| [`planted-combined-01.html`](test-site/planted-combined-01.html) | All four patterns on one page | Four findings and a high risk score |
 | [`clean-coffee-maker.html`](test-site/clean-coffee-maker.html) | Nothing. Honest pricing | **0 findings**. It does not raise false alarms |
+| [`clean-ticking-timer.html`](test-site/clean-ticking-timer.html) | A timer that genuinely counts down | **0 findings**. Real timers are not flagged |
 
 ### 60-second walkthrough
 
-1. Open `planted-urgency-01.html` and click **Scan this page**. Watch the gauge fill.
+1. Open `planted-combined-01.html` and click **Scan this page**. Watch the gauge fill.
 2. Click a finding or its **Locate** button. The page scrolls and pulses the exact element.
 3. Switch on **Ethical View**. A banner and small notes appear. Prices, buttons and checkboxes stay untouched.
 4. Click **Show original**. The page is back exactly as it was.
@@ -193,7 +194,7 @@ Dark-pattern/
 ├── src/            TypeScript engine: detectors, fusion, risk score
 ├── ml/             Text model: data, training, JS classifier, model card
 ├── eval/           Evaluation runner and labeled fixture pages
-├── test-site/      14-page offline test bed (8 planted, 6 clean)
+├── test-site/      Offline test bed with planted and clean pages
 ├── landing/        Landing page and install walkthrough
 └── LATER.md        What we would build next
 ````
@@ -230,14 +231,6 @@ npm run dev
 
 See [`LATER.md`](LATER.md) for the full list.
 
-## Team
-
-| Role | Owns | Who |
-|---|---|---|
-| **Core engine** | Scanner, four rule detectors, fusion, risk score, extension manifest | _add name_ |
-| **ML and evaluation** | Dataset, text model, classifier, integrity check, eval runner | _add name_ |
-| **Product and demo** | Test site, popup, highlighter, Ethical View, landing page | _add name_ |
-
 ## Responsible use
 
 DarkGuard AI shows you things worth checking. Findings are evidence for you to judge, not verdicts about any shop. Text-model hits are always labeled *possible pattern, low certainty*.
@@ -252,4 +245,4 @@ DarkGuard AI shows you things worth checking. Findings are evidence for you to j
 ````
 ````
 
-Copy everything between the first and last fence lines and paste it into `README.md` in your repo. Before you commit, replace the three "_add name_" entries in the Team table with your teammates' names, and add the screenshots or delete the "See it in action" section.
+
