@@ -1,190 +1,255 @@
-# DarkGuard AI 🛡️
-> Intelligent On-Device Auditor for Deceptive E-Commerce Design Patterns
+<div align="center">
 
-[![Project Status](https://img.shields.io/badge/Status-12--Hour%20Hackathon%20Build-blue)](#)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20On--Device-emerald)](#)
-[![Architecture](https://img.shields.io/badge/Architecture-Manifest%20V3%20Extension-indigo)](#)
-[![Test Suite](https://img.shields.io/badge/Test%20Bed-14%20Deterministic%20Pages-purple)](test-site/index.html)
+# DarkGuard AI
 
----
+### See the trick behind the deal.
 
-## 1. Project Overview
+**A privacy-first Chrome & Edge extension that spots dark patterns on shopping pages, shows the proof, and lets you read the page honestly with one click.**
 
-**DarkGuard AI** is a lightweight, privacy-first Chromium extension (Chrome / Edge) designed to detect, contextualize, and neutralize manipulative e-commerce design patterns ("dark patterns"). 
+![Chrome and Edge](https://img.shields.io/badge/Chrome%20%7C%20Edge-Manifest%20V3-4F46E5)
+![On-device](https://img.shields.io/badge/Runs-100%25%20in%20your%20browser-10B981)
+![Patterns](https://img.shields.io/badge/Dark%20patterns-4%20detected-F59E0B)
+![Test bed](https://img.shields.io/badge/Test%20site-14%20pages-8B5CF6)
+![Hackathon](https://img.shields.io/badge/Built%20in-12--hour%20hackathon-0EA5E9)
 
-Rather than relying on vague heuristics or sending sensitive shopping data to third-party cloud servers, DarkGuard AI audits visible webpage candidates entirely on-device, verifies evidence mathematically and temporally, generates a **0–100 risk score**, highlights suspicious DOM elements, and activates an **Ethical View** overlay with a one-click **Show Original** restoration guarantee.
+[**Install in 2 minutes**](#install-in-2-minutes) · [**Try it yourself**](#try-it-yourself) · [**How it works**](#how-it-works) · [**Results**](#results-the-honest-numbers) · [**Roadmap**](#roadmap)
 
----
-
-## 2. Problem Statement & Solution
-
-### The Problem
-E-commerce websites frequently deploy psychological coercion tactics:
-* **Manufactured Urgency**: Countdown timers that freeze or reset upon reload to induce panic.
-* **Miscalculated Discounts**: Slashed "original" prices paired with inflated discount percentages that contradict basic math.
-* **Emotional Manipulation**: Guilt-inducing decline buttons ("No thanks, I hate saving money") that pressure shoppers.
-* **Hidden Add-ons**: Sneaking insurance, extended warranties, or recurring subscriptions into carts via pre-checked boxes.
-
-### The DarkGuard AI Solution
-* **Zero Telemetry / 100% Private**: All rule evaluations and text classifications run strictly in-browser. Zero passwords, card details, or browsing histories leave your machine.
-* **Deterministic Proof**: Every finding provides demonstrable evidence—a 10-second timer freeze observation, an arithmetic mismatch calculation, or an exact shaming phrase match.
-* **Ethical View with Show Original**: Annotates manipulative design in-context without ever modifying prices, breaking buttons, or toggling checkboxes. Restores the exact pre-annotation state with one click.
+</div>
 
 ---
 
-## 3. The Four Dark Patterns & Detection Mechanisms
+## The problem
 
-| Category ID | Pattern Name | Detection Mechanism | Verification Proof |
-|---|---|---|---|
-| **DP-1** | **Fake Urgency & Scarcity** | Temporal Observation & Regex | Samples countdown timers across a 10-second observation window. Unchanging digits are flagged as frozen countdowns. |
-| **DP-2** | **Misleading Discount Calculations** | Arithmetic Parsing Heuristics | Parses reference price (`Was`) and sale price (`Now`), calculates `((Was - Now) / Was) * 100`, and flags discrepancies > 5 percentage points. |
-| **DP-3** | **Confirm Shaming Phrasing** | Lexicon Match + On-Device ML | Combines a 40+ curated shaming phrase list with an on-device TF-IDF logistic regression classifier to detect guilt-inducing decline language. |
-| **DP-4** | **Pre-Selected Extras & Add-ons** | DOM Attribute & Area Inspection | Identifies `input[type="checkbox"]` with `checked="true"` inside purchase action containers matching warranty, insurance, or protection keywords. |
+You are about to buy something online.
 
----
+- A timer says **"Deal ends in 14:59"**. You refresh. Still **14:59**.
+- **"70% OFF!"** But the old price is **$400** and the new one is **$200**. That is 50%.
+- The decline button says **"No thanks, I prefer paying full price."**
+- A **$49.99 warranty** is already ticked in your cart.
 
-## 4. Project Architecture & Directory Structure
+These are **dark patterns**: interface tricks designed to make you decide fast, not decide well. Nothing in your browser warns you about them. Until now.
 
-```
-Dark-pattern/
-├── content/                    # Content Scripts (Injected into Webpages)
-│   ├── ethical-view.js         # Safe Ethical View engine & Show Original controller
-│   ├── ethical-view.css        # Ethical View styling (banner, notes, outlines)
-│   ├── highlighter.js          # Suspicious element locator with pulse overlay
-│   └── templates.json          # Ethical template definitions & placeholders
-├── popup/                      # Extension Browser Action Popup
-│   ├── popup.html              # Popup DOM (Branding, gauge, findings, states)
-│   ├── popup.css               # Popup design tokens & animated circular gauge
-│   └── popup.js                # Popup event handling & tab messaging
-├── test-site/                  # 14-Page Standalone Evaluation Test Bed
-│   ├── css/style.css           # Realistic e-commerce store styling
-│   ├── js/main.js              # Store client interactions (frozen timers genuine)
-│   ├── index.html              # Test Bed Directory Hub & Judge Evaluation Matrix
-│   ├── planted-urgency-01.html # DP-1 Scenario: 00:14:59 Frozen Timer
-│   ├── planted-urgency-02.html # DP-1 Scenario: 02:45:00 Deadline Timer
-│   ├── planted-discount-01.html# DP-2 Scenario: 70% Fake Discount (50% actual)
-│   ├── planted-discount-02.html# DP-2 Scenario: 55% Fake Discount (30% actual)
-│   ├── planted-shaming-01.html # DP-3 Scenario: "No thanks, I prefer paying full price"
-│   ├── planted-shaming-02.html # DP-3 Scenario: "No, I don't want to save money"
-│   ├── planted-extras-01.html  # DP-4 Scenario: Pre-checked $49.99 Warranty
-│   ├── planted-extras-02.html  # DP-4 Scenario: Pre-checked $29.00 Transit Insurance
-│   ├── clean-coffee-maker.html # Clean Control: Honest pricing ($249)
-│   ├── clean-desk-lamp.html    # Clean Control: Verified 20% discount math
-│   ├── clean-backpack.html     # Clean Control: Unchecked rain cover add-on
-│   ├── clean-running-shoes.html# Clean Control: Verified 20% discount math
-│   ├── clean-ceramic-mug.html  # Clean Control: Standard artisan price ($28)
-│   └── clean-mechanical-keyboard.html # Clean Control: Neutral decline & options
-├── landing/                    # Public Landing Page & Educational Walkthrough
-│   ├── css/landing.css         # Responsive landing page stylesheet
-│   └── index.html              # 3-step guide, pattern breakdowns, install steps
-├── src/                        # Core TypeScript Engine & Dev Simulator
-│   ├── engine/                 # Scanner, detectors, fusion, risk, ethical view
-│   ├── ml/                     # Classifier, feature extraction, model weights
-│   ├── eval/                   # Evaluation runner and labeled test benchmarks
-│   └── components/             # React web preview components
-├── ethical-view.css            # Root-level mirror for extension packaging
-├── templates.json              # Root-level mirror for extension packaging
-└── server.ts                   # Local development and API server
-```
+## What DarkGuard AI does
 
----
+Click **Scan this page** and DarkGuard AI:
 
-## 5. Local Installation & Testing Instructions
+1. **Finds** four kinds of manipulation on the page.
+2. **Proves** each one with evidence you can check yourself.
+3. **Scores** the page from 0 to 100 so you see the risk at a glance.
+4. **Points** at the exact element when you click a finding.
+5. **Explains** in plain language with **Ethical View**, and restores the original page with one click.
 
-### Option A: Install Extension in Chrome / Edge (Developer Mode)
-1. Open Google Chrome or Microsoft Edge and navigate to:
-   * **Chrome**: `chrome://extensions`
-   * **Edge**: `edge://extensions`
-2. Enable **Developer mode** via the toggle switch in the top-right corner.
-3. Click the **Load unpacked** button on the top-left toolbar.
-4. Select this project repository root directory (`Dark-pattern/`).
-5. Pin the **DarkGuard AI** shield icon to your toolbar.
+| | |
+|---|---|
+| **Evidence-based findings** | A frozen timer, a failed percentage calculation, a matched guilt phrase, a ticked box. Every finding shows its proof. |
+| **Private by design** | No backend. No account. The scanner never reads what you type. Nothing leaves your browser. |
+| **Safe Ethical View** | It only *adds* notes and a banner. It never edits a price, a button or a checkbox. **Show original** undoes everything. |
+| **Fast** | Rule checks run on the page itself. The optional text model is a small JSON file that runs offline. |
 
-### Option B: Local Web Development Server
-To run the project development server:
-```powershell
-# Install dependencies (if not already installed)
-npm install
+## See it in action
 
-# Start development server
-npm run dev
-```
-The server will start at `http://localhost:3000`.
+<!-- Add your screenshots to docs/screenshots/ and keep these names, or delete this section. -->
 
----
+| Popup with risk gauge | Locate the evidence | Ethical View |
+|:---:|:---:|:---:|
+| ![Popup](docs/screenshots/popup.png) | ![Highlighter](docs/screenshots/highlight.png) | ![Ethical View](docs/screenshots/ethical-view.png) |
 
-## 6. How to Open and Explore the Test Website
+## The four patterns we catch
 
-The test website is **100% offline and standalone** with zero external dependencies.
+| ID | Pattern | How we detect it | The proof you see |
+|:--:|---|---|---|
+| **DP-1** | **Fake urgency** | Read the countdown, wait 10 seconds, read again | "Timer did not change in 10 seconds" |
+| **DP-2** | **Misleading discount** | Compare old price with the stated percent off (Rs, $ and EUR). Flag a gap above 5 points | The arithmetic, shown on screen |
+| **DP-3** | **Confirm shaming** | Match decline buttons against a list of about 40 guilt phrases | The matched phrase |
+| **DP-4** | **Pre-selected extras** | Find ticked add-on boxes (insurance, warranty, gift wrap) near Add to cart | The ticked box, highlighted |
 
-1. **Direct File URL (No Server Required)**:
-   * Open `file:///c:/Users/gur83/Dark-pattern/test-site/index.html` in Chrome or Edge, or double-click [`test-site/index.html`](test-site/index.html).
-2. **Via Local Server**:
-   * Navigate to `http://localhost:3000/test-site/index.html` (or `npx serve test-site`).
-3. **Navigating the 14 Pages**:
-   * Use the **Evaluation Matrix Hub** at `test-site/index.html` to filter between the **8 planted pages** and **6 clean control pages**.
-   * Each page includes a top inspection bar detailing the specific dark pattern under test and quick-jump links.
+## How it works
 
----
+````mermaid
+flowchart LR
+    A[Visible page elements<br/>buttons, labels, checkboxes, prices] --> B[Scanner]
+    B --> C[4 rule detectors<br/>DP-1 to DP-4]
+    B -.optional.-> D[Text model<br/>TF-IDF + logistic regression]
+    C --> E[Fusion]
+    D -.-> E
+    E --> F[Risk score 0-100]
+    F --> G[Popup + Highlighter + Ethical View]
+````
 
-## 7. How to Test the Popup, Highlighter, and Ethical View
+- **Scanner** lists the visible candidates (text, tag, position, selector). It never reads input values.
+- **Rule detectors** collect evidence you can verify. This is the trusted core.
+- **Text model (optional, off by default)** reads short button and label wording. It cannot prove anything, so its hits are shown as *possible pattern, low certainty* and count at half weight in the score.
+- **Fusion** merges everything into one list. Each detection keeps its source: rule or ML.
+- **Risk score** combines detections using four category weights.
 
-1. Navigate to any test page, such as:
-   * **Planted Fake Urgency**: [`test-site/planted-urgency-01.html`](test-site/planted-urgency-01.html)
-   * **Planted Misleading Discount**: [`test-site/planted-discount-01.html`](test-site/planted-discount-01.html)
-   * **Clean Baseline**: [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html)
-2. Click the **DarkGuard AI** extension icon in your browser toolbar to open the popup.
-3. Click **Scan this page**:
-   * Notice the **"Checking timer..."** status during the 10-second observation window.
-   * Review the animated **0–100 Risk Score Gauge** and the **Risk Level Badge**.
-   * Inspect the detected findings cards displaying pattern names, evidence snippets, and observation notes.
-4. Click on any finding card or its **Locate** button:
-   * The page will smoothly scroll to the suspicious element.
-   * A non-destructive animated pulse box (`🛡️ Detected Suspicious Element`) will highlight the element.
-5. Toggle **Ethical View**:
-   * A lavender top banner appears: *"Ethical View Active: X possible issues found. Risk Score: Y/100"*.
-   * Small contextual notes appear adjacent to deceptive elements.
-   * Product prices, button texts, and checkbox states remain strictly untouched.
-6. Click **Show original** in the top banner:
-   * Injected notes and banner are cleanly removed.
-   * Added outline classes are safely stripped without touching unrelated inline styles or classes.
+## Results: the honest numbers
+
+We tested on **30 labeled fixture pages**: 20 with planted patterns (42 planted patterns in total) and 10 clean pages.
+
+| Setup | Planted patterns caught | Clean pages falsely flagged |
+|---|:---:|:---:|
+| **Rules only (shipped)** | **24 / 42** (57.1%) | **0 / 10** |
+| Rules + text model | 34 / 42 (81.0%) | 3 / 10 |
+
+**Why the text model ships turned off:** it found 10 more patterns, but every extra catch was low certainty and it put false flags on 3 of 10 clean pages. A tool that raises false alarms loses trust, so we kept the verified rules and documented the fix.
+
+Rules-only recall by category: DP-1 0.64 · DP-2 0.40 · DP-3 0.80 · DP-4 0.45 (precision 1.00 on these pages).
+
+**What these numbers do and do not mean**
+
+- The pages and the training strings are **ours**. Real shops will be harder.
+- About 10 planted pages per category, so one page moves a score by 9 to 10 points.
+- The eval uses fixture element lists, not the live scanner on rendered pages.
+- The text model was trained on 823 hand-written strings by one labeler. We report that as in-distribution only.
+- DP-2 and DP-4 are our weakest detectors. Fixing them is first on the roadmap.
+
+## Privacy and safety
+
+- **No data leaves the browser.** No backend, no account, no analytics.
+- **The scanner ignores sensitive inputs** (passwords, email, card, CVV, address fields) and never reads what you type.
+- **Ethical View safety rules**
+  1. Never changes price text or numbers.
+  2. Never disables or alters buttons or form submits.
+  3. Never changes a checkbox state.
+  4. Only removes the classes and notes it added itself.
+- **Model integrity:** the text model is checked with a SHA-256 hash at load. If the file is missing or changed, the scan falls back to rules only. The hash catches accidental damage, not deliberate tampering.
 
 ---
 
-## 8. Integration Architecture & Team Responsibilities
+## Install in 2 minutes
 
-This project was built following the 12-hour hackathon work division across three specialized team roles:
+DarkGuard AI runs in **Google Chrome** and **Microsoft Edge**. No store account needed.
 
-| Role | Engineer | Assigned Components & Ownership |
+### Step 1: Get the code
+
+**Option A: download the ZIP**
+1. Open this repository on GitHub.
+2. Click the green **Code** button, then **Download ZIP**.
+3. Unzip it. You should get a folder named `Dark-pattern-main`.
+
+**Option B: clone with Git**
+````bash
+git clone https://github.com/rudrakshsharma1312-gif/Dark-pattern.git
+````
+
+### Step 2: Load it in your browser
+
+1. Open the extensions page:
+   - **Chrome:** type `chrome://extensions` in the address bar
+   - **Edge:** type `edge://extensions` in the address bar
+2. Turn on **Developer mode** (toggle at the top right in Chrome, bottom left in Edge).
+3. Click **Load unpacked**.
+4. Select the project folder that contains **`manifest.json`** (the repository root).
+5. **DarkGuard AI** now appears in your extension list.
+
+### Step 3: Pin it and scan
+
+1. Click the puzzle-piece icon in the toolbar and **pin** the DarkGuard AI shield.
+2. Open any shopping page, or one of our [test pages](#try-it-yourself).
+3. **Refresh the page once** (tabs that were already open before install do not get the scanner).
+4. Click the shield, then **Scan this page**.
+5. Wait about 10 seconds while it says "Checking timer...". That is the urgency check at work.
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| "Manifest file is missing or unreadable" | You selected the wrong folder. Pick the one that directly contains `manifest.json`. |
+| Scan does nothing on a test page opened from your disk (`file://`) | Open the extension's **Details** page and turn on **Allow access to file URLs**. Or serve the test site locally: `npx serve test-site`. |
+| Scan does nothing on a page that was already open | Refresh the page, then scan again. |
+| Cannot scan `chrome://` or Web Store pages | Browsers block extensions on those pages. Try a normal website. |
+| You pulled new code | On the extensions page, click the **reload** icon on the DarkGuard AI card, then refresh your test page. |
+
+---
+
+## Try it yourself
+
+We built a **14-page offline test site** so you can see every pattern, and see the tool stay quiet on honest pages. Open `test-site/index.html` (the hub), or jump straight in:
+
+| Try this page | What is planted | What you should see |
 |---|---|---|
-| **Member A** | **Extension Core Engineer** | Scanner (`scanner.js`), 4 rule detectors (`dp1-urgency.ts` to `dp4-extras.ts`), `fusion.js`, `risk.js`, `manifest.json`, and background service worker. |
-| **Member B** | **ML & Evaluation Engineer** | Dataset labeling (`ml/data/strings.csv`), TF-IDF logistic regression model (`ml/train.py`, `shaming-v1.json`), JS classifier (`ml/classifier.js`), checksum integrity verification, and evaluation report runner (`eval/run.js`). |
-| **Member C** | **Product & Demo Lead** | 14-page test website (`test-site/`), extension popup (`popup/`), suspicious element highlighter (`content/highlighter.js`), Ethical View engine (`content/ethical-view.js`, `ethical-view.css`, `templates.json`), landing page (`landing/`), and documentation (`README.md`). |
+| [`planted-urgency-01.html`](test-site/planted-urgency-01.html) | A timer frozen at `00:14:59` | DP-1 finding and a high risk score |
+| [`planted-discount-01.html`](test-site/planted-discount-01.html) | "70% off" where $400 to $200 is really 50% | DP-2 finding with the arithmetic |
+| [`planted-shaming-01.html`](test-site/planted-shaming-01.html) | "No thanks, I prefer paying full price" | DP-3 finding with the matched phrase |
+| [`planted-extras-01.html`](test-site/planted-extras-01.html) | A pre-checked $49.99 warranty | DP-4 finding, checkbox highlighted |
+| [`clean-coffee-maker.html`](test-site/clean-coffee-maker.html) | Nothing. Honest pricing | **0 findings**. It does not raise false alarms |
 
-### Current Integration Status & Known Dependencies
-* **Member C components (Test site, popup UI, highlighter, Ethical View, landing page)** are fully implemented and verified.
-* **Member A integration**: Live scanning communication relies on Member A's content script injection (`START_SCAN` message handler). When testing standalone or before Member A's injection is merged, the popup features an integrated **Load Sample Demo Result** fallback so judges can evaluate the complete UI flow without blocking.
-* **Member B integration**: The ML classifier is connected via `features.js` and `classifier.js`. If the model file is disabled or fails checksum verification, the popup cleanly falls back to rule-only verification and displays the **"Text model unavailable"** status banner.
+### 60-second walkthrough
 
----
-
-## 9. Privacy & Safety Guarantees
-
-* **Zero Data Exfiltration**: DarkGuard runs 100% on the client. It sends no DOM trees, cookies, or URLs to external cloud servers.
-* **Strict Input Exclusion**: The scanner explicitly ignores sensitive DOM inputs (`type="password"`, `type="email"`, credit card autocomplete fields, CVV, and address fields). It never reads text input values.
-* **Critical Safety Policy for Ethical View**:
-  1. Never alters visible product price text or reference numbers.
-  2. Never disables, modifies, or alters primary action buttons or form submit behaviors.
-  3. Never mutates checkbox `.checked` states.
-  4. Only removes classes added by Ethical View itself, preserving all concurrent site style mutations.
+1. Open `planted-urgency-01.html` and click **Scan this page**. Watch the gauge fill.
+2. Click a finding or its **Locate** button. The page scrolls and pulses the exact element.
+3. Switch on **Ethical View**. A banner and small notes appear. Prices, buttons and checkboxes stay untouched.
+4. Click **Show original**. The page is back exactly as it was.
+5. Open `clean-coffee-maker.html` and scan. Zero findings.
 
 ---
 
-## 10. 3-Minute Hackathon Demo Script
+## Project structure
 
-* **0:00 – 0:40 (Member C)**: Open [`test-site/planted-urgency-01.html`](test-site/planted-urgency-01.html). Click **Scan this page**. Highlight the frozen `00:14:59` timer and the high risk score gauge.
-* **0:40 – 1:15 (Member A)**: Switch to [`test-site/planted-discount-01.html`](test-site/planted-discount-01.html). Click finding to locate the fake `70% OFF` claim. Explain the arithmetic proof ($400 down to $200 is actually 50%).
-* **1:15 – 1:45 (Member C)**: Enable **Ethical View**. Show contextual note callouts and top banner. Click **Show original** to demonstrate 100% non-destructive page restoration.
-* **1:45 – 2:10 (Member A)**: Open clean control page [`test-site/clean-coffee-maker.html`](test-site/clean-coffee-maker.html). Run scan. Demonstrate that DarkGuard reports 0 findings and does not "cry wolf".
-* **2:10 – 2:50 (Member B)**: Present the rules-only vs rules+ML evaluation table and model card. Explain on-device TF-IDF classification and SHA-256 fallback protection.
-* **2:50 – 3:00 (All)**: Closing summary on consumer privacy (nothing leaves the browser) and future roadmap.
+````
+Dark-pattern/
+├── content/        Content scripts: scanner, Ethical View, highlighter
+├── popup/          Extension popup: scan button, findings, risk gauge
+├── src/            TypeScript engine: detectors, fusion, risk score
+├── ml/             Text model: data, training, JS classifier, model card
+├── eval/           Evaluation runner and labeled fixture pages
+├── test-site/      14-page offline test bed (8 planted, 6 clean)
+├── landing/        Landing page and install walkthrough
+└── LATER.md        What we would build next
+````
+
+## Built with
+
+JavaScript and TypeScript · Chrome Extension **Manifest V3** · TF-IDF and logistic regression (trained in Python, run in plain JavaScript) · React and Vite for the web preview
+
+### Optional: run the web preview
+
+The extension does not need this. It is a development preview only.
+
+````bash
+npm install
+npm run dev
+````
+
+### Re-run the evaluation
+
+````bash
+./node_modules/.bin/tsx eval/run.ts
+````
+
+---
+
+## Roadmap
+
+- **Stronger DP-2 and DP-4 detectors** (our weakest two today)
+- **Retrain the text model** with a placeholder for numbers, neutral hard negatives and a second labeler, then re-test the clean-page check before turning it on
+- **Test on real, rendered shop pages**, not only our fixtures
+- **More languages and regions** (today: English pages, prices in Rs, $ and EUR)
+- **More patterns** beyond the first four
+- **A Settings toggle** for the text model
+
+See [`LATER.md`](LATER.md) for the full list.
+
+## Team
+
+| Role | Owns | Who |
+|---|---|---|
+| **Core engine** | Scanner, four rule detectors, fusion, risk score, extension manifest | _add name_ |
+| **ML and evaluation** | Dataset, text model, classifier, integrity check, eval runner | _add name_ |
+| **Product and demo** | Test site, popup, highlighter, Ethical View, landing page | _add name_ |
+
+## Responsible use
+
+DarkGuard AI shows you things worth checking. Findings are evidence for you to judge, not verdicts about any shop. Text-model hits are always labeled *possible pattern, low certainty*.
+
+---
+
+<div align="center">
+
+**DarkGuard AI does not tell you what to buy. It shows you what the page is doing, with proof, so the decision stays yours.**
+
+</div>
+````
+````
+
+Copy everything between the first and last fence lines and paste it into `README.md` in your repo. Before you commit, replace the three "_add name_" entries in the Team table with your teammates' names, and add the screenshots or delete the "See it in action" section.
