@@ -19,7 +19,7 @@ Items and architectural enhancements logged for future development:
    - Detect sneak-into-basket and subscription traps that span the product page, cart, and final payment screen.
 
 6. **Machine Learning Model v2 Roadmap (`eval/reports/LATER-ml.md`):**
-   - Detailed plan for retraining with numeric normalization (`NUM`), minimum known-token coverage thresholds, general hard-negative neutral patterns, double-blind annotation, and mandatory evaluation disclosure rules. See full document at [eval/reports/LATER-ml.md](file:///Users/aditrisingh/Dark-pattern/eval/reports/LATER-ml.md).
+   - Detailed plan for retraining with numeric normalization (`NUM`), minimum known-token coverage thresholds, general hard-negative neutral patterns, double-blind annotation, and mandatory evaluation disclosure rules. See full document at [eval/reports/LATER-ml.md](eval/reports/LATER-ml.md).
 
 7. **MutationObserver Instant Timer Audit:**
    - In addition to interval sampling across `observeMs`, attach a lightweight `MutationObserver` to elements matching clock patterns to detect ticks immediately, returning early if the timer actively counts down.

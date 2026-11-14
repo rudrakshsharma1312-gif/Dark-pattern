@@ -1030,6 +1030,11 @@
     };
   }
 
+  // ai-explain-stub:./ai-explain
+  async function enhanceExplanationsWithTimeout() {
+    return;
+  }
+
   // src/engine/orchestrator.ts
   var STORAGE_KEY = "darkguard_scan_history_v1";
   var DarkGuardScanner = class {
@@ -1143,7 +1148,7 @@
       const { score: risk_score, level } = calculateRiskScore(detections);
       if (options.useAiExplanations && detections.length > 0) {
         try {
-          await this.enhanceExplanationsWithTimeout(detections, 3e3);
+          await enhanceExplanationsWithTimeout(detections, 3e3);
         } catch (err) {
           console.warn("AI explanation timed out or failed; keeping template explanations.");
         }
@@ -1170,43 +1175,6 @@
       };
       this.saveScan(scanResult);
       return scanResult;
-    }
-    /**
-     * Calls optional backend /v1/explain with a hard 3s timeout
-     */
-    async enhanceExplanationsWithTimeout(detections, timeoutMs) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const response = await fetch("/v1/explain", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            detections: detections.map((d) => ({
-              id: d.id,
-              category: d.category,
-              categoryName: d.categoryName,
-              evidenceSnippet: d.evidenceSnippet,
-              details: d.details
-            }))
-          }),
-          signal: controller.signal
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.explanations && Array.isArray(data.explanations)) {
-            data.explanations.forEach((item) => {
-              const det = detections.find((d) => d.id === item.id);
-              if (det && item.aiExplanation) {
-                det.aiExplanation = item.aiExplanation;
-              }
-            });
-          }
-        }
-      } catch {
-      } finally {
-        clearTimeout(timer);
-      }
     }
   };
   var scannerInstance = new DarkGuardScanner();
