@@ -32,18 +32,37 @@ function runTests() {
   const classifier = new DarkGuardClassifier(validRawText);
   console.log(`  Classifier status: ${classifier.status}, checksumValid: ${classifier.isChecksumValid}`);
 
-  // Warmup
-  classifier.batchPredict(candidates.slice(0, 10));
+  // Warmup (5 full runs on all 200 strings)
+  for (let w = 0; w < 5; w++) {
+    classifier.batchPredict(candidates);
+  }
 
-  // Timed run
-  const { results, elapsedMs } = classifier.batchPredict(candidates);
-  console.log(`  Classified ${results.length} strings in ${elapsedMs.toFixed(3)} ms`);
-  console.log(`  Average latency per candidate: ${(elapsedMs / candidates.length).toFixed(4)} ms`);
+  // 20 timed benchmark runs
+  const latencies: number[] = [];
+  for (let r = 0; r < 20; r++) {
+    const start = performance.now();
+    classifier.batchPredict(candidates);
+    latencies.push(performance.now() - start);
+  }
 
-  if (elapsedMs < 5.0) {
-    console.log(`✅ Test A PASSED: ${elapsedMs.toFixed(3)} ms is within < 5.0 ms budget\n`);
+  latencies.sort((a, b) => a - b);
+  const median = latencies[Math.floor(latencies.length / 2)];
+  const min = latencies[0];
+  const max = latencies[latencies.length - 1];
+  const mean = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+
+  console.log(`  20 Runs on 200 candidate strings:`);
+  console.log(`    Median latency: ${median.toFixed(3)} ms`);
+  console.log(`    Mean latency:   ${mean.toFixed(3)} ms`);
+  console.log(`    Min latency:    ${min.toFixed(3)} ms`);
+  console.log(`    Max latency:    ${max.toFixed(3)} ms`);
+  console.log(`    Per-candidate:  ${(median / candidates.length).toFixed(4)} ms/candidate`);
+
+  if (median < 5.0) {
+    console.log(`✅ Test A PASSED: Median ${median.toFixed(3)} ms is within < 5.0 ms budget (Max: ${max.toFixed(3)} ms)\n`);
   } else {
-    console.warn(`⚠️  Test A WARNING: ${elapsedMs.toFixed(3)} ms exceeded 5.0 ms target\n`);
+    console.error(`❌ Test A FAILED: Median ${median.toFixed(3)} ms exceeded 5.0 ms limit\n`);
+    process.exit(1);
   }
 
   // ---------------------------------------------------------------------------
