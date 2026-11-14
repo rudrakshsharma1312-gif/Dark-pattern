@@ -14,6 +14,7 @@ export interface ScanOptions {
   urlPath?: string;
   observeMs?: number;
   useAiExplanations?: boolean;
+  mlEnabled?: boolean;
 }
 
 const STORAGE_KEY = 'darkguard_scan_history_v1';
@@ -26,6 +27,9 @@ export class DarkGuardScanner {
    */
   public getHistory(): ScanResult[] {
     try {
+      if (typeof localStorage === 'undefined' || !localStorage || typeof localStorage.getItem !== 'function') {
+        return [];
+      }
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : [];
     } catch {
@@ -38,6 +42,9 @@ export class DarkGuardScanner {
    */
   public saveScan(scan: ScanResult): void {
     try {
+      if (typeof localStorage === 'undefined' || !localStorage || typeof localStorage.setItem !== 'function') {
+        return;
+      }
       const history = this.getHistory();
       const updated = [scan, ...history.filter((s) => s.id !== scan.id)].slice(0, 20);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -51,6 +58,9 @@ export class DarkGuardScanner {
    */
   public clearHistory(): void {
     try {
+      if (typeof localStorage === 'undefined' || !localStorage || typeof localStorage.removeItem !== 'function') {
+        return;
+      }
       localStorage.removeItem(STORAGE_KEY);
     } catch (e) {
       console.warn('Could not clear scan history:', e);
@@ -63,17 +73,51 @@ export class DarkGuardScanner {
   public async scan(options: ScanOptions = {}): Promise<ScanResult> {
     const startTime = performance.now();
     const container = options.container || document.body;
-    const domain = options.domain || window.location.hostname || 'demo.darkguard.shop';
-    const urlPath = options.urlPath || window.location.pathname || '/products/item';
+    const win = container.ownerDocument?.defaultView || (typeof window !== 'undefined' ? window : null);
+    const domain = options.domain || win?.location.hostname || 'demo.darkguard.shop';
+    const urlPath = options.urlPath || win?.location.pathname || '/products/item';
     const observeMs = options.observeMs ?? 10000;
+    const mlEnabled = options.mlEnabled ?? false; // Shipped disabled by default per ML-R9 release gate
 
     // 1. Extract candidates
     const candidates = extractCandidates(container);
 
+    // Identify candidate elements containing a countdown/time pattern
+    const timePatternRegex = /(\d{1,2}:\d{2}(?::\d{2})?|\b(?:ends?\s*(?:in)?|left|remaining|expires?\s*(?:in)?|order\s*within|closing\s*in)\s*:?\s*\d+\s*(?:days?|hours?|hrs?|mins?|minutes?|secs?|seconds?)\b)/i;
+    const timerCandidates = candidates.filter((c) => timePatternRegex.test(c.text));
+
+    const observationSnapshots = new Map<string, string>(this.timerSnapshots);
+
+    // If there are timer candidates and observeMs > 0, observe them
+    const needsObservation = timerCandidates.some((tc) => !observationSnapshots.has(tc.ref));
+    if (needsObservation && observeMs > 0) {
+      // Record initial values
+      timerCandidates.forEach((tc) => {
+        if (!observationSnapshots.has(tc.ref)) {
+          const match = tc.text.match(timePatternRegex)?.[0] || tc.text;
+          observationSnapshots.set(tc.ref, match);
+        }
+      });
+
+      // Wait observation duration
+      await new Promise((resolve) => setTimeout(resolve, observeMs));
+
+      // Re-sample candidate texts from live DOM elements
+      timerCandidates.forEach((tc) => {
+        if (tc.element) {
+          const liveText = (tc.element.innerText || tc.element.textContent || '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 200);
+          tc.text = liveText;
+        }
+      });
+    }
+
     // 2. Rule detectors
     const urgencyEvidence = DP1UrgencyDetector.run({
       candidates,
-      observedSnapshots: this.timerSnapshots,
+      observedSnapshots: observationSnapshots,
       observeMs,
     });
 
@@ -89,22 +133,26 @@ export class DarkGuardScanner {
     ];
 
     // Update snapshots for countdown timers
-    candidates.forEach((c) => {
-      if (c.text.match(/(\d{1,2}:\d{2})/)) {
-        this.timerSnapshots.set(c.ref, c.text.match(/(\d{1,2}:\d{2}(?::\d{2})?)/)?.[0] || c.text);
-      }
+    timerCandidates.forEach((tc) => {
+      const match = tc.text.match(timePatternRegex)?.[0] || tc.text;
+      this.timerSnapshots.set(tc.ref, match);
     });
 
     // 3. Classifier inference (runs under 5ms)
-    const textCandidates = candidates.map((c) => ({ ref: c.ref, text: c.text }));
-    const { results: mlResults } = defaultClassifier.batchPredict(textCandidates);
+    let mlResults: any[] = [];
+    const isClassifierReady = defaultClassifier.status === 'ready' && defaultClassifier.isChecksumValid;
+    if (mlEnabled && isClassifierReady) {
+      const textCandidates = candidates.map((c) => ({ ref: c.ref, text: c.text }));
+      const prediction = defaultClassifier.batchPredict(textCandidates);
+      mlResults = prediction.results;
+    }
 
     // 4. Fusion
     const detections = fuseDetections({
       candidates,
       ruleEvidence: allRuleEvidence,
       classifierResults: mlResults,
-      classifierAvailable: defaultClassifier.status === 'ready',
+      classifierAvailable: mlEnabled && isClassifierReady,
     });
 
     // 5. Risk Calculation
@@ -129,7 +177,7 @@ export class DarkGuardScanner {
       risk_score,
       level,
       model_version: defaultClassifier.modelId,
-      ml_enabled: defaultClassifier.status === 'ready',
+      ml_enabled: mlEnabled && isClassifierReady,
       detections,
       rawCandidatesCount: candidates.length,
       scanDurationMs: elapsed,

@@ -35,15 +35,20 @@ export const DP4ExtrasDetector = {
       const matchesAddon = ADDON_KEYWORDS.test(label);
       if (!matchesAddon) continue;
 
-      // Check if near add to cart or checkout
-      const container =
-        el?.closest('form, .product-actions, .cart-actions, .checkout-area, [data-action-area="true"]') ||
-        el?.parentElement;
-      const hasActionBtn = Boolean(
-        container?.querySelector(
-          'button, input[type="submit"], [role="button"], .add-to-cart, .buy-btn'
-        )
-      );
+      // Walk up parent tree to check if near an action button, form, or purchase area
+      let container: HTMLElement | null = el?.parentElement || null;
+      let hasActionBtn = false;
+      const docBody = el.ownerDocument?.body;
+      while (container && container !== docBody && container.tagName !== 'MAIN') {
+        if (
+          container.querySelector('button, input[type="submit"], [role="button"]') ||
+          container.matches?.('form, .product-actions, .cart-actions, .checkout-area')
+        ) {
+          hasActionBtn = true;
+          break;
+        }
+        container = container.parentElement;
+      }
 
       if (hasActionBtn || candidate.nearPrimaryAction || candidate.inForm) {
         evidenceList.push({
