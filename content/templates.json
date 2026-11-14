@@ -1,0 +1,69 @@
+{
+  "version": "1.1",
+  "lookup": {
+    "fake_urgency": ["ET-URG-01", "ET-URG-02"],
+    "misleading_discount": ["ET-DISC-01", "ET-DISC-02"],
+    "confirm_shaming": ["ET-CONF-01"],
+    "preselected_extra": ["ET-EXTRA-01"],
+    "classifier_signal": ["ET-SIGNAL-01"]
+  },
+  "templates": [
+    {
+      "id": "ET-URG-01",
+      "action": "caption",
+      "placement": "after",
+      "text": "Timer check: this countdown did not change during a {observed_seconds}-second check.",
+      "style": "warning"
+    },
+    {
+      "id": "ET-URG-02",
+      "action": "caption",
+      "placement": "after",
+      "text": "Urgency message: no visible stock or deadline indicator on this page supports this claim.",
+      "style": "info"
+    },
+    {
+      "id": "ET-DISC-01",
+      "action": "comparison",
+      "placement": "after",
+      "text": "Price check: current price {current_price}, reference price {reference_price}. The page states {stated_percent}% off; the calculated discount is {calculated_percent}%.",
+      "style": "warning"
+    },
+    {
+      "id": "ET-DISC-02",
+      "action": "caption",
+      "placement": "after",
+      "text": "Reference price: the higher price is shown without a clear label. Check what it refers to before comparing.",
+      "style": "info"
+    },
+    {
+      "id": "ET-CONF-01",
+      "action": "caption",
+      "placement": "after",
+      "text": "Wording note: this option uses persuasive language. Choosing it still performs the button's original action.",
+      "style": "info"
+    },
+    {
+      "id": "ET-EXTRA-01",
+      "action": "caption",
+      "placement": "before",
+      "text": "Pre-selected extra: this option was checked by default. Review it before continuing.",
+      "style": "warning"
+    },
+    {
+      "id": "ET-SIGNAL-01",
+      "action": "caption",
+      "placement": "after",
+      "text": "Possible pattern (text model, low certainty): this wording may be persuasive. Review in context.",
+      "style": "info"
+    },
+    {
+      "id": "ET-BANNER-01",
+      "action": "banner",
+      "placement": "top",
+      "text": "DarkGuard: {count} possible issue(s) found on this page. Risk score {risk_score} ({level}).",
+      "controls": ["Show original", "Details"],
+      "style": "neutral"
+    }
+  ]
+}

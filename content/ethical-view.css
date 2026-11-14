@@ -1,0 +1,211 @@
+/* DarkGuard AI — Ethical View Stylesheet
+   Safe, Reversible, Non-Destructive Design Annotations
+*/
+
+/* Reset & Scope for Injected Elements */
+[data-dg-owner="ethical-view"] {
+  box-sizing: border-box !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  line-height: 1.45 !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+[data-dg-owner="ethical-view"] *,
+[data-dg-owner="ethical-view"] *::before,
+[data-dg-owner="ethical-view"] *::after {
+  box-sizing: border-box !important;
+}
+
+/* 1. TOP ETHICAL VIEW BANNER */
+.dg-ethical-banner,
+[data-dg-owner="ethical-view"][data-dg-id="ET-BANNER-01"] {
+  width: 100% !important;
+  background-color: #E8E3F8 !important;
+  border: 1px solid #B9ABE8 !important;
+  color: #1F2A37 !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  margin-bottom: 20px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  font-size: 13px !important;
+  box-shadow: 0 2px 8px rgba(185, 171, 232, 0.25) !important;
+  position: relative !important;
+  z-index: 9999 !important;
+  animation: dg-fade-in 0.25s ease-out !important;
+}
+
+.dg-banner-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex: 1 !important;
+  min-width: 260px !important;
+}
+
+.dg-banner-shield {
+  font-size: 18px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.dg-banner-title {
+  font-weight: 700 !important;
+  color: #3B2D64 !important;
+  margin-right: 4px !important;
+}
+
+.dg-banner-text {
+  font-weight: 500 !important;
+  color: #1F2A37 !important;
+}
+
+.dg-banner-score-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  margin-left: 6px !important;
+}
+
+.dg-banner-score-pill.low {
+  background: #D5F3E4 !important;
+  color: #166534 !important;
+  border: 1px solid #8FD1B0 !important;
+}
+
+.dg-banner-score-pill.moderate {
+  background: #FEF7DB !important;
+  color: #78350F !important;
+  border: 1px solid #EBD27A !important;
+}
+
+.dg-banner-score-pill.high {
+  background: #FCE0D6 !important;
+  color: #8A3A1F !important;
+  border: 1px solid #F1A98F !important;
+}
+
+.dg-banner-score-pill.very-high {
+  background: #F9DCE4 !important;
+  color: #8A2845 !important;
+  border: 1px solid #E8A0B5 !important;
+}
+
+.dg-banner-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* "Show original" Button */
+.dg-btn-show-original {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background-color: #FFFFFF !important;
+  color: #1F2A37 !important;
+  border: 1px solid #B9ABE8 !important;
+  padding: 7px 14px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.dg-btn-show-original:hover {
+  background-color: #F8FAFC !important;
+  border-color: #7C6AB8 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important;
+}
+
+.dg-btn-show-original:active {
+  transform: translateY(0) !important;
+}
+
+/* 2. CONTEXTUAL NOTE ANNOTATIONS */
+.dg-ethical-note {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  max-width: 100% !important;
+  pointer-events: auto !important;
+  animation: dg-fade-in 0.2s ease-out !important;
+}
+
+.dg-note-icon {
+  flex-shrink: 0 !important;
+  font-size: 14px !important;
+  margin-top: 1px !important;
+}
+
+.dg-note-body {
+  flex: 1 !important;
+}
+
+.dg-note-body strong {
+  font-weight: 700 !important;
+}
+
+/* Note style variations */
+.dg-ethical-note.warning {
+  background-color: #FCE0D6 !important;
+  border: 1px solid #F1A98F !important;
+  color: #8A3A1F !important;
+}
+
+.dg-ethical-note.info {
+  background-color: #DCEBFA !important;
+  border: 1px solid #9CC5EE !important;
+  color: #1D4E89 !important;
+}
+
+.dg-ethical-note.neutral {
+  background-color: #EDF2F8 !important;
+  border: 1px solid #C9D4E0 !important;
+  color: #1F2A37 !important;
+}
+
+/* 3. SUBTLE NON-BLOCKING OUTLINE ON DETECTED ELEMENT */
+.dg-outlined-major {
+  outline: 2px solid #E8A0B5 !important;
+  outline-offset: 3px !important;
+}
+
+.dg-outlined-moderate {
+  outline: 2px solid #F1A98F !important;
+  outline-offset: 3px !important;
+}
+
+.dg-outlined-minor {
+  outline: 2px solid #EBD27A !important;
+  outline-offset: 3px !important;
+}
+
+@keyframes dg-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
