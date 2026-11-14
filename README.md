@@ -1,4 +1,4 @@
-# DarkGuard AI 🛡️
+# DarkGuard AI 
 > Intelligent On-Device Auditor for Deceptive E-Commerce Design Patterns
 
 [![Project Status](https://img.shields.io/badge/Status-12--Hour%20Hackathon%20Build-blue)](#)
