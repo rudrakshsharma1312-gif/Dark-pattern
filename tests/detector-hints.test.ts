@@ -102,21 +102,23 @@ describe('Step 2: Detector Hint Independence (Strip all data-dg-* hints)', () =>
     expect(strippedHtml).not.toContain('data-dg-action');
 
     const dom = new JSDOM(strippedHtml, { url: `http://localhost:3000/${file}` });
-    const scanner = new DarkGuardScanner();
+    try {
+      const scanner = new DarkGuardScanner();
+      const result = await scanner.scan({
+        container: dom.window.document.body,
+        domain: 'localhost',
+        urlPath: `/${file}`,
+        observeMs: 1500,
+        mlEnabled: false, // Strict rules-only verification
+      });
 
-    // Use a short observe window (50ms) to verify temporal snapshot comparison without delaying test suite
-    const result = await scanner.scan({
-      container: dom.window.document.body,
-      domain: 'localhost',
-      urlPath: `/${file}`,
-      observeMs: 50,
-      mlEnabled: false, // Strict rules-only verification
-    });
-
-    const matched = result.detections.filter((d) => d.categoryId === expectedId || d.category === expectedCategory);
-    expect(matched.length).toBeGreaterThanOrEqual(1);
-    expect(matched[0].categoryId).toBe(expectedId);
-    expect(result.risk_score).toBeGreaterThan(0);
+      const matched = result.detections.filter((d) => d.categoryId === expectedId || d.category === expectedCategory);
+      expect(matched.length).toBeGreaterThanOrEqual(1);
+      expect(matched[0].categoryId).toBe(expectedId);
+      expect(result.risk_score).toBeGreaterThan(0);
+    } finally {
+      dom.window.close();
+    }
   });
 
   it.each(cleanPages)('produces ZERO detections in clean page $file with ALL hints stripped', async (file) => {
@@ -124,19 +126,22 @@ describe('Step 2: Detector Hint Independence (Strip all data-dg-* hints)', () =>
     const strippedHtml = stripAllHints(rawHtml);
 
     const dom = new JSDOM(strippedHtml, { url: `http://localhost:3000/${file}` });
-    const scanner = new DarkGuardScanner();
+    try {
+      const scanner = new DarkGuardScanner();
+      const result = await scanner.scan({
+        container: dom.window.document.body,
+        domain: 'localhost',
+        urlPath: `/${file}`,
+        observeMs: 1500,
+        mlEnabled: false,
+      });
 
-    const result = await scanner.scan({
-      container: dom.window.document.body,
-      domain: 'localhost',
-      urlPath: `/${file}`,
-      observeMs: 50,
-      mlEnabled: false,
-    });
-
-    expect(result.detections.length).toBe(0);
-    expect(result.risk_score).toBe(0);
-    expect(result.level).toBe('Low');
+      expect(result.detections.length).toBe(0);
+      expect(result.risk_score).toBe(0);
+      expect(result.level).toBe('Low');
+    } finally {
+      dom.window.close();
+    }
   });
 
   describe('Step 2 (Part B): Heavy Stripping (Strip hints AND rename/strip all test-site specific classes)', () => {
@@ -159,20 +164,23 @@ describe('Step 2: Detector Hint Independence (Strip all data-dg-* hints)', () =>
       expect(heavyStrippedHtml).not.toMatch(/\btimer-container\b/i);
 
       const dom = new JSDOM(heavyStrippedHtml, { url: `http://localhost:3000/${file}` });
-      const scanner = new DarkGuardScanner();
+      try {
+        const scanner = new DarkGuardScanner();
+        const result = await scanner.scan({
+          container: dom.window.document.body,
+          domain: 'localhost',
+          urlPath: `/${file}`,
+          observeMs: 1500,
+          mlEnabled: false,
+        });
 
-      const result = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: `/${file}`,
-        observeMs: 50,
-        mlEnabled: false,
-      });
-
-      const matched = result.detections.filter((d) => d.categoryId === expectedId || d.category === expectedCategory);
-      expect(matched.length).toBeGreaterThanOrEqual(1);
-      expect(matched[0].categoryId).toBe(expectedId);
-      expect(result.risk_score).toBeGreaterThan(0);
+        const matched = result.detections.filter((d) => d.categoryId === expectedId || d.category === expectedCategory);
+        expect(matched.length).toBeGreaterThanOrEqual(1);
+        expect(matched[0].categoryId).toBe(expectedId);
+        expect(result.risk_score).toBeGreaterThan(0);
+      } finally {
+        dom.window.close();
+      }
     });
 
     it.each(cleanPages)('produces ZERO detections in clean page $file with hints stripped AND classes stripped/renamed', async (file) => {
@@ -180,19 +188,22 @@ describe('Step 2: Detector Hint Independence (Strip all data-dg-* hints)', () =>
       const heavyStrippedHtml = stripAllHintsAndClasses(rawHtml);
 
       const dom = new JSDOM(heavyStrippedHtml, { url: `http://localhost:3000/${file}` });
-      const scanner = new DarkGuardScanner();
+      try {
+        const scanner = new DarkGuardScanner();
+        const result = await scanner.scan({
+          container: dom.window.document.body,
+          domain: 'localhost',
+          urlPath: `/${file}`,
+          observeMs: 1500,
+          mlEnabled: false,
+        });
 
-      const result = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: `/${file}`,
-        observeMs: 50,
-        mlEnabled: false,
-      });
-
-      expect(result.detections.length).toBe(0);
-      expect(result.risk_score).toBe(0);
-      expect(result.level).toBe('Low');
+        expect(result.detections.length).toBe(0);
+        expect(result.risk_score).toBe(0);
+        expect(result.level).toBe('Low');
+      } finally {
+        dom.window.close();
+      }
     });
   });
 });

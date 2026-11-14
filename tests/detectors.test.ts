@@ -58,7 +58,7 @@ describe('Detectors & Price Parsing Suite', () => {
       const evidence = DP1UrgencyDetector.run({
         candidates,
         observedSnapshots: snapshots,
-        observeMs: 10000,
+        observeMs: 1500,
       });
 
       expect(evidence.length).toBe(1);
@@ -73,7 +73,7 @@ describe('Detectors & Price Parsing Suite', () => {
         {
           ref: 'cand-1',
           tag: 'span',
-          text: '00:14:49', // Changed during 10s observation window
+          text: '00:14:49', // Changed during observation window
           attributes: {},
           rect: { x: 0, y: 0, w: 50, h: 20 },
           selector: 'span',
@@ -87,7 +87,7 @@ describe('Detectors & Price Parsing Suite', () => {
       const evidence = DP1UrgencyDetector.run({
         candidates,
         observedSnapshots: snapshots,
-        observeMs: 10000,
+        observeMs: 1500,
       });
 
       expect(evidence.length).toBe(0);
@@ -112,32 +112,57 @@ describe('Detectors & Price Parsing Suite', () => {
       const evidence = DP1UrgencyDetector.run({
         candidates,
         observedSnapshots: snapshots,
-        observeMs: 10000,
+        observeMs: 1500,
       });
 
       expect(evidence.length).toBe(0);
     });
 
-    it('does NOT flag actively ticking countdown timer page (clean-ticking-timer.html)', async () => {
+    it('flags frozen countdown timer with full 10s observation on planted-urgency-01.html', async () => {
+      const filePath = path.resolve(__dirname, '../test-site/planted-urgency-01.html');
+      const rawHtml = fs.readFileSync(filePath, 'utf-8');
+      const dom = new JSDOM(rawHtml, { url: 'http://localhost:3000/planted-urgency-01.html' });
+      try {
+        const scanner = new DarkGuardScanner();
+        const res = await scanner.scan({
+          container: dom.window.document.body,
+          domain: 'localhost',
+          urlPath: '/planted-urgency-01.html',
+          observeMs: 10000, // Full 10s observation window
+          mlEnabled: false,
+        });
+
+        const frozenTimer = res.detections.find((d) => d.categoryId === 'DP-1' && d.confidence >= 0.9);
+        expect(frozenTimer).toBeDefined();
+        expect(res.risk_score).toBeGreaterThan(0);
+      } finally {
+        dom.window.close();
+      }
+    }, 20000);
+
+    it('does NOT flag actively ticking countdown timer with full 10s observation on clean-ticking-timer.html', async () => {
       const filePath = path.resolve(__dirname, '../test-site/clean-ticking-timer.html');
       const rawHtml = fs.readFileSync(filePath, 'utf-8');
       const dom = new JSDOM(rawHtml, {
         url: 'http://localhost:3000/clean-ticking-timer.html',
         runScripts: 'dangerously',
       });
+      try {
+        const scanner = new DarkGuardScanner();
+        const res = await scanner.scan({
+          container: dom.window.document.body,
+          domain: 'localhost',
+          urlPath: '/clean-ticking-timer.html',
+          observeMs: 10000, // Full 10s observation window (timer ticks every 1s)
+          mlEnabled: false,
+        });
 
-      const scanner = new DarkGuardScanner();
-      const res = await scanner.scan({
-        container: dom.window.document.body,
-        domain: 'localhost',
-        urlPath: '/clean-ticking-timer.html',
-        observeMs: 1200,
-        mlEnabled: false,
-      });
-
-      expect(res.detections.length).toBe(0);
-      expect(res.risk_score).toBe(0);
-    });
+        expect(res.detections.length).toBe(0);
+        expect(res.risk_score).toBe(0);
+      } finally {
+        dom.window.close();
+      }
+    }, 20000);
   });
 
   describe('DP-2 Discount Detector', () => {
